@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "115484151143",
+    "project_id": "xpt-prototype",
+    "storage_bucket": "xpt-prototype.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115484151143:android:b3f924ad0c4e48fab9b3c2",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "115484151143-ek82m0snphmutr6rb2e3gi8rhfqas669.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCelk3HTg7lqQxZln5QpZnuBz0Cfv56O0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "115484151143-ek82m0snphmutr6rb2e3gi8rhfqas669.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "115484151143-cipvodk9uskjhgns4m48hof1j6s7hc2t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
