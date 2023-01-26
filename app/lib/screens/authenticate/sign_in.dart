@@ -25,16 +25,16 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
         backgroundColor: Colors.lightBlue,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 41, 39, 39),
           elevation: 0.0,
-          title: Text('Sign in to Lumei Digital'),
+          title: Text('Sign in to XPT'),
           actions: <Widget>[
             TextButton.icon(
                 onPressed: () {
                   widget.toggelView();
                 },
                 style: TextButton.styleFrom(
-                  primary: Colors.lightBlue,
+                  primary: Color.fromARGB(255, 25, 28, 29),
                 ),
                 icon: Icon(Icons.person),
                 label: Text('Sign Up'))
@@ -67,7 +67,8 @@ class _SignInState extends State<SignIn> {
                 ElevatedButton(
                     child: Text(
                       'Sign in',
-                      style: TextStyle(color: Colors.lightBlue),
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 132, 132, 132)),
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {

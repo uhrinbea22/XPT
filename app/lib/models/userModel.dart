@@ -1,5 +1,5 @@
 class UserModel {
-  final String uid;
-
+  final String uid; 
+ // String? referenceId;
   UserModel({required this.uid});
 }

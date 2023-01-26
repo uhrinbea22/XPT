@@ -11,14 +11,14 @@ class Home extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Lumei Digital'),
-        backgroundColor: Colors.lightBlue,
+        title: const Text('XPT - Track your money'),
+        backgroundColor: Color.fromARGB(255, 82, 144, 173),
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
             icon: Icon(Icons.person),
             style: TextButton.styleFrom(
-              primary: Color(13),
+              primary: Colors.pink,
             ),
             label: Text('Sign out'),
             onPressed: () async {

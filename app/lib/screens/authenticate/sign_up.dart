@@ -25,14 +25,14 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         elevation: 0.0,
-        title: Text('Sign up to Lumei Digital'),
+        title: Text('Sign up to XPT'),
         actions: <Widget>[
           TextButton.icon(
               onPressed: () {
                 widget.toggelView();
               },
               style: TextButton.styleFrom(
-                primary: Colors.lightBlue,
+                primary: Color.fromARGB(255, 255, 255, 255),
               ),
               icon: Icon(Icons.person),
               label: Text('Sign In'))
@@ -65,7 +65,7 @@ class _SignUpState extends State<SignUp> {
               ElevatedButton(
                   child: Text(
                     'Sign up',
-                    style: TextStyle(color: Colors.lightBlue),
+                    style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
