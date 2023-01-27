@@ -1,9 +1,10 @@
 // ignore: unused_import
 import 'dart:html';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/transaction.dart';
+import '../../models/transact.dart';
 
 void main() => runApp(CreateTransacton());
 
@@ -131,9 +132,8 @@ class MyCustomFormState extends State<MyCustomForm> {
             padding: const EdgeInsets.only(left: 150.0, top: 40.0),
             child: ElevatedButton(
                 child: const Text('Submit'),
-                // ignore: avoid_print
                 onPressed: () async {
-                  final tr = Transaction(
+                  final tr = Transact(
                       DateTime.parse(myController['date']!.text),
                       int.parse(myController['amount']!.text),
                       true,
@@ -144,10 +144,20 @@ class MyCustomFormState extends State<MyCustomForm> {
                       true,
                       '');
                   //create new transaction, insert into firestore
-                  print(tr.toString());
-
-                  //db.collection("transactions").add(tr).then((DocumentReference doc) =>
-                  //print('DocumentSnapshot added with ID: ${doc.id}'));
+                  //print(tr.toString());
+                  FirebaseFirestore.instance
+                      .collection('transactions')
+                      .doc()
+                      .set({
+                    'date': tr.date,
+                    'amount': tr.amount,
+                    'title': tr.title,
+                    'place': tr.place,
+                    'online': tr.online,
+                    'expense': tr.expense,
+                    'note': tr.note,
+                    'persistent': tr.persistent
+                  });
                 }),
           ),
         ],
