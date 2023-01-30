@@ -71,14 +71,14 @@ class _SignInState extends State<SignIn> {
                           TextStyle(color: Color.fromARGB(255, 132, 132, 132)),
                     ),
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
+                     // if (_formKey.currentState!.validate()) {
                         dynamic result =
                             await _authService.signIn(email, password);
                         if (result == null) {
                           setState(() {
                             error = 'Could not sign in with the credentials';
                           });
-                        }
+                      //  }
                       }
                     }),
                 SizedBox(height: 12.0),
