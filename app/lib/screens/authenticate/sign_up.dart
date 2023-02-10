@@ -32,7 +32,7 @@ class _SignUpState extends State<SignUp> {
                 widget.toggelView();
               },
               style: TextButton.styleFrom(
-                primary: const Color.fromARGB(255, 255, 255, 255),
+                backgroundColor: const Color.fromARGB(120, 120, 255, 255),
               ),
               icon: const Icon(Icons.person),
               label: const Text('Sign In'))

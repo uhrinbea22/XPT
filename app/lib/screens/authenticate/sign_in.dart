@@ -22,7 +22,7 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
         backgroundColor: Colors.lightBlue,
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 41, 39, 39),
+          backgroundColor: const Color.fromARGB(255, 25, 39, 39),
           elevation: 0.0,
           title: const Text('Sign in to XPT'),
           actions: <Widget>[
@@ -31,7 +31,7 @@ class _SignInState extends State<SignIn> {
                   widget.toggelView();
                 },
                 style: TextButton.styleFrom(
-                  primary: const Color.fromARGB(255, 25, 28, 29),
+                  backgroundColor: const Color.fromARGB(2, 25, 28, 29),
                 ),
                 icon: const Icon(Icons.person),
                 label: const Text('Sign Up'))
@@ -58,6 +58,7 @@ class _SignInState extends State<SignIn> {
                       : null,
                   obscureText: true,
                   onChanged: (value) {
+                    print(value);
                     setState(() => password = value);
                   },
                 ),
@@ -66,18 +67,20 @@ class _SignInState extends State<SignIn> {
                     child: const Text(
                       'Sign in',
                       style:
-                          TextStyle(color: Color.fromARGB(255, 132, 132, 132)),
+                          TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                     ),
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        dynamic result =
-                            await _authService.signIn(email, password);
-                        if (result == null) {
-                          setState(() {
-                            error = 'Could not sign in with the credentials';
-                          });
-                        }
+                      //TODO: VALIDATE
+                      //if (_formKey.currentState!.validate()) {
+                      dynamic result =
+                          await _authService.signIn(email, password);
+                      if (result == null) {
+                        setState(() {
+                          error = 'Could not sign in with the credentials';
+                          print(error);
+                        });
                       }
+                      // }
                     }),
                 const SizedBox(height: 12.0),
                 Text(
