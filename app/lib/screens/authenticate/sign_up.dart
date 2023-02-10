@@ -25,33 +25,33 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         elevation: 0.0,
-        title: Text('Sign up to XPT'),
+        title: const Text('Sign up to XPT'),
         actions: <Widget>[
           TextButton.icon(
               onPressed: () {
                 widget.toggelView();
               },
               style: TextButton.styleFrom(
-                primary: Color.fromARGB(255, 255, 255, 255),
+                primary: const Color.fromARGB(255, 255, 255, 255),
               ),
-              icon: Icon(Icons.person),
-              label: Text('Sign In'))
+              icon: const Icon(Icons.person),
+              label: const Text('Sign In'))
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 validator: (value) => value!.isEmpty ? 'Enter an email' : null,
                 onChanged: (value) {
                   setState(() => email = value);
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 validator: (value) => value!.length < 6
                     ? 'Enter a password 6+ charts long'
@@ -61,9 +61,9 @@ class _SignUpState extends State<SignUp> {
                   setState(() => password = value);
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               ElevatedButton(
-                  child: Text(
+                  child: const Text(
                     'Sign up',
                     style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
                   ),
@@ -80,10 +80,10 @@ class _SignUpState extends State<SignUp> {
                       }
                     }
                   }),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               Text(
                 error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0),
+                style: const TextStyle(color: Colors.red, fontSize: 14.0),
               )
             ],
           ),

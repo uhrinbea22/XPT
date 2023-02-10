@@ -1,6 +1,3 @@
-import 'dart:html';
-import 'dart:js';
-
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -25,27 +22,28 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
         backgroundColor: Colors.lightBlue,
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 41, 39, 39),
+          backgroundColor: const Color.fromARGB(255, 41, 39, 39),
           elevation: 0.0,
-          title: Text('Sign in to XPT'),
+          title: const Text('Sign in to XPT'),
           actions: <Widget>[
             TextButton.icon(
                 onPressed: () {
                   widget.toggelView();
                 },
                 style: TextButton.styleFrom(
-                  primary: Color.fromARGB(255, 25, 28, 29),
+                  primary: const Color.fromARGB(255, 25, 28, 29),
                 ),
-                icon: Icon(Icons.person),
-                label: Text('Sign Up'))
+                icon: const Icon(Icons.person),
+                label: const Text('Sign Up'))
           ],
         ),
         body: Container(
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child: Form(
                 child: Column(
               children: <Widget>[
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   validator: (value) =>
                       value!.isEmpty ? 'Enter an email' : null,
@@ -53,7 +51,7 @@ class _SignInState extends State<SignIn> {
                     setState(() => email = value);
                   },
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   validator: (value) => value!.length < 6
                       ? 'Enter a password 6+ charts long'
@@ -63,9 +61,9 @@ class _SignInState extends State<SignIn> {
                     setState(() => password = value);
                   },
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 ElevatedButton(
-                    child: Text(
+                    child: const Text(
                       'Sign in',
                       style:
                           TextStyle(color: Color.fromARGB(255, 132, 132, 132)),
@@ -81,10 +79,10 @@ class _SignInState extends State<SignIn> {
                         }
                       }
                     }),
-                SizedBox(height: 12.0),
+                const SizedBox(height: 12.0),
                 Text(
                   error,
-                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  style: const TextStyle(color: Colors.red, fontSize: 14.0),
                 )
               ],
             ))));

@@ -13,6 +13,10 @@ class AuthService {
         .map(_userModelFromFirebase);
   }
 
+  User? getuser() {
+    return _auth.currentUser;
+  }
+
   //create an userModel object based on Firebase User object
   UserModel? _userModelFromFirebase(User? user) {
     if (user != null) {

@@ -1,10 +1,5 @@
-import 'dart:html';
-import 'dart:js';
-
 import 'package:app/screens/authenticate/sign_in.dart';
 import 'package:app/screens/authenticate/sign_up.dart';
-import 'package:app/screens/home/firestore_test.dart';
-import 'package:app/screens/home/create_transaction.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {
@@ -21,9 +16,7 @@ class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
     if (showSignIn) {
-      //return SignIn(toggelView: toggelView);
-      //return CreateTransacton();
-      return CreateTransacton();
+      return SignIn(toggelView: toggelView);
     } else {
       return SignUp(toggelView: toggelView);
     }

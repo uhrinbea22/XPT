@@ -1,6 +1,4 @@
-// ignore: unused_import
-import 'dart:html';
-
+import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -61,12 +59,16 @@ class MyCustomFormState extends State<MyCustomForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TextFormField(
-            controller: myController['amount'],
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.money),
-              hintText: 'Enter the amount',
-              labelText: 'Amount',
+          Flexible(
+            flex: 2,
+            fit: FlexFit.tight,
+            child: TextFormField(
+              controller: myController['amount'],
+              decoration: const InputDecoration(
+                icon: const Icon(Icons.money),
+                hintText: 'Enter the amount',
+                labelText: 'Amount',
+              ),
             ),
           ),
           TextFormField(
@@ -159,6 +161,18 @@ class MyCustomFormState extends State<MyCustomForm> {
                     'persistent': tr.persistent
                   });
                 }),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 190.0, top: 40.0),
+            child: ElevatedButton(
+              child: const Text('List all transactions'),
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ListAllTrans()),
+                );
+              },
+            ),
           ),
         ],
       ),

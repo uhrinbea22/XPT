@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Transact {
-  //final int id;
   final DateTime? date;
   final int amount;
   final bool? persistent;
@@ -14,7 +13,6 @@ class Transact {
   final String? title;
 
   Transact(
-      //this.id,  -> since the firestore stores documentid-s
       this.date,
       this.amount,
       this.persistent,
@@ -26,16 +24,12 @@ class Transact {
       //this.picture,
       this.title);
 
-  //factory Transact.fromJson(Map<String, dynamic> json) =>
-  //  _transactFromJson(json);
-
   Map<String, dynamic> toJson() => _transactToJson(this);
 
   @override
   String toString() =>
       'Transaction title: <$title>, amount:<$amount> , place<$place> , date<$date> , expense<$expense>, persistent<$persistent> , category<$category>, online<$online>';
 
-// 1
   Transact _transactFromJson(Map<String, dynamic> json) {
     return Transact(
         //json['id'] as int,
@@ -62,7 +56,6 @@ class Transact {
         place = data['place'],
         expense = data['expense'];
 
-// 2
   Map<String, dynamic> _transactToJson(Transact tr) => <String, dynamic>{
         'amount': tr.amount,
         'date': tr.date,
