@@ -1,4 +1,5 @@
 import 'package:app/models/userModel.dart';
+import 'package:app/screens/home/list_of_categ.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';

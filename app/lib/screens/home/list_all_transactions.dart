@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:app/screens/home/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
@@ -29,30 +30,22 @@ class MyAppHomePage extends StatelessWidget {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return ListTile(
+      leading: CircleAvatar(backgroundColor: Colors.grey),
       title: Row(
         children: [
           Expanded(
-            child: Text(
-              document['title'],
-              style: Theme.of(context).textTheme.displayMedium,
-            ),
-          ),
-          Container(
-            decoration: const BoxDecoration(
-              color: Color(0xffddddff),
-            ),
-            padding: const EdgeInsets.all(5.0),
-            child: Text(
-              document['amount'].toString(),
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
+            child: Text(document['title'], style: TextStyle(color: Colors.black)
+                //Theme.of(context).textTheme.displayMedium,
+                ),
           ),
         ],
       ),
+      subtitle: Text(document['amount'].toString(),
+          style: TextStyle(color: Colors.black)
+          //Theme.of(context).textTheme.displaySmall,
+          ),
       onTap: () {
         print(document.data());
-        //document.reference.update({'number': document['number'] + 1});
-        //document.data().add({'name': 'vamal', 'number': 2});
       },
     );
   }
@@ -60,6 +53,7 @@ class MyAppHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavDrawer(),
       appBar: AppBar(
         title: Text(title),
       ),
