@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
         title: Text('XPT - Track your money\n${_authService.getuser()!.email}'),
         backgroundColor: Color.fromARGB(255, 82, 144, 173),
         elevation: 0.0,
-        /*  actions: <Widget>[
+        actions: <Widget>[
           TextButton.icon(
             icon: Icon(Icons.person),
             style: TextButton.styleFrom(
@@ -32,7 +32,6 @@ class Home extends StatelessWidget {
             },
           )
         ],
-        */
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),

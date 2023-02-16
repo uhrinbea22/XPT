@@ -1,5 +1,6 @@
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggelView;
@@ -12,10 +13,18 @@ class _SignInState extends State<SignIn> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    _loadUserEmailPassword();
+    super.initState();
+  }
+
   // text field state
   String error = '';
-  String email = '';
-  String password = '';
+  late String email;
+  late String password;
+  bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +56,7 @@ class _SignInState extends State<SignIn> {
                 TextFormField(
                   validator: (value) =>
                       value!.isEmpty ? 'Enter an email' : null,
+                  initialValue: email,
                   onChanged: (value) {
                     setState(() => email = value);
                   },
@@ -57,6 +67,7 @@ class _SignInState extends State<SignIn> {
                       ? 'Enter a password 6+ charts long'
                       : null,
                   obscureText: true,
+                  initialValue: password,
                   onChanged: (value) {
                     print(value);
                     setState(() => password = value);
@@ -82,6 +93,10 @@ class _SignInState extends State<SignIn> {
                       }
                       // }
                     }),
+                Checkbox(
+                    activeColor: Color(0xff00C8E8),
+                    value: _isChecked,
+                    onChanged: _handleRemeberme),
                 const SizedBox(height: 12.0),
                 Text(
                   error,
@@ -89,5 +104,46 @@ class _SignInState extends State<SignIn> {
                 )
               ],
             ))));
+  }
+
+  void _handleRemeberme(bool? value) {
+    _isChecked = value!;
+    print(email);
+    print(password);
+    SharedPreferences.getInstance().then(
+      (prefs) {
+        prefs.setBool("remember_me", value);
+        prefs.setString('email', email);
+        prefs.setString('password', password);
+      },
+    );
+    setState(() {
+      _isChecked = value;
+    });
+  }
+
+  void _loadUserEmailPassword() async {
+    try {
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      var _email = _prefs.getString("email") ?? "";
+      var _password = _prefs.getString("password") ?? "";
+      var _remeberMe = _prefs.getBool("remember_me") ?? false;
+      print(_remeberMe);
+      print(_email);
+      print(_password);
+      if (_remeberMe) {
+        setState(() {
+          _isChecked = true;
+        });
+        email = _email ?? "";
+        password = _password ?? "";
+        print(email);
+        print(password);
+      }
+      print(email);
+      print(password);
+    } catch (e) {
+      print(e);
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/transactions_detailview.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
@@ -45,7 +46,12 @@ class MyAppHomePage extends StatelessWidget {
           //Theme.of(context).textTheme.displaySmall,
           ),
       onTap: () {
-        print(document.data());
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TransactionDetailview(document['title']),
+          ),
+        );
       },
     );
   }

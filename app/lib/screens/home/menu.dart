@@ -2,9 +2,11 @@ import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/list.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/listtry.dart';
+import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class NavDrawer extends StatelessWidget {
+  final AuthService _authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -48,7 +50,7 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () async => {await _authService.signOut()},
             // TODO : logout here
           ),
           ListTile(
@@ -62,7 +64,7 @@ class NavDrawer extends StatelessWidget {
             },
             // TODO : logout here
           ),
-           ListTile(
+          ListTile(
             leading: Icon(Icons.dangerous_outlined),
             title: Text('Diagram'),
             onTap: () => {
