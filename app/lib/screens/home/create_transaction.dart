@@ -41,15 +41,12 @@ class MyCustomForm extends StatefulWidget {
 
 // Create a corresponding State class. This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
-  late Stream<QuerySnapshot> _streamCategoriesList;
-  CollectionReference _referenceCategoriesList =
-      FirebaseFirestore.instance.collection('transactions');
+  String dropdownvalue = 'Notinh';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _streamCategoriesList = _referenceCategoriesList.where("category", isNotEqualTo: '').snapshots();
   }
 
   //FirebaseFirestore ref = FirebaseFirestore.instance;
@@ -102,20 +99,51 @@ class MyCustomFormState extends State<MyCustomForm> {
               labelText: 'Category',
             ),
           ),
-
-          DropdownButton<String>(
-            onChanged: (String? value) {
-              // This is called when the user selects an item.
-            },
-            items:
-                ['1','2','3'].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-
+          StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("transactions")
+                  .where("category", isNotEqualTo: '')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return const Text("Loading.....");
+                else {
+                  List<DropdownMenuItem> currencyItems = [];
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot snap = snapshot.data!.docs[i];
+                    currencyItems.add(
+                      DropdownMenuItem(
+                        child: Text(
+                          snap['category'],
+                          style: TextStyle(color: Color(0xff11b719)),
+                        ),
+                        value: Text(snap['category']),
+                      ),
+                    );
+                    print(currencyItems);
+                  }
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(width: 50.0),
+                      DropdownButton<dynamic>(
+                        items: currencyItems,
+                        onChanged: (currencyValue) {
+                          setState(() {
+                            dropdownvalue = currencyValue.toString();
+                          });
+                        },
+                        // value: "fsa",
+                        isExpanded: false,
+                        hint: new Text(
+                          "Choose category",
+                          style: TextStyle(color: Color(0xff11b719)),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }),
           TextFormField(
             controller: myController['date'],
             //editing controller of this TextField

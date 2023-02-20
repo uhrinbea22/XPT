@@ -1,4 +1,5 @@
 import 'package:app/screens/home/create_transaction.dart';
+import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +37,8 @@ class Home extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: ElevatedButton(
-            child: const Text(
-              'Create transaction',
+            child: Text(
+              'Welcome',
               style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
             ),
             onPressed: () {

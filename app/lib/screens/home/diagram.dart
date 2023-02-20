@@ -15,7 +15,7 @@ class DiagramPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          drawer: NavDrawer(),
+      drawer: NavDrawer(),
       body: SfCircularChart(
         series: <CircularSeries>[
           PieSeries<TransactData, String>(

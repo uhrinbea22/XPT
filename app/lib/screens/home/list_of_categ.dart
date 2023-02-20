@@ -5,12 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
 
-void main() {
-  runApp(const ListAllCat());
-}
-
 class ListAllCat extends StatelessWidget {
-  const ListAllCat();
+  ListAllCat();
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +15,16 @@ class ListAllCat extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
-      home: const _ListAllCat(title: 'All expenses'),
+      home: _ListAllCat(title: 'All expenses'),
     );
   }
 }
 
 class _ListAllCat extends StatelessWidget {
-  const _ListAllCat({Key? key, required this.title}) : super(key: key);
+  _ListAllCat({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
   final String title;
 
   @override
@@ -43,17 +42,19 @@ class _ListAllCat extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Text("Waiting...");
           if (snapshot.hasError) return Text('Something went wrong');
-
           List<String> categories = [];
           for (var element in snapshot.data!.docs) {
             categories.add(element['category']);
           }
-          print(categories);
+          //print(categories);
+
           // if (snapshot.hasData) return Text('has data');
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text("Waiting");
           }
+          
+          //getAllCategories();
           return ListView.builder(
             itemExtent: 80.0,
             itemCount: snapshot.data!.size,

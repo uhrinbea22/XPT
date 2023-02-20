@@ -1,6 +1,7 @@
 import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/list.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
+import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/listtry.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ListAllTrans()),
+                MaterialPageRoute(builder: (context) => ListAllCat()),
               ),
             },
             // TODO : logout here
