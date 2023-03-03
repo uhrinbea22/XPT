@@ -1,8 +1,5 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/auth_service.dart';
 
 void main() {
   runApp(const Lista());

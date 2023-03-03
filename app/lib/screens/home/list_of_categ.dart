@@ -1,9 +1,6 @@
-import 'dart:js';
-
 import 'package:app/screens/home/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/auth_service.dart';
 
 class ListAllCat extends StatelessWidget {
   ListAllCat();
@@ -53,7 +50,7 @@ class _ListAllCat extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text("Waiting");
           }
-          
+
           //getAllCategories();
           return ListView.builder(
             itemExtent: 80.0,

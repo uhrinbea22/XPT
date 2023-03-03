@@ -1,16 +1,22 @@
-import 'dart:html';
-
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import '../../firebase_options.dart';
 import '../../models/transact.dart';
 import '../../services/auth_service.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-void main() => runApp(CreateTransacton());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(CreateTransacton());
+}
 
 class CreateTransacton extends StatelessWidget {
   @override
@@ -41,7 +47,7 @@ class MyCustomForm extends StatefulWidget {
 
 // Create a corresponding State class. This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
-  String dropdownvalue = 'Notinh';
+  String dropdownvalue = 'Food';
 
   @override
   void initState() {
@@ -68,6 +74,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool valuefirst = false;
   bool valuesec = false;
 
+  var categoryController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final AuthService _authService = AuthService();
@@ -77,73 +85,20 @@ class MyCustomFormState extends State<MyCustomForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Flexible(
-            flex: 2,
-            fit: FlexFit.tight,
-            child: TextFormField(
-              controller: myController['amount'],
-              decoration: const InputDecoration(
-                icon: const Icon(Icons.money),
-                hintText: 'Enter the amount',
-                labelText: 'Amount',
-                iconColor: Colors.grey,
-              ),
-            ),
-          ),
-          //create dropdown list from the categories so far
+          // Flexible(
+          // flex: 1,
+          // fit: FlexFit.tight,
+          // child:
           TextFormField(
-            controller: myController['category'],
+            controller: myController['amount'],
             decoration: const InputDecoration(
-              icon: const Icon(Icons.add_box),
-              hintText: 'Enter category',
-              labelText: 'Category',
+              icon: const Icon(Icons.money),
+              hintText: 'Enter the amount',
+              labelText: 'Amount',
+              iconColor: Colors.grey,
             ),
           ),
-          StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("transactions")
-                  .where("category", isNotEqualTo: '')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData)
-                  return const Text("Loading.....");
-                else {
-                  List<DropdownMenuItem> currencyItems = [];
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot snap = snapshot.data!.docs[i];
-                    currencyItems.add(
-                      DropdownMenuItem(
-                        child: Text(
-                          snap['category'],
-                          style: TextStyle(color: Color(0xff11b719)),
-                        ),
-                        value: Text(snap['category']),
-                      ),
-                    );
-                    print(currencyItems);
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(width: 50.0),
-                      DropdownButton<dynamic>(
-                        items: currencyItems,
-                        onChanged: (currencyValue) {
-                          setState(() {
-                            dropdownvalue = currencyValue.toString();
-                          });
-                        },
-                        // value: "fsa",
-                        isExpanded: false,
-                        hint: new Text(
-                          "Choose category",
-                          style: TextStyle(color: Color(0xff11b719)),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-              }),
+          // ),
           TextFormField(
             controller: myController['date'],
             //editing controller of this TextField
@@ -152,18 +107,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 labelText: "Enter Date" //label text of field
                 ),
           ),
-          CheckboxListTile(
-            //controller : myController['persistent'],
-            title: Text('Persistent?'),
-            checkColor: Colors.grey,
-            activeColor: Colors.blue,
-            value: valuefirst,
-            onChanged: (bool? value) {
-              setState(() {
-                valuefirst = value!;
-              });
-            },
-          ),
+
           TextFormField(
             //editing controller of this TextField
             controller: myController['place'],
@@ -199,63 +143,162 @@ class MyCustomFormState extends State<MyCustomForm> {
               });
             },
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 150.0, top: 40.0),
-            child: ElevatedButton(
-                child: const Text('Submit'),
-                onPressed: () async {
-                  final tr = Transact(
-                    DateTime.parse(myController['date']!.text),
-                    int.parse(myController['amount']!.text),
-                    valuefirst,
-                    //'CATEG',
-                    myController['category']!.text,
-                    false,
-                    //'note by hand',
-                    myController['notes']!.text,
-                    //'place by hand',
-                    myController['place']!.text,
-                    valuesec,
-                    myController['title']!.text,
-                  );
-                  //print(tr.toString());
-
-                  //create new transaction, insert into firestore
-                  //print(tr.toString());
-                  FirebaseFirestore.instance
-                      .collection('transactions')
-                      .doc()
-                      .set({
-                    'date': tr.date,
-                    'amount': tr.amount,
-                    'title': tr.title,
-                    'place': tr.place,
-                    'online': tr.online,
-                    'expense': tr.expense,
-                    'note': tr.note,
-                    'category': tr.category,
-                    'persistent': tr.persistent,
-                    'uid': _authService.getuser()!.uid
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ListAllTrans()),
-                  );
-                }),
+          CheckboxListTile(
+            //controller : myController['persistent'],
+            title: Text('Persistent?'),
+            checkColor: Colors.grey,
+            activeColor: Colors.blue,
+            value: valuefirst,
+            onChanged: (bool? value) {
+              setState(() {
+                valuefirst = value!;
+              });
+            },
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 190.0, top: 40.0),
-            child: ElevatedButton(
-              child: const Text('List all transactions'),
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ListAllTrans()),
-                );
-              },
-            ),
+          Row(
+            children: [
+              Text('Category : '),
+              Text(dropdownvalue),
+              Container(
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("transactions")
+                        .where("category", isNotEqualTo: '')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData)
+                        return const Text("Loading.....");
+                      else {
+                        List<DropdownMenuItem> currencyItems = [];
+                        for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                          DocumentSnapshot snap = snapshot.data!.docs[i];
+                          currencyItems.add(
+                            DropdownMenuItem(
+                              child: Text(
+                                snap['category'],
+                                style: TextStyle(color: Color(0xff11b719)),
+                              ),
+                              //it was text
+                              value: (snap['category']).toString(),
+                            ),
+                          );
+                        }
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(width: 50.0),
+                            DropdownButton<dynamic>(
+                              items: currencyItems,
+                              onChanged: (currencyValue) {
+                                setState(() {
+                                  dropdownvalue = currencyValue.toString();
+                                });
+                                dropdownvalue = currencyValue.toString();
+                                print(dropdownvalue);
+                              },
+                              //value: currencyItems.first,
+                              isExpanded: false,
+                              //hint: Text(dropdownvalue),
+                            ),
+                          ],
+                        );
+                      }
+                    }),
+              ),
+              Container(
+                padding: const EdgeInsets.only(left: 20.0, top: 0.0),
+                child: FloatingActionButton(
+                    mini: true,
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.blueGrey,
+                    hoverColor: Colors.purple,
+                    child: Icon(Icons.add),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('New category'),
+                              content: TextField(
+                                controller: categoryController,
+                                decoration: const InputDecoration(
+                                    hintText: 'Type new category'),
+                              ),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  child: const Text('Submit'),
+                                  onPressed: () {
+                                    setState(() {
+                                      dropdownvalue = categoryController.text;
+                                    });
+                                    print(categoryController.text);
+                                    dropdownvalue = categoryController.text;
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                      //pop button with text field
+                      //create a string with category, and then create transact
+                    }),
+              ),
+            ],
           ),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 150.0, top: 20.0),
+                child: ElevatedButton(
+                    child: const Text('Submit'),
+                    onPressed: () async {
+                      print(categoryController.text);
+                      print(dropdownvalue);
+                      final tr = Transact(
+                        DateTime.parse(myController['date']!.text),
+                        int.parse(myController['amount']!.text),
+                        valuefirst,
+                        myController['category']!.text,
+                        false,
+                        myController['notes']!.text,
+                        myController['place']!.text,
+                        valuesec,
+                        myController['title']!.text,
+                      );
+                      FirebaseFirestore.instance
+                          .collection('transactions')
+                          .doc()
+                          .set({
+                        'date': tr.date,
+                        'amount': tr.amount,
+                        'title': tr.title,
+                        'place': tr.place,
+                        'online': tr.online,
+                        'expense': tr.expense,
+                        'note': tr.note,
+                        'category': tr.category,
+                        'persistent': tr.persistent,
+                        'uid': _authService.getuser()!.uid
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ListAllTrans()),
+                      );
+                    }),
+              ),
+              Container(
+                padding: const EdgeInsets.only(left: 250.0, top: 20.0),
+                child: ElevatedButton(
+                  child: const Text('Back'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              )
+            ],
+          ),
+//create category dropdownlist from db
         ],
       ),
     );

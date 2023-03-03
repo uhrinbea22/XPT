@@ -1,15 +1,22 @@
 import 'package:app/models/transact.dart';
 import 'package:app/screens/home/menu.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../services/auth_service.dart';
+
 class TransactionDetailview extends StatelessWidget {
+  //title, date, persistent, category, onlie, note, place, expense, ?picture?
+
   String title;
   TransactionDetailview(this.title, {Key? key}) : super(key: key);
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+     final AuthService _authService = AuthService();
+    User? user = _authService.getuser();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -131,7 +138,6 @@ class TransactionDetailview extends StatelessWidget {
                   ],
                 ),
               ),
-              //output: 04-Dec-2021
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
                 child: Row(
@@ -225,7 +231,7 @@ class TransactionDetailview extends StatelessWidget {
                                     '[display_name]',
                                   ),
                                   Text(
-                                    'user.name@domainname.com',
+                                    user!.email.toString()
                                   ),
                                 ],
                               ),

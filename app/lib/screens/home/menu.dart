@@ -1,8 +1,9 @@
+import 'package:app/screens/home/create_transaction.dart';
 import 'package:app/screens/home/diagram.dart';
-import 'package:app/screens/home/list.dart';
+import 'package:app/screens/home/fileupload.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
-import 'package:app/screens/home/list_of_categ.dart';
-import 'package:app/screens/home/listtry.dart';
+import 'package:app/screens/home/profile.dart';
+import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -16,24 +17,45 @@ class NavDrawer extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
               child: Text(
-                'Side menu',
+                'Menu',
                 style: TextStyle(color: Colors.white, fontSize: 25),
               ),
               decoration: BoxDecoration(
                 color: Color.fromARGB(100, 100, 100, 100),
-                //image: DecorationImage(
-                //  fit: BoxFit.fill,
-                //image: AssetImage('assets/images/cover.jpg'))),
               )),
-          ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
-            onTap: () => {},
+          ExpansionTile(
+            leading: Icon(Icons.border_color),
+            title: Text('Transactions'),
+            children: [
+              ListTile(
+                title: Text("List transactions"),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListAllTrans()),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text("Add new"),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CreateTransacton()),
+                  );
+                },
+              ),
+            ],
           ),
           ListTile(
-            leading: Icon(Icons.verified_user),
+            leading: Icon(Icons.verified_user_outlined),
             title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
+              ),
+            },
           ),
           ListTile(
             leading: Icon(Icons.settings),
@@ -41,26 +63,13 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text('Transactions'),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ListAllTrans()),
-            ),
-          ),
-          ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () async => {await _authService.signOut()},
-            // TODO : logout here
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('List try'),
-            onTap: () => {
+            onTap: () async => {
+              await _authService.signOut(),
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ListAllCat()),
+                MaterialPageRoute(builder: (context) => Wrapper()),
               ),
             },
             // TODO : logout here
@@ -72,6 +81,17 @@ class NavDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DiagramPage()),
+              ),
+            },
+            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.dangerous_outlined),
+            title: Text('Pic '),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ImageUploads()),
               ),
             },
             // TODO : logout here

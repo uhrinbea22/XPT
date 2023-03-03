@@ -18,8 +18,8 @@ class _SignInState extends State<SignIn> {
 
   // text field state
   String error = '';
-  // late String email;
-  //late String password;
+  String email = '';
+  String password = '';
   bool _isChecked = false;
 
   @override
@@ -29,7 +29,7 @@ class _SignInState extends State<SignIn> {
     _loadUserEmailPassword();
   }
 
-  /*String getEmailValue() {
+  String getEmailValue() {
     if (email != '') {
       return email;
     } else {
@@ -45,7 +45,6 @@ class _SignInState extends State<SignIn> {
     }
   }
 
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,28 +73,26 @@ class _SignInState extends State<SignIn> {
               children: <Widget>[
                 const SizedBox(height: 20.0),
                 TextFormField(
-                  controller: emailController,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter an email' : null,
-                  //initialValue: getEmailValue(),
-                  //onChanged: (value) {
-                  //setState(() => email = value);
-
-                  //},
+                  //controller: emailController,
+                  validator: (text) => text!.isEmpty ? 'Enter an email' : null,
+                  initialValue: getEmailValue(),
+                  onChanged: (text) {
+                    print(text);
+                    setState(() => email = text);
+                  },
                 ),
                 const SizedBox(height: 20.0),
                 TextFormField(
-                  controller: passwordController,
+                  //controller: passwordController,
                   validator: (value) => value!.length < 6
                       ? 'Enter a password 6+ charts long'
                       : null,
                   obscureText: true,
-                  // initialValue: getPasswordValue(),
-                  //onChanged: (value) {
-
-                  //print(value);
-                  //setState(() => password = value);
-                  //},
+                  initialValue: getPasswordValue(),
+                  onChanged: (value) {
+                    print(value);
+                    setState(() => password = value);
+                  },
                 ),
                 const SizedBox(height: 20.0),
                 ElevatedButton(
@@ -108,7 +105,7 @@ class _SignInState extends State<SignIn> {
                       //TODO: VALIDATE
                       //if (_formKey.currentState!.validate()) {
                       dynamic result = await _authService.signIn(
-                          emailController.text, passwordController.text);
+                          email, password);
                       if (result == null) {
                         setState(() {
                           error = 'Could not sign in with the credentials';
@@ -132,15 +129,16 @@ class _SignInState extends State<SignIn> {
             ))));
   }
 
-  void _handleRemeberme(bool? value) {
+  void _handleRemeberme(bool? value) async {
     _isChecked = value!;
-    //print(email);
-    //print(password);
+
     SharedPreferences.getInstance().then(
       (prefs) {
         prefs.setBool("remember_me", value);
-        prefs.setString('email', emailController.text);
-        prefs.setString('password', passwordController.text);
+        prefs.setString('email', email);
+        prefs.setString('password', password);
+        //prefs.setString('email', emailController.text);
+        //prefs.setString('password', passwordController.text);
       },
     );
     setState(() {
@@ -151,8 +149,8 @@ class _SignInState extends State<SignIn> {
   void _loadUserEmailPassword() async {
     try {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
-      var _email = _prefs.getString("email") ?? "";
-      var _password = _prefs.getString("password") ?? "";
+      var _email = _prefs.getString('email') ?? "";
+      var _password = _prefs.getString('password') ?? "";
       var _remeberMe = _prefs.getBool("remember_me") ?? false;
       print(_remeberMe);
       print(_email);
@@ -161,8 +159,10 @@ class _SignInState extends State<SignIn> {
         setState(() {
           _isChecked = true;
         });
-        emailController.text = _email;
-        passwordController.text = _password;
+        email = _email;
+        password = _password;
+        //emailController.text = _email;
+        //passwordController.text = _password;
       }
     } catch (e) {
       print(e);

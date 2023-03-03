@@ -42,6 +42,9 @@ dependencies:
   google_fonts: ^2.1.0
   syncfusion_flutter_charts: ^19.1.54
   shared_preferences: '2.0.17'
+  firebase_storage: "^11.0.14"
+  path: ^1.8.0
+  image_picker: ^0.8.4
 
 dev_dependencies:
   flutter_test:

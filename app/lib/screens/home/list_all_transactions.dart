@@ -1,7 +1,7 @@
-import 'dart:html';
-
+import 'package:app/screens/home/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions_detailview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
@@ -58,14 +58,18 @@ class MyAppHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService _authService = AuthService();
+    User? user = _authService.getuser();
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text(title),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance.collection('transactions').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('transactions')
+            .where('uid', isEqualTo: user!.uid)
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Text("Waiting...");
           if (snapshot.hasError) return Text('Something went wrong');
@@ -82,6 +86,16 @@ class MyAppHomePage extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+          hoverColor: Colors.purple,
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateTransacton(),
+                ));
+          }),
     );
   }
 }
