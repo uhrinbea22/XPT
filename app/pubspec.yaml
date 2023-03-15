@@ -45,6 +45,7 @@ dependencies:
   firebase_storage: "^11.0.14"
   path: ^1.8.0
   image_picker: ^0.8.4
+  table_calendar: ^2.1.0
 
 dev_dependencies:
   flutter_test:

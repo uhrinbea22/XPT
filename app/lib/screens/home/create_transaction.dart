@@ -258,13 +258,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                         DateTime.parse(myController['date']!.text),
                         int.parse(myController['amount']!.text),
                         valuefirst,
-                        myController['category']!.text,
+                        categoryController.text,
                         false,
                         myController['notes']!.text,
                         myController['place']!.text,
                         valuesec,
                         myController['title']!.text,
                       );
+                      print(tr.category);
                       FirebaseFirestore.instance
                           .collection('transactions')
                           .doc()

@@ -72,9 +72,9 @@ class _SignUpState extends State<SignUp> {
                       setState(() => loading = true);
                       dynamic result =
                           await _authService.signUp(email, password);
-                      if (result == null) {
+                      if (result != null) {
                         setState(() {
-                          error = 'Please provide n valid email';
+                          error = result.toString().split(']')[1];
                           loading = false;
                         });
                       }

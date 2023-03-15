@@ -24,7 +24,6 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadUserEmailPassword();
   }
@@ -48,85 +47,85 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.lightBlue,
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 41, 39, 39),
-          elevation: 0.0,
-          title: const Text('Sign in to XPT'),
-          actions: <Widget>[
-            TextButton.icon(
-                onPressed: () {
-                  widget.toggelView();
+      backgroundColor: Colors.lightBlue,
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 41, 39, 39),
+        elevation: 0.0,
+        title: const Text('Sign in to XPT'),
+        actions: <Widget>[
+          TextButton.icon(
+              onPressed: () {
+                widget.toggelView();
+              },
+              style: TextButton.styleFrom(
+                primary: const Color.fromARGB(255, 25, 28, 29),
+              ),
+              icon: const Icon(Icons.person),
+              label: const Text('Sign Up'))
+        ],
+      ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        child: Form(
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 20.0),
+              TextFormField(
+                //controller: emailController,
+                validator: (text) => text!.isEmpty ? 'Enter an email' : null,
+                initialValue: getEmailValue(),
+                onChanged: (text) {
+                  print(text);
+                  setState(() => email = text);
                 },
-                style: TextButton.styleFrom(
-                  primary: const Color.fromARGB(255, 25, 28, 29),
-                ),
-                icon: const Icon(Icons.person),
-                label: const Text('Sign Up'))
-          ],
+              ),
+              const SizedBox(height: 20.0),
+              TextFormField(
+                //controller: passwordController,
+                validator: (value) => value!.length < 6
+                    ? 'Enter a password 6+ charts long'
+                    : null,
+                obscureText: true,
+                initialValue: getPasswordValue(),
+                onChanged: (value) {
+                  print(value);
+                  setState(() => password = value);
+                },
+              ),
+              const SizedBox(height: 20.0),
+              ElevatedButton(
+                  child: const Text(
+                    'Sign in',
+                    style: TextStyle(color: Color.fromARGB(255, 132, 132, 132)),
+                  ),
+                  onPressed: () async {
+                    //TODO: VALIDATE
+                    //if (_formKey.currentState!.validate()) {
+                    dynamic result = await _authService.signIn(email, password);
+                    if (result == null) {
+                      setState(() {
+                        error = 'Could not sign in with the credentials';
+                        print(error);
+                      });
+                    }
+                    // }
+                  }),
+              Checkbox(
+                  activeColor: Color(0xff00C8E8),
+                  value: _isChecked,
+                  onChanged: _handleRemeberme,
+                  hoverColor: Colors.blue),
+              Text('Remember me'),
+              const SizedBox(height: 12.0),
+              Text(
+                error,
+                style: const TextStyle(color: Colors.red, fontSize: 14.0),
+              ),
+            ],
+          ),
         ),
-        body: Container(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-            child: Form(
-                child: Column(
-              children: <Widget>[
-                const SizedBox(height: 20.0),
-                TextFormField(
-                  //controller: emailController,
-                  validator: (text) => text!.isEmpty ? 'Enter an email' : null,
-                  initialValue: getEmailValue(),
-                  onChanged: (text) {
-                    print(text);
-                    setState(() => email = text);
-                  },
-                ),
-                const SizedBox(height: 20.0),
-                TextFormField(
-                  //controller: passwordController,
-                  validator: (value) => value!.length < 6
-                      ? 'Enter a password 6+ charts long'
-                      : null,
-                  obscureText: true,
-                  initialValue: getPasswordValue(),
-                  onChanged: (value) {
-                    print(value);
-                    setState(() => password = value);
-                  },
-                ),
-                const SizedBox(height: 20.0),
-                ElevatedButton(
-                    child: const Text(
-                      'Sign in',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 132, 132, 132)),
-                    ),
-                    onPressed: () async {
-                      //TODO: VALIDATE
-                      //if (_formKey.currentState!.validate()) {
-                      dynamic result = await _authService.signIn(
-                          email, password);
-                      if (result == null) {
-                        setState(() {
-                          error = 'Could not sign in with the credentials';
-                          print(error);
-                        });
-                      }
-                      // }
-                    }),
-                Checkbox(
-                    activeColor: Color(0xff00C8E8),
-                    value: _isChecked,
-                    onChanged: _handleRemeberme,
-                    hoverColor: Colors.blue),
-                Text('Remember me'),
-                const SizedBox(height: 12.0),
-                Text(
-                  error,
-                  style: const TextStyle(color: Colors.red, fontSize: 14.0),
-                )
-              ],
-            ))));
+      ),
+    );
   }
 
   void _handleRemeberme(bool? value) async {

@@ -1,6 +1,5 @@
 import 'package:app/models/userModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -32,14 +31,12 @@ class AuthService {
       return await _auth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (e) {
-      print(email);
-      print(password);
       print(e.toString());
       return null;
     }
   }
 
-  //sign up with email & password
+//sign up with email & password
   Future signUp(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -48,12 +45,11 @@ class AuthService {
 
       return _userModelFromFirebase(user);
     } catch (e) {
-      print(e.toString());
-      return null;
+      return e.toString();
     }
   }
 
-  //sing out
+//sing out
   Future signOut() async {
     try {
       return await _auth.signOut();
@@ -63,7 +59,7 @@ class AuthService {
     }
   }
 
-  //sign in anonymously, it's an asynchronous task, it's going to return a future
+//sign in anonymously, it's an asynchronous task, it's going to return a future
   Future signInAnonymously() async {
     try {
       UserCredential result = await _auth.signInAnonymously();

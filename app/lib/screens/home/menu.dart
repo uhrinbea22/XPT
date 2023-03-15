@@ -1,3 +1,4 @@
+import 'package:app/screens/home/calendar.dart';
 import 'package:app/screens/home/create_transaction.dart';
 import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/fileupload.dart';
@@ -92,6 +93,17 @@ class NavDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ImageUploads()),
+              ),
+            },
+            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.calendar_month),
+            title: Text('Calendar '),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DynamicEvent()),
               ),
             },
             // TODO : logout here
