@@ -1,182 +1,152 @@
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../../firebase_options.dart';
+import '../../services/auth_service.dart';
+import 'menu.dart';
 
-class DynamicEvent extends StatefulWidget {
-  @override
-  _DynamicEventState createState() => _DynamicEventState();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyCalendar());
 }
 
-class _DynamicEventState extends State<DynamicEvent> {
-  late CalendarController _controller;
-  late Map<DateTime, List<dynamic>> _events;
-  late List<dynamic> _selectedEvents;
-  late TextEditingController _eventController;
-  late SharedPreferences prefs;
+class Calendar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appTitle = 'Flutter Form Demo';
+    return MaterialApp(
+      title: appTitle,
+      home: Scaffold(
+        drawer: NavDrawer(),
+        appBar: AppBar(
+          title: Text(appTitle),
+          backgroundColor: Colors.grey,
+        ),
+        body: MyCalendar(),
+      ),
+    );
+  }
+}
 
+// Create a Form widget.
+class MyCalendar extends StatefulWidget {
+  late CalendarView view2 = CalendarView.month;
+  late List<Meeting> meetings;
+  var _streamTransactions;
+  @override
+  Cal createState() {
+    return Cal();
+  }
+}
+
+class Cal extends State<MyCalendar> {
+  late CalendarView view2 = CalendarView.month;
+  List<Meeting> meetings = [];
   @override
   void initState() {
+    getData();
+    view2 = view2;
     super.initState();
-    _controller = CalendarController();
-    _eventController = TextEditingController();
-    _events = {};
-    _selectedEvents = [];
-    prefsData();
   }
 
-  prefsData() async {
-    prefs = await SharedPreferences.getInstance();
+  void changeView(val) {
     setState(() {
-      _events = Map<DateTime, List<dynamic>>.from(
-          decodeMap(json.decode(prefs.getString("events") ?? "{}")));
+      view2 = val;
     });
+    build(context) {
+      return SfCalendar(view: CalendarView.day);
+    }
   }
 
-  Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
-    Map<String, dynamic> newMap = {};
-    map.forEach((key, value) {
-      newMap[key.toString()] = map[key];
-    });
-    return newMap;
-  }
-
-  Map<DateTime, dynamic> decodeMap(Map<String, dynamic> map) {
-    Map<DateTime, dynamic> newMap = {};
-    map.forEach((key, value) {
-      newMap[DateTime.parse(key)] = map[key];
-    });
-    return newMap;
+  @override
+  void didUpdateWidget(covariant MyCalendar oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.black,
-        title: Text('Flutter Dynamic Event Calendar'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TableCalendar(
-              events: _events,
-              initialCalendarFormat: CalendarFormat.month,
-              calendarStyle: CalendarStyle(
-                  canEventMarkersOverflow: true,
-                  todayColor: Colors.orange,
-                  selectedColor: Theme.of(context).primaryColor,
-                  todayStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                      color: Colors.white)),
-              headerStyle: HeaderStyle(
-                centerHeaderTitle: true,
-                formatButtonDecoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                formatButtonTextStyle: TextStyle(color: Colors.white),
-                formatButtonShowsNext: false,
-              ),
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              onDaySelected: (date, events, holidays) {
-                setState(() {
-                  _selectedEvents = events;
-                });
-              },
-              builders: CalendarBuilders(
-                selectedDayBuilder: (context, date, events) => Container(
-                    margin: const EdgeInsets.all(4.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Text(
-                      date.day.toString(),
-                      style: TextStyle(color: Colors.white),
-                    )),
-                todayDayBuilder: (context, date, events) => Container(
-                    margin: const EdgeInsets.all(4.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Text(
-                      date.day.toString(),
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ),
-              calendarController: _controller,
-            ),
-            ..._selectedEvents.map((event) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 20,
-                    width: MediaQuery.of(context).size.width / 2,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey)),
-                    child: Center(
-                        child: Text(
-                      event,
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    )),
-                  ),
-                )),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
-        child: Icon(Icons.add),
-        onPressed: _showAddDialog,
-      ),
-    );
+        body: Container(
+            child: SfCalendar(
+                view: view2,
+                dataSource: MeetingDataSource(_getDataSource()),
+                monthViewSettings: MonthViewSettings(
+                    appointmentDisplayMode:
+                        MonthAppointmentDisplayMode.appointment),
+                todayHighlightColor: Colors.red,
+                onTap: (calendarTapDetails) {
+                  print(calendarTapDetails);
+                  print(view2);
+                  changeView(CalendarView.day);
+                  print(view2);
+                  didUpdateWidget(MyCalendar());
+                })));
   }
 
-  _showAddDialog() async {
-    await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              backgroundColor: Colors.white70,
-              title: Text("Add Events"),
-              content: TextField(
-                controller: _eventController,
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    "Save",
-                    style: TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () {
-                    if (_eventController.text.isEmpty) return;
-                    setState(() {
-                      if (_events[_controller.selectedDay] != null) {
-                        _events[_controller.selectedDay]!
-                            .add(_eventController.text);
-                      } else {
-                        _events[_controller.selectedDay] = [
-                          _eventController.text
-                        ];
-                      }
-                      prefs.setString(
-                          "events", json.encode(encodeMap(_events)));
-                      _eventController.clear();
-                      Navigator.pop(context);
-                    });
-                  },
-                )
-              ],
-            ));
+  getDailyView() {
+    return Scaffold(
+        body: Container(
+            child: SfCalendar(
+      view: CalendarView.day,
+      dataSource: MeetingDataSource(_getDataSource()),
+    )));
   }
+
+  getData() async {
+    final AuthService _authService = AuthService();
+    User? user = _authService.getuser();
+    Map<Timestamp, List<String>> map = {};
+    await for (var messages in FirebaseFirestore.instance
+        .collection('transactions')
+        .where('uid', isEqualTo: user?.uid)
+        .snapshots()) {
+      for (var date in messages.docs.toList()) {
+        Meeting meeting =
+            new Meeting(date['title'], date['date'], const Color(0xFF0F8644));
+        print(meeting.time);
+        meetings.add(meeting);
+      }
+    }
+  }
+
+  List<Meeting> _getDataSource() {
+    final List<Meeting> meetings = this.meetings;
+    return meetings;
+  }
+}
+
+class MeetingDataSource extends CalendarDataSource {
+  MeetingDataSource(List<Meeting> source) {
+    appointments = source;
+  }
+
+  Timestamp getTime(int index) {
+    return appointments![index].time;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].eventName;
+  }
+
+  @override
+  Color getColor(int index) {
+    return appointments![index].background;
+  }
+}
+
+class Meeting {
+  Meeting(this.eventName, this.time, this.background);
+
+  String eventName;
+  Timestamp time;
+  Color background;
 }

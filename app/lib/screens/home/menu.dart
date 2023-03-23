@@ -4,6 +4,7 @@ import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/fileupload.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/profile.dart';
+import 'package:app/screens/home/settings.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,12 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              ),
+            },
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
@@ -99,11 +105,11 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.calendar_month),
-            title: Text('Calendar '),
+            title: Text('Calendar'),
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DynamicEvent()),
+                MaterialPageRoute(builder: (context) => Calendar()),
               ),
             },
             // TODO : logout here

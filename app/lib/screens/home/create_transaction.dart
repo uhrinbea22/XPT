@@ -1,8 +1,7 @@
 import 'package:app/screens/home/list_all_transactions.dart';
-import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '../../firebase_options.dart';
@@ -71,8 +70,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   };
 
   //var valuefirst;
-  bool valuefirst = false;
-  bool valuesec = false;
+  bool expense_value = false;
+  bool persistent_value = false;
+  bool online_value = false;
 
   var categoryController = TextEditingController();
 
@@ -133,25 +133,37 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ),
           ),
           CheckboxListTile(
-            title: Text('Expense?'),
+            title: Text('Expense'),
             checkColor: Colors.grey,
             activeColor: Colors.blue,
-            value: valuesec,
+            value: expense_value,
             onChanged: (bool? value) {
               setState(() {
-                valuesec = value!;
+                expense_value = value!;
               });
             },
           ),
           CheckboxListTile(
             //controller : myController['persistent'],
-            title: Text('Persistent?'),
+            title: Text('Persistent'),
             checkColor: Colors.grey,
             activeColor: Colors.blue,
-            value: valuefirst,
+            value: persistent_value,
             onChanged: (bool? value) {
               setState(() {
-                valuefirst = value!;
+                persistent_value = value!;
+              });
+            },
+          ),
+          CheckboxListTile(
+            //controller : myController['persistent'],
+            title: Text('Online'),
+            checkColor: Colors.grey,
+            activeColor: Colors.blue,
+            value: online_value,
+            onChanged: (bool? value) {
+              setState(() {
+                online_value = value!;
               });
             },
           ),
@@ -189,11 +201,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                             SizedBox(width: 50.0),
                             DropdownButton<dynamic>(
                               items: currencyItems,
-                              onChanged: (currencyValue) {
+                              onChanged: (choosed_category) {
                                 setState(() {
-                                  dropdownvalue = currencyValue.toString();
+                                  dropdownvalue = choosed_category.toString();
                                 });
-                                dropdownvalue = currencyValue.toString();
+                                dropdownvalue = choosed_category.toString();
+                                categoryController.text =
+                                    choosed_category.toString();
                                 print(dropdownvalue);
                               },
                               //value: currencyItems.first,
@@ -239,8 +253,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                               ],
                             );
                           });
-                      //pop button with text field
-                      //create a string with category, and then create transact
                     }),
               ),
             ],
@@ -254,18 +266,19 @@ class MyCustomFormState extends State<MyCustomForm> {
                     onPressed: () async {
                       print(categoryController.text);
                       print(dropdownvalue);
+                      //create a transaction
                       final tr = Transact(
                         DateTime.parse(myController['date']!.text),
                         int.parse(myController['amount']!.text),
-                        valuefirst,
-                        categoryController.text,
-                        false,
+                        persistent_value,
+                        dropdownvalue,
+                        online_value,
                         myController['notes']!.text,
                         myController['place']!.text,
-                        valuesec,
+                        expense_value,
                         myController['title']!.text,
                       );
-                      print(tr.category);
+                      //store it in database
                       FirebaseFirestore.instance
                           .collection('transactions')
                           .doc()
@@ -281,6 +294,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         'persistent': tr.persistent,
                         'uid': _authService.getuser()!.uid
                       });
+                      //put it in the calendar
                       Navigator.push(
                         context,
                         MaterialPageRoute(
