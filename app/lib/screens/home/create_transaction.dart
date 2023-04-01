@@ -278,19 +278,31 @@ class MyCustomFormState extends State<MyCustomForm> {
                       );
 
                       //check if with that amount the category limit is overlapped
-
-                      
+                      final citiesRef = await FirebaseFirestore.instance
+                          .collection("category_limits")
+                          .where("uid", isEqualTo: _authService.getuser()!.uid)
+                          .where("category", isEqualTo: tr.category)
+                          .get();
+                      if (citiesRef.docs.isNotEmpty) {
+                        if (citiesRef.docs.first['limit'] + tr.amount >
+                            citiesRef.docs.first['limit']) {
+                          //TODO hibauzenet pop up window
+                          print("TULLÉPED A HATART");
+                        }
+                      } else {
+                        FirebaseFirestore.instance
+                            .collection('category_limits')
+                            .doc()
+                            .set({
+                          'category': tr.category,
+                          'limit': 0,
+                          'uid': _authService.getuser()!.uid
+                        });
+                      }
                       //find the category with user uid, and check if it has limit
+
                       //if not, normally add the transaction
                       //if it has, check the amounts, and war the user about possible over expense
-                      FirebaseFirestore.instance
-                          .collection('category_limits')
-                          .doc()
-                          .set({
-                        'category': tr.category,
-                        'limit': 0,
-                        'uid': _authService.getuser()!.uid
-                      });
 
                       //store it in database
                       FirebaseFirestore.instance
@@ -327,7 +339,6 @@ class MyCustomFormState extends State<MyCustomForm> {
               )
             ],
           ),
-//create category dropdownlist from db
         ],
       ),
     );
