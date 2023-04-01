@@ -3,11 +3,14 @@ import 'package:app/screens/home/create_transaction.dart';
 import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/fileupload.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
+import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/profile.dart';
 import 'package:app/screens/home/settings.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+
+import 'category_limits.dart';
 
 class NavDrawer extends StatelessWidget {
   final AuthService _authService = AuthService();
@@ -110,6 +113,17 @@ class NavDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Calendar()),
+              ),
+            },
+            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.calendar_month),
+            title: Text('Limits'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CategoryLimits()),
               ),
             },
             // TODO : logout here

@@ -264,8 +264,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                 child: ElevatedButton(
                     child: const Text('Submit'),
                     onPressed: () async {
-                      print(categoryController.text);
-                      print(dropdownvalue);
                       //create a transaction
                       final tr = Transact(
                         DateTime.parse(myController['date']!.text),
@@ -278,6 +276,22 @@ class MyCustomFormState extends State<MyCustomForm> {
                         expense_value,
                         myController['title']!.text,
                       );
+
+                      //check if with that amount the category limit is overlapped
+
+                      
+                      //find the category with user uid, and check if it has limit
+                      //if not, normally add the transaction
+                      //if it has, check the amounts, and war the user about possible over expense
+                      FirebaseFirestore.instance
+                          .collection('category_limits')
+                          .doc()
+                          .set({
+                        'category': tr.category,
+                        'limit': 0,
+                        'uid': _authService.getuser()!.uid
+                      });
+
                       //store it in database
                       FirebaseFirestore.instance
                           .collection('transactions')
