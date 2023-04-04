@@ -14,7 +14,10 @@ class DiagramPage extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
       drawer: NavDrawer(),
-      body: SfCircularChart(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children :  <Widget> [
+ SfCircularChart(
         series: <CircularSeries>[
           PieSeries<_ChartData, String>(
               dataSource: chartData,
@@ -22,6 +25,9 @@ class DiagramPage extends StatelessWidget {
               yValueMapper: (_ChartData data, _) => data.y)
         ],
       ),
+        ]
+      )
+     
     ));
   }
 

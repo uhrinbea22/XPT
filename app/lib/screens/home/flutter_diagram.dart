@@ -15,6 +15,7 @@ class RealtimeDiagram extends StatefulWidget {
 }
 
 class _State extends State<RealtimeDiagram> {
+  late TooltipBehavior _tooltipBehavior;
   final AuthService _authService = AuthService();
   List<TransactionDetails> chartData = [];
 
@@ -35,6 +36,8 @@ class _State extends State<RealtimeDiagram> {
   @override
   void initState() {
     loadChartData();
+    _tooltipBehavior =
+        TooltipBehavior(enable: true, tooltipPosition: TooltipPosition.pointer);
     super.initState();
   }
 
@@ -43,13 +46,21 @@ class _State extends State<RealtimeDiagram> {
     return SafeArea(
         child: Scaffold(
       drawer: NavDrawer(),
-      body:
-          SfCartesianChart(primaryXAxis: CategoryAxis(), series: <ChartSeries>[
-        ColumnSeries<TransactionDetails, String>(
-            dataSource: chartData,
-            xValueMapper: (TransactionDetails details, _) => details.category,
-            yValueMapper: (TransactionDetails details, _) => details.amount)
-      ]),
+      body: SfCircularChart(
+        series: <CircularSeries>[
+          PieSeries<TransactionDetails, String>(
+              dataLabelSettings: DataLabelSettings(
+                isVisible: true,
+                color: Colors.purple,
+              ),
+              dataSource: chartData,
+              dataLabelMapper: (TransactionDetails details, _) =>
+                  details.category,
+              xValueMapper: (TransactionDetails details, _) => details.category,
+              yValueMapper: (TransactionDetails details, _) => details.amount),
+        ],
+        tooltipBehavior: _tooltipBehavior,
+      ),
     ));
   }
 }
