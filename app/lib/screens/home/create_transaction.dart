@@ -1,9 +1,10 @@
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../firebase_options.dart';
 import '../../models/transact.dart';
 import '../../services/auth_service.dart';
@@ -47,17 +48,6 @@ class MyCustomForm extends StatefulWidget {
 // Create a corresponding State class. This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
   String dropdownvalue = 'Food';
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  //FirebaseFirestore ref = FirebaseFirestore.instance;
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> myController = {
     'amount': TextEditingController(),
     'category': TextEditingController(),
@@ -68,13 +58,18 @@ class MyCustomFormState extends State<MyCustomForm> {
     'notes': TextEditingController(),
     'expense': TextEditingController(),
   };
-
-  //var valuefirst;
   bool expense_value = false;
   bool persistent_value = false;
   bool online_value = false;
 
   var categoryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -92,13 +87,55 @@ class MyCustomFormState extends State<MyCustomForm> {
           TextFormField(
             controller: myController['amount'],
             decoration: const InputDecoration(
-              icon: const Icon(Icons.money),
+              icon: Icon(Icons.money),
               hintText: 'Enter the amount',
               labelText: 'Amount',
               iconColor: Colors.grey,
             ),
           ),
-          // ),
+          //datepicker to make it easier for user to choose date
+
+          TextFormField(
+              controller:
+                  myController['date'] 
+              ,
+              decoration: const InputDecoration(
+                icon: Icon(Icons.calendar_month),
+                hintText: 'Enter date',
+                labelText: 'Date',
+                iconColor: Colors.grey,
+              ),
+              readOnly: true, 
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(), 
+                    firstDate: DateTime(
+                        2000),
+                    lastDate: DateTime(2101));
+                if (pickedDate != null) {
+                  print(
+                      pickedDate); 
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(pickedDate);
+                  setState(() {
+                    myController['date']!.text = formattedDate;
+                  });
+                } else {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        Future.delayed(const Duration(seconds: 5), () {
+                          Navigator.of(context).pop(true);
+                        });
+                        return const AlertDialog(
+                          title: Text('Date is not selected!'),
+                        );
+                      });
+                }
+              }),
+          //
+/* 
           TextFormField(
             controller: myController['date'],
             //editing controller of this TextField
@@ -106,7 +143,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 icon: Icon(Icons.calendar_today), //icon of text field
                 labelText: "Enter Date" //label text of field
                 ),
-          ),
+          ), */
 
           TextFormField(
             //editing controller of this TextField
@@ -176,6 +213,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     stream: FirebaseFirestore.instance
                         .collection("transactions")
                         .where("category", isNotEqualTo: '')
+                        //.where('uid', isEqualTo: _authService.getuser()!.uid)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData)
@@ -201,13 +239,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                             SizedBox(width: 50.0),
                             DropdownButton<dynamic>(
                               items: currencyItems,
-                              onChanged: (choosed_category) {
+                              onChanged: (choosedCategory) {
                                 setState(() {
-                                  dropdownvalue = choosed_category.toString();
+                                  dropdownvalue = choosedCategory.toString();
                                 });
-                                dropdownvalue = choosed_category.toString();
+                                dropdownvalue = choosedCategory.toString();
                                 categoryController.text =
-                                    choosed_category.toString();
+                                    choosedCategory.toString();
                                 print(dropdownvalue);
                               },
                               //value: currencyItems.first,

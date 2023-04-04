@@ -77,7 +77,7 @@ class Cal extends State<MyCalendar> {
             child: SfCalendar(
                 view: view2,
                 dataSource: MeetingDataSource(_getDataSource()),
-                monthViewSettings: MonthViewSettings(
+                monthViewSettings: const MonthViewSettings(
                     appointmentDisplayMode:
                         MonthAppointmentDisplayMode.appointment),
                 todayHighlightColor: Colors.red,
@@ -94,11 +94,12 @@ class Cal extends State<MyCalendar> {
         .snapshots()) {
       for (var date in messages.docs.toList()) {
         Meeting meeting =
-            new Meeting(date['title'], date['date'], const Color(0xFF0F8644));
+            Meeting(date['title'], date['date'], const Color(0xFF0F8644));
         print(meeting.time);
         meetings.add(meeting);
       }
     }
+    return meetings;
   }
 
   List<Meeting> _getDataSource() {
