@@ -1,15 +1,13 @@
 import 'package:app/screens/home/menu.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../services/auth_service.dart';
 
 class DiagramPage extends StatelessWidget {
+  final AuthService _authService = AuthService();
   DiagramPage({Key? key}) : super(key: key);
-  final List<TransactData> _chartData = [
-    TransactData('Pet', 2000),
-    TransactData('Food', 20000),
-    TransactData('Clothes', 10000),
-    TransactData('SPA', 1000),
-  ];
+  List<_ChartData> chartData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +16,30 @@ class DiagramPage extends StatelessWidget {
       drawer: NavDrawer(),
       body: SfCircularChart(
         series: <CircularSeries>[
-          PieSeries<TransactData, String>(
-            dataSource: _chartData,
-            xValueMapper: (TransactData data, _) => data.categ,
-            yValueMapper: (TransactData data, _) => data.amount,
-            // dataLabelSettings: DataLabelSettings(isVisible: true)
-          )
+          PieSeries<_ChartData, String>(
+              dataSource: chartData,
+              xValueMapper: (_ChartData data, _) => data.x,
+              yValueMapper: (_ChartData data, _) => data.y)
         ],
       ),
     ));
   }
 
-  List<TransactData> getChartData() {
-    final List<TransactData> chartData = [
-      TransactData('Pet', 2000),
-      TransactData('Food', 20000),
-      TransactData('Clothes', 10000),
-      TransactData('SPA', 1000),
-    ];
-    return chartData;
+  Future<void> getDataFromFireStore() async {
+    var snapShotsValue =
+        await FirebaseFirestore.instance.collection("transactions").get();
+    print(snapShotsValue.size);
+    List<_ChartData> list = snapShotsValue.docs
+        .map((e) => _ChartData(x: e.data()['category'], y: e.data()['amount']))
+        .toList();
+
+    chartData = list;
+    //setState(() {
+
+    //chartData = list;
+
+    // }
+    //);
   }
 }
 
@@ -44,4 +47,10 @@ class TransactData {
   TransactData(this.categ, this.amount);
   final String categ;
   final int amount;
+}
+
+class _ChartData {
+  _ChartData({this.x, this.y});
+  final String? x;
+  final int? y;
 }

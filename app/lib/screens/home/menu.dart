@@ -2,6 +2,7 @@ import 'package:app/screens/home/calendar.dart';
 import 'package:app/screens/home/create_transaction.dart';
 import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/fileupload.dart';
+import 'package:app/screens/home/flutter_diagram.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/profile.dart';
@@ -124,6 +125,17 @@ class NavDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CategoryLimits()),
+              ),
+            },
+            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.calendar_month),
+            title: Text('FLUTTER DIAGRAM'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RealtimeDiagram()),
               ),
             },
             // TODO : logout here

@@ -67,7 +67,6 @@ class Cal extends State<MyCalendar> {
 
   @override
   void didUpdateWidget(covariant MyCalendar oldWidget) {
-    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
   }
 
@@ -82,22 +81,7 @@ class Cal extends State<MyCalendar> {
                     appointmentDisplayMode:
                         MonthAppointmentDisplayMode.appointment),
                 todayHighlightColor: Colors.red,
-                onTap: (calendarTapDetails) {
-                  print(calendarTapDetails);
-                  print(view2);
-                  changeView(CalendarView.day);
-                  print(view2);
-                  didUpdateWidget(MyCalendar());
-                })));
-  }
-
-  getDailyView() {
-    return Scaffold(
-        body: Container(
-            child: SfCalendar(
-      view: CalendarView.day,
-      dataSource: MeetingDataSource(_getDataSource()),
-    )));
+                onTap: (calendarTapDetails) {})));
   }
 
   getData() async {

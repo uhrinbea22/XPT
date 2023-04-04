@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Transact {
-  final DateTime? date;
-  final int amount;
-  final bool? persistent;
-  final String? category;
-  final bool? online;
-  final String? note;
-  final String? place;
-  final bool expense;
+  DateTime? date;
+  int amount;
+  bool? persistent;
+  String? category;
+  bool? online;
+  String? note;
+  String? place;
+  bool expense;
   //final Picture? picture;
-  final String? title;
+  String? title;
 
   Transact(
       this.date,
@@ -45,8 +45,17 @@ class Transact {
         json['title'] as String);
   }
 
-  Transact.fromMap(Map<String, dynamic> data, String id)
-      : title = data['title'],
+  Transact.fromMap(Map<String, dynamic> data)
+      : assert(data['amount'] != null),
+        assert(data['category'] != null),
+        assert(data['title'] != null),
+        assert(data['date'] != null),
+        assert(data['online'] != null),
+        assert(data['note'] != null),
+        assert(data['place'] != null),
+        assert(data['expense'] != null),
+        assert(data['persistent'] != null),
+        title = data['title'],
         amount = data['amount'],
         date = data['date'],
         persistent = data['persistent'],
