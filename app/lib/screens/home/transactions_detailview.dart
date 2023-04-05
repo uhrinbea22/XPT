@@ -317,6 +317,8 @@ class TransactionDetailview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService _authService = AuthService();
+    User? user = _authService.getuser();
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
@@ -325,7 +327,8 @@ class TransactionDetailview extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("transactions")
-            .where("title", isEqualTo: this.title)
+            .where("title", isEqualTo: title)
+            //.where("uid", isEqualTo: user!.uid)
             .get()
             .asStream(),
         builder: (context, snapshot) {

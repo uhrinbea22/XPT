@@ -1,6 +1,5 @@
 import 'package:app/screens/home/calendar.dart';
 import 'package:app/screens/home/create_transaction.dart';
-import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/fileupload.dart';
 import 'package:app/screens/home/flutter_diagram.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
@@ -23,14 +22,16 @@ class NavDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            
               child: Text(
                 'Menu',
                 style: TextStyle(color: Colors.black, fontSize: 25),
               ),
               decoration: BoxDecoration(
-                color: Color.fromARGB(100, 100, 100, 100),
-              )),
+                  color: Colors.white,
+                  image: DecorationImage(
+                      image:
+                          const AssetImage("../../assets/images/xpt_logo.png"),
+                      fit: BoxFit.cover))),
           ExpansionTile(
             leading: Icon(Icons.border_color),
             title: Text('Transactions'),
@@ -89,17 +90,6 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.dangerous_outlined),
-            title: Text('Diagram'),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DiagramPage()),
-              ),
-            },
-            // TODO : logout here
-          ),
-          ListTile(
-            leading: Icon(Icons.dangerous_outlined),
             title: Text('Pic '),
             onTap: () => {
               Navigator.push(
@@ -107,7 +97,6 @@ class NavDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => ImageUploads()),
               ),
             },
-            // TODO : logout here
           ),
           ListTile(
             leading: Icon(Icons.calendar_month),

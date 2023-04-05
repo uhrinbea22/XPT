@@ -96,26 +96,22 @@ class MyCustomFormState extends State<MyCustomForm> {
           //datepicker to make it easier for user to choose date
 
           TextFormField(
-              controller:
-                  myController['date'] 
-              ,
+              controller: myController['date'],
               decoration: const InputDecoration(
                 icon: Icon(Icons.calendar_month),
                 hintText: 'Enter date',
                 labelText: 'Date',
                 iconColor: Colors.grey,
               ),
-              readOnly: true, 
+              readOnly: true,
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(), 
-                    firstDate: DateTime(
-                        2000),
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
                     lastDate: DateTime(2101));
                 if (pickedDate != null) {
-                  print(
-                      pickedDate); 
+                  print(pickedDate);
                   String formattedDate =
                       DateFormat('yyyy-MM-dd').format(pickedDate);
                   setState(() {
@@ -213,25 +209,36 @@ class MyCustomFormState extends State<MyCustomForm> {
                     stream: FirebaseFirestore.instance
                         .collection("transactions")
                         .where("category", isNotEqualTo: '')
-                        //.where('uid', isEqualTo: _authService.getuser()!.uid)
+                        //.where("category", i)
+                        //.where("uid", isEqualTo: _authService.getuser()!.uid)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData)
                         return const Text("Loading.....");
                       else {
                         List<DropdownMenuItem> currencyItems = [];
+
                         for (int i = 0; i < snapshot.data!.docs.length; i++) {
                           DocumentSnapshot snap = snapshot.data!.docs[i];
-                          currencyItems.add(
-                            DropdownMenuItem(
-                              child: Text(
-                                snap['category'],
-                                style: TextStyle(color: Color(0xff11b719)),
+                          if (snapshot.data!.docs.contains(snap['category'])) {
+                            print(snap['category']);
+                          }
+                          if (currencyItems.contains(DropdownMenuItem(
+                            value: (snap['category']).toString(),
+                            child: Text(snap['category']),
+                          ))) {
+                            print("egyezese");
+                          } else {
+                            currencyItems.add(
+                              DropdownMenuItem(
+                                value: (snap['category']).toString(),
+                                child: Text(
+                                  snap['category'],
+                                  style: TextStyle(color: Color(0xff11b719)),
+                                ),
                               ),
-                              //it was text
-                              value: (snap['category']).toString(),
-                            ),
-                          );
+                            );
+                          }
                         }
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -319,7 +326,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                       final citiesRef = await FirebaseFirestore.instance
                           .collection("category_limits")
                           .where("uid", isEqualTo: _authService.getuser()!.uid)
-                          .where("category", isEqualTo: tr.category)
+                          .where("category".toLowerCase(),
+                              isEqualTo: tr.category!.toLowerCase())
+                          //.where("expense", isEqualTo: true)
                           .get();
                       if (citiesRef.docs.isNotEmpty) {
                         if (citiesRef.docs.first['limit'] + tr.amount >
@@ -327,7 +336,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                           //TODO hibauzenet pop up window
                           print("TULLÉPED A HATART");
                         }
-                      } else {
+                      } else if (tr.expense == true) {
                         FirebaseFirestore.instance
                             .collection('category_limits')
                             .doc()
