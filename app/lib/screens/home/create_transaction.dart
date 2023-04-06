@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import '../../firebase_options.dart';
 import '../../models/transact.dart';
 import '../../services/auth_service.dart';
@@ -61,8 +62,11 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool expense_value = false;
   bool persistent_value = false;
   bool online_value = false;
+  var showText = "";
 
   var categoryController = TextEditingController();
+
+  List Lista = [];
 
   @override
   void initState() {
@@ -202,8 +206,22 @@ class MyCustomFormState extends State<MyCustomForm> {
           ),
           Row(
             children: [
-              Text('Category : '),
+              Text(
+                'Category : ',
+                style: TextStyle(
+                    color: showText == "" ? Colors.black : Colors.red),
+              ),
               Text(dropdownvalue),
+              Column(
+                children: [
+                  Text(
+                    showText,
+                    style: TextStyle(color: Colors.red),
+                  )
+                ],
+              ),
+              //show the error text here somewhere
+              //Text(showText),
               Container(
                 child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -216,10 +234,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                       if (!snapshot.hasData)
                         return const Text("Loading.....");
                       else {
+                        //TODO : refactor this
+
                         List<DropdownMenuItem> currencyItems = [];
 
                         for (int i = 0; i < snapshot.data!.docs.length; i++) {
                           DocumentSnapshot snap = snapshot.data!.docs[i];
+                          Lista.add(snap['category']);
                           if (snapshot.data!.docs.contains(snap['category'])) {
                             print(snap['category']);
                           }
@@ -285,15 +306,27 @@ class MyCustomFormState extends State<MyCustomForm> {
                               ),
                               actions: <Widget>[
                                 ElevatedButton(
-                                  child: const Text('Submit'),
                                   onPressed: () {
                                     setState(() {
                                       dropdownvalue = categoryController.text;
                                     });
                                     print(categoryController.text);
                                     dropdownvalue = categoryController.text;
+
+                                    if (Lista.contains(dropdownvalue)) {
+                                      setState(() {
+                                        showText =
+                                            "This category is already exists! Create a new one or choose from the list!";
+                                      });
+
+                                      //TODO : warn user that this category exists and that they cant create it like this
+                                      print("VAN MAR IYLEN");
+                                    } else
+                                      showText = "Submit";
+
                                     Navigator.of(context).pop();
                                   },
+                                  child: Text("Submit"),
                                 )
                               ],
                             );
