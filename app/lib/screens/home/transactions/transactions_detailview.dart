@@ -1,10 +1,10 @@
-import 'package:app/screens/home/list_transactions_by_category.dart';
+import 'package:app/screens/home/transactions/list_transactions_by_category.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/auth_service.dart';
+import '../../../services/auth_service.dart';
 
 class TransactionDetailview extends StatelessWidget {
   //title, date, persistent, category, onlie, note, place, expense, ?picture?
@@ -242,7 +242,7 @@ class TransactionDetailview extends StatelessWidget {
                           hoverColor: Colors.purple,
                           child: Icon(Icons.delete_forever),
                           onPressed: () {
-                            //warn user that it is forever
+                            //warn user
                             showDialog(
                                 context: context,
                                 builder: (context) {
@@ -265,8 +265,6 @@ class TransactionDetailview extends StatelessWidget {
                                     ],
                                   );
                                 });
-
-                            //delete that transaction
                           }),
                     ),
                   ],
@@ -286,7 +284,7 @@ class TransactionDetailview extends StatelessWidget {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text('Payment Detail'),
+        title: Text('Details'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance

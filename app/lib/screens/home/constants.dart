@@ -1,3 +1,4 @@
+//these are for the alarm
 const String appName = "Alarm Manager Example";
 const String durationSeconds = "Seconds";
 const String durationMinutes = "Minutes";

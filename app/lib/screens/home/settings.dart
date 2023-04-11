@@ -5,6 +5,7 @@ void main() {
   runApp(SettingsScreen());
 }
 
+// TODO : implement this for the whole app
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 

@@ -59,7 +59,6 @@ class _SignInState extends State<SignIn> {
                         : null,
                     obscureText: true,
                     onChanged: (value) {
-                      print(value);
                       setState(() => password = value);
                     },
                   ),
@@ -69,17 +68,13 @@ class _SignInState extends State<SignIn> {
                         'Sign in',
                       ),
                       onPressed: () async {
-                        //TODO: VALIDATE
-                        //if (_formKey.currentState!.validate()) {
                         dynamic result =
                             await _authService.signIn(email, password);
                         if (result == null) {
                           setState(() {
                             error = 'Could not sign in with the credentials';
-                            print(error);
                           });
                         }
-                        // }
                       }),
                   const SizedBox(height: 12.0),
                   Text(
@@ -95,12 +90,10 @@ class _SignInState extends State<SignIn> {
                 if (_status == "success") {
                   setState(() {
                     resetPasswordStatus = 'Email sent';
-                    print(resetPasswordStatus);
                   });
                 } else {
                   setState(() {
                     resetPasswordStatus = 'Error happened!';
-                    print(resetPasswordStatus);
                   });
                 }
               },

@@ -1,9 +1,7 @@
-import 'package:app/screens/home/create_transaction.dart';
-import 'package:app/screens/home/list_of_categ.dart';
+import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../../services/auth_service.dart';
 
 class Home extends StatelessWidget {
@@ -38,13 +36,13 @@ class Home extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: ElevatedButton(
             child: Text(
-              'Welcome',
+              'This is your Expense Tracker Application.',
               style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
             ),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateTransacton()),
+                MaterialPageRoute(builder: (context) => CreateTransaction()),
               );
               //return to create_transaction page
             }),

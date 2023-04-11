@@ -20,7 +20,7 @@ void main() async {
 class Calendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Flutter Form Demo';
+    final appTitle = 'Calendar';
     return MaterialApp(
       title: appTitle,
       home: Scaffold(
@@ -38,7 +38,7 @@ class Calendar extends StatelessWidget {
 // Create a Form widget.
 class MyCalendar extends StatefulWidget {
   late CalendarView view2 = CalendarView.month;
-  late List<Meeting> meetings;
+  late List<TransactionEvent> meetings;
   var _streamTransactions;
   @override
   Cal createState() {
@@ -48,7 +48,7 @@ class MyCalendar extends StatefulWidget {
 
 class Cal extends State<MyCalendar> {
   late CalendarView view2 = CalendarView.month;
-  List<Meeting> meetings = [];
+  List<TransactionEvent> meetings = [];
   @override
   void initState() {
     getData();
@@ -93,8 +93,8 @@ class Cal extends State<MyCalendar> {
         .where('uid', isEqualTo: user?.uid)
         .snapshots()) {
       for (var date in messages.docs.toList()) {
-        Meeting meeting =
-            Meeting(date['title'], date['date'], const Color(0xFF0F8644));
+        TransactionEvent meeting = TransactionEvent(
+            date['title'], date['date'], const Color(0xFF0F8644));
         print(meeting.time);
         meetings.add(meeting);
       }
@@ -102,14 +102,14 @@ class Cal extends State<MyCalendar> {
     return meetings;
   }
 
-  List<Meeting> _getDataSource() {
-    final List<Meeting> meetings = this.meetings;
+  List<TransactionEvent> _getDataSource() {
+    final List<TransactionEvent> meetings = this.meetings;
     return meetings;
   }
 }
 
 class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Meeting> source) {
+  MeetingDataSource(List<TransactionEvent> source) {
     appointments = source;
   }
 
@@ -128,8 +128,8 @@ class MeetingDataSource extends CalendarDataSource {
   }
 }
 
-class Meeting {
-  Meeting(this.eventName, this.time, this.background);
+class TransactionEvent {
+  TransactionEvent(this.eventName, this.time, this.background);
 
   String eventName;
   Timestamp time;

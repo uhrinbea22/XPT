@@ -6,11 +6,13 @@ import 'constants.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AndroidAlarmManager.initialize();
-  runApp(const MyApp2());
+  runApp(const ReminderScreen());
 }
 
-class MyApp2 extends StatelessWidget {
-  const MyApp2({Key? key}) : super(key: key);
+//WIP
+
+class ReminderScreen extends StatelessWidget {
+  const ReminderScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

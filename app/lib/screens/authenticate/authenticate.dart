@@ -2,6 +2,10 @@ import 'package:app/screens/authenticate/sign_in.dart';
 import 'package:app/screens/authenticate/sign_up.dart';
 import 'package:flutter/material.dart';
 
+/*
+ * 
+ */
+
 class Authenticate extends StatefulWidget {
   @override
   _AuthenticateState createState() => _AuthenticateState();

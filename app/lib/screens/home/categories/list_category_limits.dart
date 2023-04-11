@@ -1,10 +1,10 @@
-import 'package:app/screens/home/create_transaction.dart';
+import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/transactions_detailview.dart';
+import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/auth_service.dart';
+import '../../../services/auth_service.dart';
 
 void main() {
   runApp(const CategoryLimits());

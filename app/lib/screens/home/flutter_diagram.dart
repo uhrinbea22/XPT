@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:http/http.dart';
-
 import '../../firebase_options.dart';
 import '../../services/auth_service.dart';
 
@@ -63,7 +58,6 @@ class _State extends State<RealtimeDiagram> {
             e.data()['amount'], e.data()['expense'] ? 'Expense' : "Income"))
         .toList();
     for (int i = 0; i < list.length; i++) {
-      print(list[i].amount);
       if (list[i].expense == "Expense") {
         allExpenseAmount += list[i].amount!;
       } else {
@@ -196,6 +190,7 @@ class _State extends State<RealtimeDiagram> {
                     ],
                   ),
                 ),
+                //TODO : colors are not good 
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(),

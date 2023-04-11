@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
 
+// TODO !! : use this in create_transaction
+
 class ImageUploads extends StatefulWidget {
   ImageUploads({Key? key}) : super(key: key);
 
@@ -26,6 +28,7 @@ class _ImageUploadsState extends State<ImageUploads> {
         _photo = File(pickedFile.path);
         uploadFile();
       } else {
+        //TODO : warn user that no image is selected
         print('No image selected.');
       }
     });
@@ -39,12 +42,15 @@ class _ImageUploadsState extends State<ImageUploads> {
         _photo = File(pickedFile.path);
         uploadFile();
       } else {
+        //TODO : warn user that no image is selected
         print('No image selected.');
       }
     });
   }
 
   Future uploadFile() async {
+    //TODO : create directory with user_id and insert pic as the transaction__id
+
     if (_photo == null) return;
     final fileName = basename(_photo!.path);
     final destination = 'files/$fileName';

@@ -1,10 +1,10 @@
-import 'package:app/screens/home/create_transaction.dart';
+import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/transactions_detailview.dart';
+import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../services/auth_service.dart';
+import '../../../services/auth_service.dart';
 
 void main() {
   runApp(const ListAllTrans());
@@ -16,11 +16,11 @@ class ListAllTrans extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'expense db test',
+      title: 'List all transactions',
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
-      home: const MyAppHomePage(title: 'All expenses'),
+      home: const MyAppHomePage(title: 'All transactions'),
     );
   }
 }
@@ -161,7 +161,7 @@ class MyAppHomePage extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CreateTransacton(),
+                  builder: (context) => CreateTransaction(),
                 ));
           }),
     );

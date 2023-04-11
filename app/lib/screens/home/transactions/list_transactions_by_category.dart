@@ -1,12 +1,10 @@
-import 'package:app/screens/home/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../firebase_options.dart';
-import '../../services/auth_service.dart';
+import '../../../firebase_options.dart';
+import '../../../services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +17,7 @@ void main() async {
 class ListAllTransByCateg extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Flutter Form Demo';
+    final appTitle = 'List transactions by category';
     return MaterialApp(
       title: appTitle,
       home: Scaffold(
@@ -54,7 +52,7 @@ class MyCustomFormState extends State<MyCustomForm> {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
+        // listázás kategóriánként
         ListTile(
           leading: CircleAvatar(backgroundColor: Colors.grey),
           title: Row(
@@ -62,14 +60,12 @@ class MyCustomFormState extends State<MyCustomForm> {
               Expanded(
                 child: Text(document['title'],
                     style: TextStyle(color: Colors.black)
-                    //Theme.of(context).textTheme.displayMedium,
                     ),
               ),
             ],
           ),
           subtitle: Text(document['amount'].toString(),
               style: TextStyle(color: Colors.black)
-              //Theme.of(context).textTheme.displaySmall,
               ),
         )
       ],
@@ -111,7 +107,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const Text("Waiting...");
                   if (snapshot.hasError) return Text('Something went wrong');
-                  // if (snapshot.hasData) return Text('has data');
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Text("Waiting");

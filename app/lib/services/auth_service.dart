@@ -42,19 +42,17 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
-
       return _userModelFromFirebase(user);
     } catch (e) {
       return e.toString();
     }
   }
 
-//sing out
+//sign out
   Future signOut() async {
     try {
       return await _auth.signOut();
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
@@ -72,6 +70,8 @@ class AuthService {
   }
 
   Future<String> resetPassword({required String email}) async {
+    // TODO : check if email has been registered already
+
     String _status = "";
     await _auth
         .sendPasswordResetEmail(email: email)

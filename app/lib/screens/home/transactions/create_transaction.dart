@@ -1,16 +1,13 @@
-import 'dart:convert';
-
-import 'package:app/screens/home/list_all_transactions.dart';
+import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
-import '../../firebase_options.dart';
-import '../../models/transact.dart';
-import '../../services/auth_service.dart';
+import '../../../firebase_options.dart';
+import '../../../models/transact.dart';
+import '../../../services/auth_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:http/http.dart' as http;
 
@@ -19,23 +16,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-/*   final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
-  final response = await http.post(url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'service_id': 'service_h9tov0s',
-        'user_id': 'TYfwQ2J6_PZ-Cdh1V',
-        'template_id': 'template_w3jv2gb'
-      }));
-
-  print(response.body); */
-  runApp(CreateTransacton());
+  runApp(CreateTransaction());
 }
 
-class CreateTransacton extends StatelessWidget {
+class CreateTransaction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Flutter Form Demo';
+    final appTitle = 'Add new transaction';
     return MaterialApp(
       title: appTitle,
       home: Scaffold(
@@ -50,7 +37,6 @@ class CreateTransacton extends StatelessWidget {
   }
 }
 
-// Create a Form widget.
 class MyCustomForm extends StatefulWidget {
   var _streamCategoriesList;
   @override
@@ -59,7 +45,6 @@ class MyCustomForm extends StatefulWidget {
   }
 }
 
-// Create a corresponding State class. This class holds data related to the form.
 class MyCustomFormState extends State<MyCustomForm> {
   String dropdownvalue = 'Food';
   final Map<String, TextEditingController> myController = {
@@ -72,35 +57,28 @@ class MyCustomFormState extends State<MyCustomForm> {
     'notes': TextEditingController(),
     'expense': TextEditingController(),
   };
+
+  final _formKey = GlobalKey<FormState>();
+  List categoryList = [];
   bool expense_value = false;
   bool persistent_value = false;
   bool online_value = false;
   var showText = "";
-
   var categoryController = TextEditingController();
-
-  List Lista = [];
 
   @override
   void initState() {
     super.initState();
   }
 
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     final AuthService _authService = AuthService();
-
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Flexible(
-          // flex: 1,
-          // fit: FlexFit.tight,
-          // child:
           TextFormField(
             controller: myController['amount'],
             decoration: const InputDecoration(
@@ -111,7 +89,6 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           ),
           //datepicker to make it easier for user to choose date
-
           TextFormField(
               controller: myController['date'],
               decoration: const InputDecoration(
@@ -128,7 +105,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2101));
                 if (pickedDate != null) {
-                  print(pickedDate);
                   String formattedDate =
                       DateFormat('yyyy-MM-dd').format(pickedDate);
                   setState(() {
@@ -147,40 +123,20 @@ class MyCustomFormState extends State<MyCustomForm> {
                       });
                 }
               }),
-          //
-/* 
           TextFormField(
-            controller: myController['date'],
-            //editing controller of this TextField
-            decoration: const InputDecoration(
-                icon: Icon(Icons.calendar_today), //icon of text field
-                labelText: "Enter Date" //label text of field
-                ),
-          ), */
-
-          TextFormField(
-            //editing controller of this TextField
             controller: myController['place'],
             decoration: const InputDecoration(
-                icon: Icon(Icons.place_outlined), //icon of text field
-                labelText: "Place" //label text of field
-                ),
+                icon: Icon(Icons.place_outlined), labelText: "Place"),
           ),
           TextFormField(
-            //editing controller of this TextField
             controller: myController['title'],
             decoration: const InputDecoration(
-                icon: Icon(Icons.abc), //icon of text field
-                labelText: "Title" //label text of field
-                ),
+                icon: Icon(Icons.abc), labelText: "Title"),
           ),
           TextFormField(
             controller: myController['notes'],
-            //editing controller of this TextField
             decoration: const InputDecoration(
-                icon: Icon(Icons.note), //icon of text field
-                labelText: "Notes" //label text of field
-                ),
+                icon: Icon(Icons.note), labelText: "Notes"),
           ),
           CheckboxListTile(
             title: Text('Expense'),
@@ -194,7 +150,6 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
           CheckboxListTile(
-            //controller : myController['persistent'],
             title: Text('Persistent'),
             checkColor: Colors.grey,
             activeColor: Colors.blue,
@@ -233,35 +188,27 @@ class MyCustomFormState extends State<MyCustomForm> {
                   )
                 ],
               ),
-              //show the error text here somewhere
-              //Text(showText),
               Container(
                 child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection("transactions")
                         .where("category", isNotEqualTo: '')
                         //.where("category", i)
-                        //.where("uid", isEqualTo: _authService.getuser()!.uid)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData)
                         return const Text("Loading.....");
                       else {
-                        //TODO : refactor this
-
                         List<DropdownMenuItem> currencyItems = [];
 
                         for (int i = 0; i < snapshot.data!.docs.length; i++) {
                           DocumentSnapshot snap = snapshot.data!.docs[i];
-                          Lista.add(snap['category']);
-                          if (snapshot.data!.docs.contains(snap['category'])) {
-                            print(snap['category']);
-                          }
+                          categoryList.add(snap['category']);
+
                           if (currencyItems.contains(DropdownMenuItem(
                             value: (snap['category']).toString(),
                             child: Text(snap['category']),
                           ))) {
-                            print("egyezese");
                           } else {
                             currencyItems.add(
                               DropdownMenuItem(
@@ -287,11 +234,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 dropdownvalue = choosedCategory.toString();
                                 categoryController.text =
                                     choosedCategory.toString();
-                                print(dropdownvalue);
                               },
-                              //value: currencyItems.first,
                               isExpanded: false,
-                              //hint: Text(dropdownvalue),
                             ),
                           ],
                         );
@@ -323,20 +267,15 @@ class MyCustomFormState extends State<MyCustomForm> {
                                     setState(() {
                                       dropdownvalue = categoryController.text;
                                     });
-                                    print(categoryController.text);
                                     dropdownvalue = categoryController.text;
 
-                                    if (Lista.contains(dropdownvalue)) {
+                                    if (categoryList.contains(dropdownvalue)) {
                                       setState(() {
                                         showText =
                                             "This category is already exists! Create a new one or choose from the list!";
                                       });
-
-                                      //TODO : warn user that this category exists and that they cant create it like this
-                                      print("VAN MAR IYLEN");
                                     } else
                                       showText = "Submit";
-
                                     Navigator.of(context).pop();
                                   },
                                   child: Text("Submit"),
@@ -356,8 +295,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: const Text('Submit'),
                     onPressed: () async {
                       //create a transaction
-                      print(dropdownvalue);
-                      print(expense_value);
                       final tr = Transact(
                         DateTime.parse(myController['date']!.text),
                         int.parse(myController['amount']!.text),
@@ -381,24 +318,23 @@ class MyCustomFormState extends State<MyCustomForm> {
                       if (citiesRef.docs.isNotEmpty) {
                         if (citiesRef.docs.first['limit'] + tr.amount >
                             citiesRef.docs.first['limit']) {
-                          //TODO hibauzenet pop up window
+                          //TODO : hibauzenet pop up window
                           print("TULLÉPED A HATART");
                         }
                       } else if (tr.expense == true) {
-                        print(tr.category);
                         FirebaseFirestore.instance
                             .collection('category_limits')
                             .doc()
                             .set({
                           'category': tr.category.toString(),
-                          'limit': 0,
+                          'limit': "0",
                           'uid': _authService.getuser()!.uid
                         });
                       }
                       //find the category with user uid, and check if it has limit
 
                       //if not, normally add the transaction
-                      //if it has, check the amounts, and war the user about possible over expense
+                      //if it has, check the amounts, and warn the user about possible over expense
 
                       //store it in database
                       FirebaseFirestore.instance
