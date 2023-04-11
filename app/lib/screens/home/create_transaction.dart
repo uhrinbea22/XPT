@@ -343,6 +343,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: const Text('Submit'),
                     onPressed: () async {
                       //create a transaction
+                      print(dropdownvalue);
+                      print(expense_value);
                       final tr = Transact(
                         DateTime.parse(myController['date']!.text),
                         int.parse(myController['amount']!.text),
@@ -370,11 +372,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                           print("TULLÉPED A HATART");
                         }
                       } else if (tr.expense == true) {
+                        print(tr.category);
                         FirebaseFirestore.instance
                             .collection('category_limits')
                             .doc()
                             .set({
-                          'category': tr.category,
+                          'category': tr.category.toString(),
                           'limit': 0,
                           'uid': _authService.getuser()!.uid
                         });

@@ -70,4 +70,13 @@ class AuthService {
       return null;
     }
   }
+
+  Future<String> resetPassword({required String email}) async {
+    String _status = "";
+    await _auth
+        .sendPasswordResetEmail(email: email)
+        .then((value) => _status = "success")
+        .catchError((e) => _status = "error");
+    return _status;
+  }
 }

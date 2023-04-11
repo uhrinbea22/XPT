@@ -1,87 +1,67 @@
-import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import '../../firebase_options.dart';
-import '../../models/transact.dart';
-import '../../services/auth_service.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+void main() {
   runApp(SettingsScreen());
 }
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _RunMyAppState();
+}
+
+class _RunMyAppState extends State<SettingsScreen> {
+  ThemeMode _themeMode = ThemeMode.system;
+  void changeTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode = themeMode;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Settings';
     return MaterialApp(
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      title: appTitle,
+      theme: ThemeData(primarySwatch: Colors.green),
+
+      // standard dark theme
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         drawer: NavDrawer(),
         appBar: AppBar(
-          title: Text(appTitle),
-          backgroundColor: Colors.grey,
+          title: Text('Device Controlled theme Mode'),
         ),
-        body: Settings(),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Choose your theme:',
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Change theme & rebuild to
+                  // show it using these buttons
+                  ElevatedButton(
+                      onPressed: () {
+                        changeTheme(ThemeMode.light);
+                      },
+                      child: Text('Light theme')),
+                  ElevatedButton(
+                      onPressed: () {
+                        changeTheme(ThemeMode.dark);
+                      },
+                      child: Text('Dark theme')),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
-  }
-}
-
-// Create a Form widget.
-class Settings extends StatefulWidget {
-  var _streamCategoriesList;
-  @override
-  SettingState createState() {
-    return SettingState();
-  }
-}
-
-// Create a corresponding State class. This class holds data related to the form.
-class SettingState extends State<Settings> {
-  String dropdownvalue = 'Food';
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  //var valuefirst;
-  bool night_mode_on = false;
-
-  var night_mode_controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    final AuthService _authService = AuthService();
-    User? user = _authService.getuser();
-    return Scaffold(
-        body: Column(children: [
-      Text(user!.email.toString()),
-      Container(
-        child: CheckboxListTile(
-          title: Text('Night mode'),
-          checkColor: Colors.grey,
-          activeColor: Colors.blue,
-          value: night_mode_on,
-          onChanged: (bool? value) {
-            setState(() {
-              night_mode_on = !night_mode_on;
-            });
-          },
-        ),
-      )
-    ]));
   }
 }

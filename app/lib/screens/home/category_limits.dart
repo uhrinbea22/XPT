@@ -16,7 +16,7 @@ class CategoryLimits extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'expense db test',
+      title: 'Category Limits',
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
@@ -37,13 +37,13 @@ class MyAppHomePage extends StatelessWidget {
       title: Row(
         children: [
           Expanded(
-            child:
-                Text(document['category'], style: TextStyle(color: Colors.black)
-                    //Theme.of(context).textTheme.displayMedium,
-                    ),
+            child: Text(document['category'].toString(),
+                style: TextStyle(color: Colors.black)
+                //Theme.of(context).textTheme.displayMedium,
+                ),
           ),
           Expanded(
-            child: Text(document['limit'].toString(),
+            child: Text(document['limit'],
                 style: TextStyle(color: Colors.black)
                 //Theme.of(context).textTheme.displayMedium,
                 ),

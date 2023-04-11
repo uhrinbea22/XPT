@@ -59,8 +59,8 @@ class _State extends State<RealtimeDiagram> {
         .where('uid', isEqualTo: _authService.getuser()!.uid)
         .get();
     List<TransactionDetails> list = snapShotsValue.docs
-        .map((e) => TransactionDetails.expense(e.data()['amount'],
-            e.data()['expense'] ? 'Expense' : "Income", e.data()['color']))
+        .map((e) => TransactionDetails.expense(
+            e.data()['amount'], e.data()['expense'] ? 'Expense' : "Income"))
         .toList();
     for (int i = 0; i < list.length; i++) {
       print(list[i].amount);
@@ -98,11 +98,6 @@ class _State extends State<RealtimeDiagram> {
 
     List categoryNameList = categoryLimitSnapshot.docs.toList();
 
-    for (int i = 0; i < categoryNameList.length; i++) {
-      print("CATEGROYNAMELIST");
-      print(categoryNameList[i]['category']);
-    }
-
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("transactions")
         .where('uid', isEqualTo: _authService.getuser()!.uid)
@@ -110,17 +105,9 @@ class _State extends State<RealtimeDiagram> {
     List list = snapShotsValue.docs.toList();
 
     for (int i = 0; i < list.length; i++) {
-      print("TRANSACTION LIST");
-      print(list[i]['category']);
-    }
-
-    for (int i = 0; i < list.length; i++) {
       for (int j = 0; j < categoryNameList.length; j++) {
         if (list[i]['category'] == categoryNameList[j]['category']) {
           limit += list[i]['amount'];
-          print("egyezés");
-          print(list[i]['category']);
-          print(categoryNameList[j]['category']);
           limitCategories.add(list[i]['category']);
           limitMap.addAll({list[i]['category']: categoryNameList[j]['limit']});
           amountMap.addAll({list[i]['category']: limit});
@@ -128,8 +115,6 @@ class _State extends State<RealtimeDiagram> {
       }
     }
     //limitMap has the data we want to visualize
-    print(limitMap);
-    print(amountMap);
 
     List<TransactionDetails> categoryLimitList = snapShotsValue.docs
         .map((e) => TransactionDetails.expense(e.data()['amount'],
@@ -171,8 +156,8 @@ class _State extends State<RealtimeDiagram> {
                   child: SfCartesianChart(
                     title: ChartTitle(text: "ELSO"),
                     primaryXAxis: CategoryAxis(),
-                    primaryYAxis:
-                        NumericAxis(minimum: 0, maximum: 15000, interval: 1000),
+                    primaryYAxis: NumericAxis(
+                        minimum: 0, maximum: 150000, interval: 1000),
                     series: <ChartSeries>[
                       ColumnSeries<TransactionDetails, String>(
                           dataLabelSettings: DataLabelSettings(

@@ -4,6 +4,7 @@ import 'package:app/screens/home/fileupload.dart';
 import 'package:app/screens/home/flutter_diagram.dart';
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/list_of_categ.dart';
+import 'package:app/screens/home/map.dart';
 import 'package:app/screens/home/profile.dart';
 import 'package:app/screens/home/settings.dart';
 import 'package:app/screens/wrapper.dart';
@@ -17,7 +18,7 @@ class NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.white,
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
@@ -57,7 +58,7 @@ class NavDrawer extends StatelessWidget {
             ],
           ),
           ListTile(
-            leading: Icon(Icons.verified_user_outlined),
+            leading: Icon(Icons.verified_user_sharp),
             title: Text('Profile'),
             onTap: () => {
               Navigator.push(
@@ -122,11 +123,37 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.calendar_month),
-            title: Text('FLUTTER DIAGRAM'),
+            title: Text('Diagrams'),
             onTap: () => {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RealtimeDiagram()),
+              ),
+            },
+            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.note_add_sharp),
+            title: Text('Reminders'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                //navigate to reminders page
+
+                MaterialPageRoute(builder: (context) => RealtimeDiagram()),
+              ),
+            },
+            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.note_add_sharp),
+            title: Text('Map'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                //navigate to reminders page
+
+                MaterialPageRoute(builder: (context) => MyAppMap()),
               ),
             },
             // TODO : logout here

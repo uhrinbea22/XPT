@@ -30,29 +30,97 @@ class MyAppHomePage extends StatelessWidget {
   final String title;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    return ListTile(
-      leading: CircleAvatar(backgroundColor: Colors.grey),
-      title: Row(
-        children: [
-          Expanded(
-            child: Text(document['title'], style: TextStyle(color: Colors.black)
-                //Theme.of(context).textTheme.displayMedium,
-                ),
+    return Column(
+      children: [
+        //
+       /*  Container(
+          child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("transactions")
+                  .where("category", isNotEqualTo: '')
+                  //.where("category", i)
+                  //.where("uid", isEqualTo: _authService.getuser()!.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return const Text("Loading.....");
+                else {
+                  //TODO : refactor this
+
+                  List<DropdownMenuItem> currencyItems = [];
+
+                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                    DocumentSnapshot snap = snapshot.data!.docs[i];
+                    if (snapshot.data!.docs.contains(snap['category'])) {
+                      print(snap['category']);
+                    }
+                    if (currencyItems.contains(DropdownMenuItem(
+                      value: (snap['category']).toString(),
+                      child: Text(snap['category']),
+                    ))) {
+                      print("egyezese");
+                    } else {
+                      currencyItems.add(
+                        DropdownMenuItem(
+                          value: (snap['category']).toString(),
+                          child: Text(
+                            snap['category'],
+                            style: TextStyle(color: Color(0xff11b719)),
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(width: 50.0),
+                      DropdownButton<dynamic>(
+                        items: currencyItems,
+                        onChanged: (choosedCategory) {
+                          setState(() {
+                            dropdownvalue = choosedCategory.toString();
+                          });
+                          dropdownvalue = choosedCategory.toString();
+                          categoryController.text = choosedCategory.toString();
+                          print(dropdownvalue);
+                        },
+                        //value: currencyItems.first,
+                        isExpanded: false,
+                        //hint: Text(dropdownvalue),
+                      ),
+                    ],
+                  );
+                }
+              }),
+        ), */
+        // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
+        ListTile(
+          leading: CircleAvatar(backgroundColor: Colors.grey),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(document['title'],
+                    style: TextStyle(color: Colors.black)
+                    //Theme.of(context).textTheme.displayMedium,
+                    ),
+              ),
+            ],
           ),
-        ],
-      ),
-      subtitle: Text(document['amount'].toString(),
-          style: TextStyle(color: Colors.black)
-          //Theme.of(context).textTheme.displaySmall,
-          ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TransactionDetailview(document['title']),
-          ),
-        );
-      },
+          subtitle: Text(document['amount'].toString(),
+              style: TextStyle(color: Colors.black)
+              //Theme.of(context).textTheme.displaySmall,
+              ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TransactionDetailview(document['title']),
+              ),
+            );
+          },
+        )
+      ],
     );
   }
 

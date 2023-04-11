@@ -1,3 +1,4 @@
+import 'package:app/screens/home/list_transactions_by_category.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -144,6 +145,15 @@ class TransactionDetailview extends StatelessWidget {
                           Expanded(
                             child: Text(document['category']),
                           ),
+                          BackButton(onPressed: () {
+                            Navigator.push(
+                              context,
+                              //navigate to reminders page
+
+                              MaterialPageRoute(
+                                  builder: (context) => ListAllTransByCateg()),
+                            );
+                          })
                         ],
                       ),
                     ),
@@ -227,83 +237,37 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 12, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Spent by',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-                      child: Material(
-                        color: Colors.transparent,
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.lime,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Card(
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  color: Colors.grey,
-                                  elevation: 2,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        2, 2, 2, 2),
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        12, 0, 0, 0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '[display_name]',
-                                        ),
-                                        Text(user!.email.toString()),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                      child: FloatingActionButton(
+                          hoverColor: Colors.purple,
+                          child: Icon(Icons.delete_forever),
+                          onPressed: () {
+                            //warn user that it is forever
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('Are you sure?'),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        child: const Text(
+                                            'Yes, I delete this transaction'),
+                                        onPressed: () {
+                                          FirebaseFirestore.instance
+                                              .runTransaction(
+                                                  (transaction) async =>
+                                                      await transaction.delete(
+                                                          document.reference));
+                                          Navigator.maybePop(context);
+                                          Navigator.maybePop(context);
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+
+                            //delete that transaction
+                          }),
                     ),
                   ],
                 ),
