@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,12 +12,23 @@ import '../../firebase_options.dart';
 import '../../models/transact.dart';
 import '../../services/auth_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+/*   final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
+  final response = await http.post(url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'service_id': 'service_h9tov0s',
+        'user_id': 'TYfwQ2J6_PZ-Cdh1V',
+        'template_id': 'template_w3jv2gb'
+      }));
+
+  print(response.body); */
   runApp(CreateTransacton());
 }
 
@@ -416,6 +429,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                 child: ElevatedButton(
                   child: const Text('Back'),
                   onPressed: () async {
+                    sendEmail('uhrinbeauhrinbeaa@gmail.com', 'TEST SUBJECT',
+                        'TEST TEXT');
                     Navigator.of(context).pop();
                   },
                 ),
@@ -426,4 +441,12 @@ class MyCustomFormState extends State<MyCustomForm> {
       ),
     );
   }
+}
+
+sendEmail(String sendEmailTo, String subject, String emailBody) async {
+  await FirebaseFirestore.instance.collection('mail').add({
+    'to': '$sendEmailTo',
+    'message': {'subject': '$subject', 'text': '$emailBody'}
+  }).then((value) => print("EMAIL QUEUED FOR DLIVER"));
+  print("EMAIL SENT");
 }

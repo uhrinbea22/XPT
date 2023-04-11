@@ -48,8 +48,9 @@ dependencies:
   table_calendar: ^2.1.0
   syncfusion_flutter_calendar: ^19.4.56
   intl: ^0.17.0
-  google_maps_flutter: ^2.2.5
-  google_maps_flutter_web: ^0.3.2+2
+  google_maps_flutter: ^2.0.5
+  http : ^0.13.3
+  android_alarm_manager_plus: ^2.0.6
 
 dev_dependencies:
   flutter_test:

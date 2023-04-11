@@ -43,8 +43,7 @@ class MyAppHomePage extends StatelessWidget {
                 ),
           ),
           Expanded(
-            child: Text(document['limit'],
-                style: TextStyle(color: Colors.black)
+            child: Text(document['limit'], style: TextStyle(color: Colors.black)
                 //Theme.of(context).textTheme.displayMedium,
                 ),
           ),
@@ -111,16 +110,6 @@ class MyAppHomePage extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-          hoverColor: Colors.pink,
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateTransacton(),
-                ));
-          }),
     );
   }
 }

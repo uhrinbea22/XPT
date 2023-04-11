@@ -11,6 +11,10 @@ Any]?
 ) -> Bool {
 GMSServices.provideAPIKey("AIzaSyAv75pXV0Ye9qS3aDKCqGP8FEzDuB_3gHw")
 GeneratedPluginRegistrant.register(with: self)
+if #available(iOS 10.0, *) {
+UNUserNotificationCenter.current().delegate = self as ? 
+UNUserNotificationCenterDelegate    
+}
 return super.application(application, didFinishLaunchingWithOptions:
 launchOptions)
 }

@@ -6,10 +6,12 @@ import 'package:app/screens/home/list_all_transactions.dart';
 import 'package:app/screens/home/list_of_categ.dart';
 import 'package:app/screens/home/map.dart';
 import 'package:app/screens/home/profile.dart';
+import 'package:app/screens/home/remnder.dart';
 import 'package:app/screens/home/settings.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 import 'category_limits.dart';
 
@@ -87,7 +89,6 @@ class NavDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => Wrapper()),
               ),
             },
-            // TODO : logout here
           ),
           ListTile(
             leading: Icon(Icons.dangerous_outlined),
@@ -108,7 +109,6 @@ class NavDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => Calendar()),
               ),
             },
-            // TODO : logout here
           ),
           ListTile(
             leading: Icon(Icons.calendar_month),
@@ -119,7 +119,6 @@ class NavDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => CategoryLimits()),
               ),
             },
-            // TODO : logout here
           ),
           ListTile(
             leading: Icon(Icons.calendar_month),
@@ -130,7 +129,6 @@ class NavDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => RealtimeDiagram()),
               ),
             },
-            // TODO : logout here
           ),
           ListTile(
             leading: Icon(Icons.note_add_sharp),
@@ -138,12 +136,9 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                //navigate to reminders page
-
                 MaterialPageRoute(builder: (context) => RealtimeDiagram()),
               ),
             },
-            // TODO : logout here
           ),
           ListTile(
             leading: Icon(Icons.note_add_sharp),
@@ -151,12 +146,19 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                //navigate to reminders page
-
-                MaterialPageRoute(builder: (context) => MyAppMap()),
+                MaterialPageRoute(builder: (context) => MyApp3()),
               ),
             },
-            // TODO : logout here
+          ),
+          ListTile(
+            leading: Icon(Icons.note_add_sharp),
+            title: Text('M,FA'),
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyApp2()),
+              ),
+            },
           ),
         ],
       ),
