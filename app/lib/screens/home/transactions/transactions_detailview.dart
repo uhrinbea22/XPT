@@ -1,4 +1,3 @@
-import 'package:app/screens/home/transactions/list_transactions_by_category.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -146,13 +145,13 @@ class TransactionDetailview extends StatelessWidget {
                             child: Text(document['category']),
                           ),
                           BackButton(onPressed: () {
-                            Navigator.push(
+                          /*   Navigator.push(
                               context,
                               //navigate to reminders page
 
                               MaterialPageRoute(
                                   builder: (context) => ListAllTransByCateg()),
-                            );
+                            ); */
                           })
                         ],
                       ),

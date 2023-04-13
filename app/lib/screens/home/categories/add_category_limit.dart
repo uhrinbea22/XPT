@@ -27,7 +27,7 @@ class MyAppHomePage extends StatelessWidget {
   MyAppHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
   final limitController = TextEditingController();
-  var limitValue = 0;
+  String limitValue = "";
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return ListTile(
@@ -60,8 +60,7 @@ class MyAppHomePage extends StatelessWidget {
                   ElevatedButton(
                     child: const Text('Submit'),
                     onPressed: () {
-                      limitValue = limitController.text as int;
-                      print(limitController.text);
+                      limitValue = limitController.text;
                       Navigator.of(context).pop();
                     },
                   )
