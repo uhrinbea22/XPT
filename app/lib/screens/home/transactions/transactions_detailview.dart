@@ -1,8 +1,8 @@
-import 'dart:html';
-
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/storage_service.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +18,8 @@ class TransactionDetailview extends StatelessWidget {
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
+    Storage storage = Storage();
+
     return Scaffold(
       drawer: NavDrawer(),
       body: SafeArea(
@@ -43,6 +45,21 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
+                    FutureBuilder(
+                        future: storage.downloadUrl(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String?> snapshot) {
+                          if (!snapshot.hasData)
+                            return const Text("Waiting...");
+                          if (snapshot.hasError)
+                            return Text('Something went wrong');
+
+                          return Container(
+                            width: 300,
+                            height: 250,
+                            child: Image.network(snapshot.data!),
+                          );
+                        }),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 20),
                       child: Row(
@@ -55,9 +72,7 @@ class TransactionDetailview extends StatelessWidget {
                             color: Colors.black,
                             size: 30.0,
                           ),
-                          Expanded(
-                            child: Text(document['amount'].toString()),
-                          ),
+                          Text(document['amount'].toString()),
                         ],
                       ),
                     ),

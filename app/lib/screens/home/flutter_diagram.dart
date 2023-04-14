@@ -20,7 +20,6 @@ class DiagramScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appTitle = 'Diagrams';
-    // return MyCustomForm();
     return MaterialApp(
       title: appTitle,
       theme: Theme.of(context),
@@ -28,7 +27,6 @@ class DiagramScreen extends StatelessWidget {
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(appTitle),
-          backgroundColor: Colors.grey,
         ),
         body: RealtimeDiagram(),
       ),

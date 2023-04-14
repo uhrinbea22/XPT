@@ -111,12 +111,12 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.note_add_rounded),
-            title: const Text('Reminders'),
+            title: const Text('IMG'),
             onTap: () => {
-              /*  Navigator.push(
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ReminderScreen()),
-              ), */
+                MaterialPageRoute(builder: (context) => ImageUploads()),
+              ),
             },
           ),
           ListTile(

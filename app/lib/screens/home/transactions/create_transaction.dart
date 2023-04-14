@@ -44,7 +44,6 @@ class CreateTransaction extends StatelessWidget {
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(appTitle),
-          backgroundColor: Colors.grey,
         ),
         body: MyCustomForm(),
       ),
@@ -126,14 +125,14 @@ class MyCustomFormState extends State<MyCustomForm> {
     //TODO : create directory with user_id and insert pic as the transaction__id
 
     if (_photo == null) return;
-    final fileName = myController['title'].toString();
+    final fileName = myController['title']!.text.toString();
     //basename(_photo!.path);
-    final destination = 'files/$fileName';
     String directory = _authService.getuser()!.uid;
+
     try {
       final ref = firebase_storage.FirebaseStorage.instance
-          .ref(destination)
-          .child('$directory/');
+          .ref(directory)
+          .child(fileName);
       await ref.putFile(_photo!);
     } catch (e) {
       print('error occured');

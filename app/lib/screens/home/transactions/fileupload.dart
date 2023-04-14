@@ -1,4 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -19,6 +23,13 @@ class _ImageUploadsState extends State<ImageUploads> {
 
   File? _photo;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    downloadURLExample();
+    super.initState();
+  }
 
   Future imgFromGallery() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -48,6 +59,15 @@ class _ImageUploadsState extends State<ImageUploads> {
     });
   }
 
+  Future<String> downloadURLExample() async {
+    var downloadURL = await FirebaseStorage.instance
+        .ref()
+        .child("file/Gabinak3.png")
+        .getDownloadURL();
+    print(downloadURL);
+    return downloadURL;
+  }
+
   Future uploadFile() async {
     //TODO : create directory with user_id and insert pic as the transaction__id
 
@@ -58,7 +78,7 @@ class _ImageUploadsState extends State<ImageUploads> {
     try {
       final ref = firebase_storage.FirebaseStorage.instance
           .ref(destination)
-          .child('file/');
+          .child('/file/');
       await ref.putFile(_photo!);
     } catch (e) {
       print('error occured');
@@ -71,6 +91,8 @@ class _ImageUploadsState extends State<ImageUploads> {
       appBar: AppBar(),
       body: Column(
         children: <Widget>[
+          Image.network(
+              "https://firebasestorage.googleapis.com/v0/b/xpt-prototype.appspot.com/o/file%2FGabinak3.png?alt=media&token=07611ef2-87f9-4143-bf5e-4d8b57248c61"),
           SizedBox(
             height: 32,
           ),
@@ -105,7 +127,7 @@ class _ImageUploadsState extends State<ImageUploads> {
                       ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
