@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +19,7 @@ class TransactionDetailview extends StatelessWidget {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     return Scaffold(
+      drawer: NavDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -27,7 +31,7 @@ class TransactionDetailview extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -44,6 +48,13 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
+                          Icon(
+                            document['expense'] == false
+                                ? Icons.add
+                                : Icons.remove,
+                            color: Colors.black,
+                            size: 30.0,
+                          ),
                           Expanded(
                             child: Text(document['amount'].toString()),
                           ),
@@ -105,7 +116,7 @@ class TransactionDetailview extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              'Szamla / Fizetes',
+                              'Regularity',
                             ),
                           ),
                         ],
@@ -117,8 +128,9 @@ class TransactionDetailview extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            child:
-                                Text(document['persistent'] ? 'Fizetes' : ''),
+                            child: Text(document['persistent']
+                                ? 'Regular '
+                                : 'Not regular '),
                           ),
                         ],
                       ),
@@ -144,15 +156,6 @@ class TransactionDetailview extends StatelessWidget {
                           Expanded(
                             child: Text(document['category']),
                           ),
-                          BackButton(onPressed: () {
-                          /*   Navigator.push(
-                              context,
-                              //navigate to reminders page
-
-                              MaterialPageRoute(
-                                  builder: (context) => ListAllTransByCateg()),
-                            ); */
-                          })
                         ],
                       ),
                     ),
@@ -202,7 +205,8 @@ class TransactionDetailview extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            child: Text(document['online'] ? 'Yes' : 'No'),
+                            child: Text(
+                                document['online'] ? 'Online' : 'Not online'),
                           ),
                         ],
                       ),
@@ -257,8 +261,12 @@ class TransactionDetailview extends StatelessWidget {
                                                   (transaction) async =>
                                                       await transaction.delete(
                                                           document.reference));
-                                          Navigator.maybePop(context);
-                                          Navigator.maybePop(context);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ListAllTrans()),
+                                          );
                                         },
                                       )
                                     ],

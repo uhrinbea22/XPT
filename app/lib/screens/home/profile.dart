@@ -14,9 +14,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Profile',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-      ),
+      theme: Theme.of(context),
       home: MyAppHomePage(title: 'Your profile'),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:app/models/userModel.dart';
+import 'package:app/screens/home/theme_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
@@ -11,7 +12,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
+ /*  runApp(ChangeNotifierProvider<ThemeNotifier>(
+    create: (_) => new ThemeNotifier(),
+    child: MyApp(),
+  )); */
 }
 
 class MyApp extends StatelessWidget {

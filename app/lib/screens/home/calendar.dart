@@ -1,11 +1,17 @@
 import 'dart:math';
+import 'package:app/screens/home/flutter_diagram.dart';
+import 'package:app/screens/home/notification.dart';
+import 'package:app/screens/home/theme_manager.dart';
+import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../../firebase_options.dart';
 import '../../services/auth_service.dart';
@@ -16,7 +22,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyCalendar());
+  runApp(Calendar());
+  /* runApp(ChangeNotifierProvider<ThemeNotifier>(
+    create: (_) => new ThemeNotifier(),
+    child: Calendar(),
+  )); */
 }
 
 class Calendar extends StatelessWidget {
@@ -25,6 +35,7 @@ class Calendar extends StatelessWidget {
     final appTitle = 'Calendar';
     return MaterialApp(
       title: appTitle,
+      theme: Theme.of(context),
       home: Scaffold(
         drawer: NavDrawer(),
         appBar: AppBar(
@@ -37,7 +48,6 @@ class Calendar extends StatelessWidget {
   }
 }
 
-// Create a Form widget.
 class MyCalendar extends StatefulWidget {
   @override
   Cal createState() {
@@ -46,16 +56,15 @@ class MyCalendar extends StatefulWidget {
 }
 
 class Cal extends State<MyCalendar> {
+  late CalendarController _controller;
   List<Color> _colorCollection = <Color>[];
   MeetingDataSource? events;
   final databaseReference = FirebaseFirestore.instance;
-
-  late CalendarView view2 = CalendarView.month;
   late List<Meeting> meetings;
 
   @override
   void initState() {
-    //_initializeEventColor();
+    _controller = CalendarController();
     getDataFromFireStore().then((results) {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() {});
@@ -68,32 +77,42 @@ class Cal extends State<MyCalendar> {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
 
-    var snapShotsValue = await FirebaseFirestore.instance
+//incomes - different color
+    var incomeSnapShots = await FirebaseFirestore.instance
         .collection("transactions")
         .where('uid', isEqualTo: user!.uid)
+        .where('expense', isEqualTo: false)
+        .get();
+//expenses - different color
+    var expenseSnapShots = await FirebaseFirestore.instance
+        .collection("transactions")
+        .where('uid', isEqualTo: user.uid)
+        .where('expense', isEqualTo: true)
         .get();
 
-    final Random random = new Random();
-
-    List<Meeting> list = snapShotsValue.docs
+    List<Meeting> incomes = incomeSnapShots.docs
         .map((e) => Meeting(
             e.data()['title'],
-            //DateFormat('dd/MM/yyyy HH:mm:ss').parse(e.data()['date']),
-            //DateFormat('dd/MM/yyyy HH:mm:ss').parse(e.data()['date']),
+            (e.data()['date'] as Timestamp).toDate(),
+            (e.data()['date'] as Timestamp).toDate(),
+            Colors.green,
+            true))
+        .toList();
 
+    List<Meeting> expenses = expenseSnapShots.docs
+        .map((e) => Meeting(
+            e.data()['title'],
             (e.data()['date'] as Timestamp).toDate(),
             (e.data()['date'] as Timestamp).toDate(),
             Colors.black,
             true))
         .toList();
 
+    List<Meeting> bigList = incomes + expenses;
+
     setState(() {
-      events = MeetingDataSource(list);
+      events = MeetingDataSource(bigList);
     });
-    for (var i = 0; i < events!.appointments!.length; i++) {
-      print(events!.appointments![i].eventName);
-      print(events!.appointments![i].from);
-    }
   }
 
   getDataFromDatabase() async {
@@ -103,105 +122,50 @@ class Cal extends State<MyCalendar> {
         .collection('transactions')
         .where("uid", isEqualTo: user!.uid)
         .snapshots();
-//    var getValue = await value.child('CalendarAppointmentCollection').once();
     return value;
+  }
+
+  void calendarTapped(CalendarTapDetails calendarTapDetails) {
+    Meeting meeting = calendarTapDetails.appointments![0];
+    if (calendarTapDetails.targetElement == CalendarElement.appointment) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TransactionDetailview(meeting.eventName)),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SfCalendar(
-      view: CalendarView.month,
-      //initialDisplayDate: DateTime(2023, 4, 5, 9, 0, 0),
-      dataSource: events,
-      monthViewSettings: MonthViewSettings(
-        showAgenda: true,
-      ),
-    ));
+        drawer: NavDrawer(),
+        body: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () => setState(() {
+                if (_controller.view == CalendarView.day) {
+                  _controller.view = CalendarView.month;
+                } else {
+                  _controller.view = CalendarView.day;
+                }
+                print(_controller.view);
+              }),
+              child: Text('Change the view'),
+            ),
+            SfCalendar(
+              controller: _controller,
+              view: CalendarView.month,
+              //initialDisplayDate: DateTime(2023, 4, 5, 9, 0, 0),
+              dataSource: events,
+              monthViewSettings: MonthViewSettings(
+                showAgenda: true,
+              ),
+              onTap: calendarTapped,
+            ),
+          ],
+        ));
   }
-
-  /*  _showCalendar() {
-    var querySnapshot;
-    var data;
-    var collection;
-
-    if (getDataFromDatabase() != null) {
-      List<TransactionEvent> collection = [];
-      var showData = querySnapshot.value;
-      Map<dynamic, dynamic> values = showData;
-      List<dynamic> key = values.keys.toList();
-      if (values != null) {
-        for (int i = 0; i < key.length; i++) {
-          data = values[key[i]];
-          final Random random = new Random();
-          collection.add(TransactionEvent(
-            eventName = data['title'],
-            time: data['date'],
-            background: _colorCollection[random.nextInt(9)],
-          ));
-        }
-      } else {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-
-      return SfCalendar(
-        view: CalendarView.timelineDay,
-        allowedViews: [
-          CalendarView.timelineDay,
-          CalendarView.timelineWeek,
-          CalendarView.timelineWorkWeek,
-          CalendarView.timelineMonth,
-        ],
-        initialDisplayDate: DateTime(2020, 4, 5, 9, 0, 0),
-        dataSource: _getCalendarDataSource(collection),
-        monthViewSettings: MonthViewSettings(showAgenda: true),
-      );
-    } */
-
-  void _initializeEventColor() {
-    this._colorCollection = [];
-    _colorCollection.add(const Color(0xFF0F8644));
-    _colorCollection.add(const Color(0xFF8B1FA9));
-    _colorCollection.add(const Color(0xFFD20100));
-    _colorCollection.add(const Color(0xFFFC571D));
-    _colorCollection.add(const Color(0xFF36B37B));
-    _colorCollection.add(const Color(0xFF01A1EF));
-    _colorCollection.add(const Color(0xFF3D4FB5));
-    _colorCollection.add(const Color(0xFFE47C73));
-    _colorCollection.add(const Color(0xFF636363));
-    _colorCollection.add(const Color(0xFF0A8043));
-  }
-
-  /*  getData() async {
-      final List<TransactionEvent> meetings = [];
-      final AuthService _authService = AuthService();
-      User? user = _authService.getuser();
-      Map<Timestamp, List<String>> map = {};
-      await for (var messages in FirebaseFirestore.instance
-          .collection('transactions')
-          .where('uid', isEqualTo: user?.uid)
-          .snapshots()) {
-        for (var date in messages.docs.toList()) {
-          TransactionEvent meeting = TransactionEvent(
-              date['title'], date['date'], const Color(0xFF0F8644));
-          meetings.add(meeting);
-        }
-      }
-      for (var i = 0; i < meetings.length; i++) {
-        print(meetings[i].eventName);
-        print(meetings[i].time);
-        print(meetings[i].background);
-      }
-      print(meetings.length);
-      return meetings;
-    } */
-
-  /*  List<TransactionEvent> _getDataSource() {
-      final List<TransactionEvent> meetings = getData();
-      return meetings;
-    } */
 }
 
 class TransactionEvent {

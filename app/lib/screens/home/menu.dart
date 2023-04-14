@@ -1,4 +1,5 @@
 import 'package:app/screens/home/calendar.dart';
+import 'package:app/screens/home/notification.dart';
 import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/transactions/fileupload.dart';
 import 'package:app/screens/home/flutter_diagram.dart';
@@ -59,11 +60,12 @@ class NavDrawer extends StatelessWidget {
           // TODO : move it to createTransaction
           ListTile(
             leading: const Icon(Icons.image),
-            title: const Text('Pic '),
+            title: const Text('THEME '),
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ImageUploads()),
+                MaterialPageRoute(
+                    builder: (context) => DynamicThemesExampleApp()),
               ),
             },
           ),
@@ -93,7 +95,7 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RealtimeDiagram()),
+                MaterialPageRoute(builder: (context) => DiagramScreen()),
               ),
             },
           ),
@@ -111,10 +113,10 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.note_add_rounded),
             title: const Text('Reminders'),
             onTap: () => {
-              Navigator.push(
+              /*  Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ReminderScreen()),
-              ),
+              ), */
             },
           ),
           ListTile(

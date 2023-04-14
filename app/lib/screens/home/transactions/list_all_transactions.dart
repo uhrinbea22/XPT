@@ -1,13 +1,29 @@
+import 'package:app/screens/home/settings.dart';
+import 'package:app/screens/home/theme_manager.dart';
 import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
 
 void main() {
-  runApp(const ListAllTrans());
+  runApp(ListAllTrans());
+  /*  runApp(ChangeNotifierProvider<ThemeNotifier>(
+    create: (_) => new ThemeNotifier(),
+    child: ListAllTrans(),
+  )); */
+}
+
+getStringValuesSF() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //Return String
+  String? stringValue = prefs.getString('theme');
+  print(stringValue);
+  return stringValue;
 }
 
 class ListAllTrans extends StatelessWidget {
@@ -15,11 +31,14 @@ class ListAllTrans extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return MyAppHomePage(title: "All transactions");
     return MaterialApp(
+      theme: Theme.of(context),
       title: 'List all transactions',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-      ),
+      //getStringValuesSF() == "dark" ? ThemeMode.dark : ThemeMode.light,
+      /*  theme: getStringValuesSF().toString().contains("dark")
+          ? ThemeData.dark()
+          : ThemeData.light(), */
       home: const MyAppHomePage(title: 'All transactions'),
     );
   }
@@ -33,7 +52,7 @@ class MyAppHomePage extends StatelessWidget {
     return Column(
       children: [
         //
-       /*  Container(
+        /*  Container(
           child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("transactions")

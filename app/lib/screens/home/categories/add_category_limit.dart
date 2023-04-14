@@ -13,11 +13,10 @@ class ListAllTrans extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //return MyAppHomePage(title: "Set limit");
     return MaterialApp(
       title: 'Set limit ',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-      ),
+      theme: Theme.of(context),
       home: MyAppHomePage(title: 'Set limit'),
     );
   }

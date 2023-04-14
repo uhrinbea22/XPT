@@ -15,13 +15,12 @@ class CategoryLimits extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+   // return MyAppHomePage(title: "Category limits");
+     return MaterialApp(
       title: 'Category Limits',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-      ),
+        theme: Theme.of(context),
       home: MyAppHomePage(title: 'Category limits'),
-    );
+    ); 
   }
 }
 

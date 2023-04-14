@@ -1,7 +1,9 @@
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/theme_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../firebase_options.dart';
 import '../../services/auth_service.dart';
@@ -14,6 +16,26 @@ void main() async {
   runApp(RealtimeDiagram());
 }
 
+class DiagramScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appTitle = 'Diagrams';
+    // return MyCustomForm();
+    return MaterialApp(
+      title: appTitle,
+      theme: Theme.of(context),
+      home: Scaffold(
+        drawer: NavDrawer(),
+        appBar: AppBar(
+          title: Text(appTitle),
+          backgroundColor: Colors.grey,
+        ),
+        body: RealtimeDiagram(),
+      ),
+    );
+  }
+}
+
 class RealtimeDiagram extends StatefulWidget {
   @override
   _State createState() => _State();
@@ -24,6 +46,7 @@ class _State extends State<RealtimeDiagram> {
   final AuthService _authService = AuthService();
   List<TransactionDetails> chartData = [];
   List<TransactionDetails> expenseData = [];
+  List<TransactionDetails> expense2Data = [];
 
   @override
   void dispose() {
@@ -68,9 +91,9 @@ class _State extends State<RealtimeDiagram> {
     if (!mounted) return;
     if (mounted) {
       setState(() {
-        expenseData = [
-          TransactionDetails("Expense", allExpenseAmount as int),
-          TransactionDetails("Income", allIncomeAmount as int)
+        expense2Data = [
+          TransactionDetails("Expense", allExpenseAmount as int, Colors.black),
+          TransactionDetails("Income", allIncomeAmount as int, Colors.green)
         ];
       });
     }
@@ -131,90 +154,88 @@ class _State extends State<RealtimeDiagram> {
     loadChartData();
     loadExpenseData();
     loadLimitData();
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            drawer: NavDrawer(),
-            body: SingleChildScrollView(
-                child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
-                  child: SfCartesianChart(
-                    title: ChartTitle(text: "ELSO"),
-                    primaryXAxis: CategoryAxis(),
-                    primaryYAxis: NumericAxis(
-                        minimum: 0, maximum: 150000, interval: 1000),
-                    series: <ChartSeries>[
-                      ColumnSeries<TransactionDetails, String>(
-                          dataLabelSettings: DataLabelSettings(
-                            isVisible: true,
-                            color: Colors.purple,
-                          ),
-                          dataSource: chartData,
-                          dataLabelMapper: (TransactionDetails details, _) =>
-                              details.category,
-                          xValueMapper: (TransactionDetails details, _) =>
-                              details.category,
-                          yValueMapper: (TransactionDetails details, _) =>
-                              details.amount),
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
-                  child: SfCircularChart(
-                    title: ChartTitle(text: "masodik"),
-                    series: <PieSeries>[
-                      PieSeries<TransactionDetails, String>(
-                          dataLabelSettings: DataLabelSettings(
-                            isVisible: true,
-                            color: Colors.purple,
-                          ),
-                          dataSource: chartData,
-                          dataLabelMapper: (TransactionDetails details, _) =>
-                              details.category,
-                          xValueMapper: (TransactionDetails details, _) =>
-                              details.category,
-                          yValueMapper: (TransactionDetails details, _) =>
-                              details.amount),
-                    ],
-                  ),
-                ),
-                //TODO : colors are not good 
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
-                  child: SfCircularChart(
-                    title: ChartTitle(text: "harmadik"),
-                    series: <PieSeries>[
-                      PieSeries<TransactionDetails, String>(
-                          dataLabelSettings: DataLabelSettings(
-                            isVisible: true,
-                            color: Colors.purple,
-                          ),
-                          dataLabelMapper: (TransactionDetails details, _) =>
-                              details.category,
-                          dataSource: expenseData,
-                          xValueMapper: (TransactionDetails details, _) =>
-                              details.expense.toString(),
-                          yValueMapper: (TransactionDetails details, _) =>
-                              details.amount),
-                    ],
-                  ),
-                ),
-              ],
-            ))));
+    return Scaffold(
+        drawer: NavDrawer(),
+        body: SingleChildScrollView(
+            child: Column(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              child: SfCartesianChart(
+                title: ChartTitle(text: "ELSO"),
+                primaryXAxis: CategoryAxis(),
+                primaryYAxis:
+                    NumericAxis(minimum: 0, maximum: 150000, interval: 1000),
+                series: <ChartSeries>[
+                  ColumnSeries<TransactionDetails, String>(
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        color: Colors.purple,
+                      ),
+                      dataSource: chartData,
+                      dataLabelMapper: (TransactionDetails details, _) =>
+                          details.category,
+                      xValueMapper: (TransactionDetails details, _) =>
+                          details.category,
+                      yValueMapper: (TransactionDetails details, _) =>
+                          details.amount),
+                ],
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              child: SfCircularChart(
+                title: ChartTitle(text: "masodik"),
+                series: <PieSeries>[
+                  PieSeries<TransactionDetails, String>(
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        color: Colors.purple,
+                      ),
+                      dataSource: chartData,
+                      dataLabelMapper: (TransactionDetails details, _) =>
+                          details.category,
+                      xValueMapper: (TransactionDetails details, _) =>
+                          details.category,
+                      yValueMapper: (TransactionDetails details, _) =>
+                          details.amount),
+                ],
+              ),
+            ),
+            //TODO : colors are not good
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              child: SfCircularChart(
+                title: ChartTitle(text: "harmadik"),
+                series: <PieSeries>[
+                  PieSeries<TransactionDetails, String>(
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        color: Colors.purple,
+                      ),
+                      dataLabelMapper: (TransactionDetails details, _) =>
+                          details.category,
+                      dataSource: expense2Data,
+                      xValueMapper: (TransactionDetails details, _) =>
+                          details.expense.toString(),
+                      yValueMapper: (TransactionDetails details, _) =>
+                          details.amount),
+                ],
+              ),
+            ),
+          ],
+        )));
   }
 }
 

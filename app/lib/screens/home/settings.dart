@@ -1,5 +1,8 @@
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/theme_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(SettingsScreen());
@@ -23,41 +26,38 @@ class _RunMyAppState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.green),
-
-      // standard dark theme
-      darkTheme: ThemeData.dark(),
-      themeMode: _themeMode,
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        drawer: NavDrawer(),
-        appBar: AppBar(
-          title: Text('Device Controlled theme Mode'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    SharedPreferences prefs;
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, _) => MaterialApp(
+        theme: theme.getTheme(),
+        home: Scaffold(
+          drawer: NavDrawer(),
+          appBar: AppBar(
+            title: Text('Hybrid Theme'),
+          ),
+          body: Row(
             children: [
-              Text(
-                'Choose your theme:',
+              Container(
+                child: FlatButton(
+                  onPressed: () async => {
+                    print('Set Light Theme'),
+                    theme.setLightMode(),
+                    prefs = await SharedPreferences.getInstance(),
+                    prefs.setString('theme', "light")
+                  },
+                  child: Text('Set Light Theme'),
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Change theme & rebuild to
-                  // show it using these buttons
-                  ElevatedButton(
-                      onPressed: () {
-                        changeTheme(ThemeMode.light);
-                      },
-                      child: Text('Light theme')),
-                  ElevatedButton(
-                      onPressed: () {
-                        changeTheme(ThemeMode.dark);
-                      },
-                      child: Text('Dark theme')),
-                ],
+              Container(
+                child: FlatButton(
+                  onPressed: () async => {
+                    print('Set Dark theme'),
+                    theme.setDarkMode(),
+                    prefs = await SharedPreferences.getInstance(),
+                    prefs.setString('theme', "dark")
+                  },
+                  child: Text('Set Dark theme'),
+                ),
               ),
             ],
           ),
