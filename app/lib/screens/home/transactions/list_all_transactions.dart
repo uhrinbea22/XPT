@@ -2,6 +2,7 @@ import 'package:app/screens/home/settings.dart';
 import 'package:app/screens/home/theme_manager.dart';
 import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/transactions/list_transactions_by_category.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,71 +52,29 @@ class MyAppHomePage extends StatelessWidget {
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Column(
       children: [
-        //
-        /*  Container(
-          child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("transactions")
-                  .where("category", isNotEqualTo: '')
-                  //.where("category", i)
-                  //.where("uid", isEqualTo: _authService.getuser()!.uid)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData)
-                  return const Text("Loading.....");
-                else {
-                  //TODO : refactor this
-
-                  List<DropdownMenuItem> currencyItems = [];
-
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot snap = snapshot.data!.docs[i];
-                    if (snapshot.data!.docs.contains(snap['category'])) {
-                      print(snap['category']);
-                    }
-                    if (currencyItems.contains(DropdownMenuItem(
-                      value: (snap['category']).toString(),
-                      child: Text(snap['category']),
-                    ))) {
-                      print("egyezese");
-                    } else {
-                      currencyItems.add(
-                        DropdownMenuItem(
-                          value: (snap['category']).toString(),
-                          child: Text(
-                            snap['category'],
-                            style: TextStyle(color: Color(0xff11b719)),
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(width: 50.0),
-                      DropdownButton<dynamic>(
-                        items: currencyItems,
-                        onChanged: (choosedCategory) {
-                          setState(() {
-                            dropdownvalue = choosedCategory.toString();
-                          });
-                          dropdownvalue = choosedCategory.toString();
-                          categoryController.text = choosedCategory.toString();
-                          print(dropdownvalue);
-                        },
-                        //value: currencyItems.first,
-                        isExpanded: false,
-                        //hint: Text(dropdownvalue),
-                      ),
-                    ],
-                  );
-                }
-              }),
-        ), */
         // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
         ListTile(
-          leading: CircleAvatar(backgroundColor: Colors.grey),
+          selectedColor: Colors.lightBlueAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.0),
+          ),
+          tileColor: Colors.white24,
+          hoverColor: Colors.blueGrey,
+          leading: CircleAvatar(
+            backgroundColor: Colors.lightBlue,
+            child: document['expense'] == true
+                ? Icon(
+                    Icons.add,
+                    color: Colors.black,
+                  )
+                : Icon(
+                    Icons.remove,
+                    color: Colors.black,
+                  ),
+          ),
+          /* leading: document['expense'] == true
+              ? Icon(Icons.add)
+              : Icon(Icons.remove), */
           title: Row(
             children: [
               Expanded(
@@ -137,6 +96,15 @@ class MyAppHomePage extends StatelessWidget {
                 builder: (context) => TransactionDetailview(document['title']),
               ),
             );
+          },
+          onLongPress: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ListAllTransByCateg(title: document['category']),
+                ));
+            print(document['category'].toString());
           },
         )
       ],

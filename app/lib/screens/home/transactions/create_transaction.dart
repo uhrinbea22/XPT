@@ -81,6 +81,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool persistent_value = false;
   bool online_value = false;
   var showText = "";
+  String categoryExists = "";
   var categoryController = TextEditingController();
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
@@ -276,6 +277,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: expense_value,
+                subtitle: Text("If expense check, if income leave it"),
                 onChanged: (bool? value) {
                   setState(() {
                     expense_value = value!;
@@ -287,6 +289,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: persistent_value,
+                //subtitle: Text("If it is bill or salary - check it"),
                 onChanged: (bool? value) {
                   setState(() {
                     persistent_value = value!;
@@ -299,6 +302,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: online_value,
+              //  subtitle: Text("If transaction was online - check it"),
                 onChanged: (bool? value) {
                   setState(() {
                     online_value = value!;
@@ -307,19 +311,21 @@ class MyCustomFormState extends State<MyCustomForm> {
               ),
               Row(
                 children: [
-                  Text(
-                    'Category : ',
-                    style: TextStyle(
-                        color: showText == "" ? Colors.black : Colors.red),
-                  ),
-                  Text(dropdownvalue),
-                  Column(
-                    children: [
-                      Text(
-                        showText,
-                        style: TextStyle(color: Colors.red),
-                      )
-                    ],
+                  Container(
+                    child: Column(
+                      children: [
+                        Text('Category : '),
+                        Text(dropdownvalue),
+                        Column(
+                          children: [
+                            Text(
+                              showText,
+                              style: TextStyle(color: Colors.red),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
                     child: StreamBuilder<QuerySnapshot>(
@@ -329,32 +335,21 @@ class MyCustomFormState extends State<MyCustomForm> {
                             //.where("category", i)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          if (!snapshot.hasData)
+                          // if not has data - loading
+                          if (!snapshot.hasData) {
                             return const Text("Loading.....");
-                          else {
-                            List<DropdownMenuItem> currencyItems = [];
+                            //if has data
+                          } else {
+                            List<DropdownMenuItem> dropdownList = [];
 
                             for (int i = 0;
                                 i < snapshot.data!.docs.length;
                                 i++) {
+                              //add only when it is not alerady in it - check cases too
                               DocumentSnapshot snap = snapshot.data!.docs[i];
-                              categoryList.add(snap['category']);
-
-                              if (currencyItems.contains(DropdownMenuItem(
-                                value: (snap['category']).toString(),
-                                child: Text(snap['category']),
-                              ))) {
-                              } else {
-                                currencyItems.add(
-                                  DropdownMenuItem(
-                                    value: (snap['category']).toString(),
-                                    child: Text(
-                                      snap['category'],
-                                      style:
-                                          TextStyle(color: Color(0xff11b719)),
-                                    ),
-                                  ),
-                                );
+                              if (!categoryList
+                                  .contains(snap['category'].toString())) {
+                                categoryList.add(snap['category']);
                               }
                             }
                             return Row(
@@ -362,9 +357,15 @@ class MyCustomFormState extends State<MyCustomForm> {
                               children: <Widget>[
                                 SizedBox(width: 50.0),
                                 DropdownButton<dynamic>(
-                                  items: currencyItems,
+                                  items: categoryList.map((location) {
+                                    return DropdownMenuItem(
+                                      child: new Text(location),
+                                      value: location,
+                                    );
+                                  }).toList(),
                                   onChanged: (choosedCategory) {
                                     setState(() {
+                                      showText = "";
                                       dropdownvalue =
                                           choosedCategory.toString();
                                     });
@@ -393,31 +394,36 @@ class MyCustomFormState extends State<MyCustomForm> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: const Text('New category'),
-                                  content: TextField(
-                                    controller: categoryController,
-                                    decoration: const InputDecoration(
-                                        hintText: 'Type new category'),
+                                  content: Column(
+                                    children: [
+                                      TextField(
+                                        controller: categoryController,
+                                        decoration: const InputDecoration(
+                                            hintText: 'Type new category'),
+                                      ),
+                                      Text(categoryExists)
+                                    ],
                                   ),
                                   actions: <Widget>[
                                     ElevatedButton(
                                       onPressed: () {
-                                        setState(() {
-                                          dropdownvalue =
-                                              categoryController.text;
-                                        });
-                                        dropdownvalue = categoryController.text;
-
-                                        if (categoryList
-                                            .contains(dropdownvalue)) {
+                                        if (categoryList.contains(
+                                            categoryController.text)) {
                                           setState(() {
                                             showText =
-                                                "This category is already exists! Create a new one or choose from the list!";
+                                                "This category already exists!";
                                           });
                                         } else
-                                          showText = "Submit";
+                                          setState(() {
+                                            dropdownvalue =
+                                                categoryController.text;
+                                          });
+                                        dropdownvalue = categoryController.text;
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text("Submit"),
+                                      child: Text(
+                                        'Submit',
+                                      ),
                                     )
                                   ],
                                 );

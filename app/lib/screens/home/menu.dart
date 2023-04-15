@@ -8,6 +8,7 @@ import 'package:app/screens/home/map.dart';
 import 'package:app/screens/home/profile.dart';
 import 'package:app/screens/home/reminder.dart';
 import 'package:app/screens/home/settings.dart';
+import 'package:app/screens/home/transactions/list_transactions_by_category.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -101,11 +102,11 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.note_add_sharp),
-            title: const Text('Map'),
+            title: const Text('List b categ'),
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MapWidget()),
+                MaterialPageRoute(builder: (context) => ListAllTransByCateg(title: 'Clothes',)),
               ),
             },
           ),

@@ -1,72 +1,112 @@
-/* import 'package:app/screens/home/menu.dart';
+import 'dart:html';
+
+import 'package:app/screens/home/settings.dart';
+import 'package:app/screens/home/theme_manager.dart';
+import 'package:app/screens/home/transactions/create_transaction.dart';
+import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../firebase_options.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(ListAllTransByCateg());
+getStringValuesSF() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //Return String
+  String? stringValue = prefs.getString('theme');
+  print(stringValue);
+  return stringValue;
 }
 
-class ListAllTransByCateg extends StatelessWidget {
+/* class ListAllTransByCateg extends StatelessWidget {
+  //const ListAllTransByCateg(citle);
+
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'List transactions by category';
     return MaterialApp(
-      title: appTitle,
-      home: Scaffold(
-        drawer: NavDrawer(),
-        appBar: AppBar(
-          title: Text(appTitle),
-          backgroundColor: Colors.grey,
-        ),
-        body: MyCustomForm(),
-      ),
+      theme: Theme.of(context),
+      home: MyAppHomePage(),
     );
   }
-}
+} */
 
-class MyCustomForm extends StatefulWidget {
-  @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
-  }
-}
-
-class MyCustomFormState extends State<MyCustomForm> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  final String title = '';
-  String filterData = "Clothes";
+class ListAllTransByCateg extends StatelessWidget {
+  String title;
+  //TransactionDetailview(this.title, {Key? key}) : super(key: key);
+  ListAllTransByCateg({Key? key, required this.title}) : super(key: key);
+  //final String selectedCategory = title;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Column(
-      mainAxisSize: MainAxisSize.max,
       children: [
-        // listázás kategóriánként
+        /*  Container(
+          child: FutureBuilder(
+            future: FirebaseFirestore.instance.collection('transactions').get(),
+            builder: (_, snapshot) {
+              if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text("Loading");
+              }
+
+              return ListView(
+                  children: snapshot.data.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                return ListTile(
+                  title: Text(data['cateory']),
+                );
+              }).toList());
+            },
+          ),
+        ), */
+
+        // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
         ListTile(
-          leading: CircleAvatar(backgroundColor: Colors.grey),
+          selectedColor: Colors.lightBlueAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.0),
+          ),
+          tileColor: Colors.white24,
+          hoverColor: Colors.blueGrey,
+          leading: CircleAvatar(
+            backgroundColor: Colors.lightBlue,
+            child: document['expense'] == true
+                ? Icon(
+                    Icons.add,
+                    color: Colors.black,
+                  )
+                : Icon(
+                    Icons.remove,
+                    color: Colors.black,
+                  ),
+          ),
+          /* leading: document['expense'] == true
+              ? Icon(Icons.add)
+              : Icon(Icons.remove), */
           title: Row(
             children: [
               Expanded(
                 child: Text(document['title'],
                     style: TextStyle(color: Colors.black)
+                    //Theme.of(context).textTheme.displayMedium,
                     ),
               ),
             ],
           ),
           subtitle: Text(document['amount'].toString(),
               style: TextStyle(color: Colors.black)
+              //Theme.of(context).textTheme.displaySmall,
               ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TransactionDetailview(document['title']),
+              ),
+            );
+          },
         )
       ],
     );
@@ -77,54 +117,42 @@ class MyCustomFormState extends State<MyCustomForm> {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     return Scaffold(
-        body: Row(
-      children: [
-        TextFormField(
-          decoration: const InputDecoration(
-            icon: Icon(Icons.calendar_month),
-            hintText: 'Enter filter data',
-            labelText: 'Enter filter data',
-            iconColor: Colors.grey,
-          ),
-          initialValue: filterData,
-          readOnly: false,
-          onChanged: (value) {
-            setState(() => filterData = value);
-          },
-        ),
-        Flex(
-          direction: Axis.vertical,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-                child: Row(children: [
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('transactions')
-                    .where('uid', isEqualTo: user!.uid)
-                    .where('category', isEqualTo: filterData)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const Text("Waiting...");
-                  if (snapshot.hasError) return Text('Something went wrong');
+      drawer: NavDrawer(),
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('transactions')
+            .where('uid', isEqualTo: user!.uid)
+            .where('category', isEqualTo: title)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Text("Waiting...");
+          if (snapshot.hasError) return Text('Something went wrong');
+          // if (snapshot.hasData) return Text('has data');
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("Waiting");
-                  }
-                  print(snapshot.data!.size.toInt().toString());
-                  return ListView.builder(
-                    itemExtent: 120.0,
-                    itemCount: snapshot.data!.size,
-                    itemBuilder: ((context, index) =>
-                        _buildListItem(context, snapshot.data!.docs[index])),
-                  );
-                },
-              ),
-            ]))
-          ],
-        )
-      ],
-    ));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("Waiting");
+          }
+          return ListView.builder(
+            itemExtent: 80.0,
+            itemCount: snapshot.data!.size,
+            itemBuilder: ((context, index) =>
+                _buildListItem(context, snapshot.data!.docs[index])),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+          hoverColor: Colors.purple,
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateTransaction(),
+                ));
+          }),
+    );
   }
 }
- */
