@@ -104,7 +104,6 @@ class MyAppHomePage extends StatelessWidget {
                   builder: (context) =>
                       ListAllTransByCateg(title: document['category']),
                 ));
-            print(document['category'].toString());
           },
         )
       ],

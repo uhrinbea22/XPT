@@ -1,5 +1,6 @@
 import 'package:app/screens/home/calendar.dart';
 import 'package:app/screens/home/notification.dart';
+import 'package:app/screens/home/transactions/category_list.dart';
 import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/transactions/fileupload.dart';
 import 'package:app/screens/home/flutter_diagram.dart';
@@ -106,7 +107,7 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ListAllTransByCateg(title: 'Clothes',)),
+                MaterialPageRoute(builder: (context) => CategLiast()),
               ),
             },
           ),

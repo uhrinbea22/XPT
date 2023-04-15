@@ -199,7 +199,7 @@ class _State extends State<RealtimeDiagram> {
                         isVisible: true,
                         color: Colors.purple,
                       ),
-                      dataSource: chartData,
+                      dataSource: expenseData,
                       dataLabelMapper: (TransactionDetails details, _) =>
                           details.category,
                       xValueMapper: (TransactionDetails details, _) =>

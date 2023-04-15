@@ -143,16 +143,6 @@ class ListAllTransByCateg extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-          hoverColor: Colors.purple,
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateTransaction(),
-                ));
-          }),
     );
   }
 }
