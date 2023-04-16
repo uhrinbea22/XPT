@@ -5,7 +5,6 @@ class Storage {
   final FirebaseStorage storage = FirebaseStorage.instance;
 
   Future<String?> downloadUrl(String userid, String transactionId) async {
-    print("FUGGVENXMEGHIVVA");
     var downloadURL = await FirebaseStorage.instance
         .ref()
         .child("$userid")

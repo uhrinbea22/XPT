@@ -240,14 +240,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ),
               )),
               TextFormField(
-                /*  validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      value.runtimeType != num) {
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter the amount';
                   }
                   return null;
-                }, */
+                },
                 controller: myController['amount'],
                 decoration: const InputDecoration(
                   icon: Icon(Icons.money),
@@ -348,7 +346,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                 },
               ),
               CheckboxListTile(
-                //controller : myController['persistent'],
                 title: Text('Online'),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,

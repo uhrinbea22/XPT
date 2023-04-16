@@ -314,7 +314,7 @@ class _State extends State<RealtimeDiagram> {
                 border: Border.all(),
               ),
               child: SfCartesianChart(
-                title: ChartTitle(text: "Transactions group by categories"),
+                title: ChartTitle(text: "Spent money and their limit"),
                 primaryXAxis: CategoryAxis(),
                 primaryYAxis: NumericAxis(),
                 enableSideBySideSeriesPlacement: false,

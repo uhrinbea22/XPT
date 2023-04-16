@@ -47,6 +47,15 @@ class NavDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
+                title: const Text('List by categories'),
+                onTap: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CategLiast()),
+                  ),
+                },
+              ),
+              ListTile(
                 title: const Text("Add new"),
                 onTap: () {
                   Navigator.push(
@@ -59,18 +68,6 @@ class NavDrawer extends StatelessWidget {
             ],
           ),
 
-          // TODO : move it to createTransaction
-          ListTile(
-            leading: const Icon(Icons.image),
-            title: const Text('THEME '),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DynamicThemesExampleApp()),
-              ),
-            },
-          ),
           ListTile(
             leading: const Icon(Icons.calendar_month),
             title: const Text('Calendar'),
@@ -92,7 +89,7 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.calendar_month),
+            leading: const Icon(Icons.line_style_rounded),
             title: const Text('Diagrams'),
             onTap: () => {
               Navigator.push(
@@ -101,26 +98,7 @@ class NavDrawer extends StatelessWidget {
               ),
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.note_add_sharp),
-            title: const Text('List b categ'),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CategLiast()),
-              ),
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.note_add_rounded),
-            title: const Text('IMG'),
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ImageUploads()),
-              ),
-            },
-          ),
+
           ListTile(
             leading: const Icon(Icons.verified_user_sharp),
             title: const Text('Profile'),
@@ -131,13 +109,15 @@ class NavDrawer extends StatelessWidget {
               ),
             },
           ),
+          // TODO : move it to createTransaction
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                MaterialPageRoute(
+                    builder: (context) => DynamicThemesExampleApp()),
               ),
             },
           ),
