@@ -80,6 +80,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   bool expense_value = false;
   bool persistent_value = false;
   bool online_value = false;
+  bool titleInDbAlready = false;
   var showText = "";
   String categoryExists = "";
   var categoryController = TextEditingController();
@@ -132,8 +133,8 @@ class MyCustomFormState extends State<MyCustomForm> {
 
     try {
       final ref = firebase_storage.FirebaseStorage.instance
-          .ref(directory)
-          .child(fileName);
+          .ref("$directory/")
+          .child("/$fileName");
       await ref.putFile(_photo!);
     } catch (e) {
       print('error occured');
@@ -168,6 +169,31 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           );
         });
+  }
+
+  Future<bool> titleInDb(String title) async {
+    var limitSnapshots = await FirebaseFirestore.instance
+        .collection("transactions")
+        .where('uid', isEqualTo: _authService.getuser()!.uid)
+        .get();
+
+    List titles = limitSnapshots.docs.map((e) => (e.data()['title'])).toList();
+    print(titles);
+
+    for (int i = 0; i < titles.length; i++) {
+      if (titles.contains(title)) {
+        print("$title in db already");
+        setState(() {
+          titleInDbAlready = true;
+        });
+        return true;
+      }
+    }
+    print("$title is NOT in db");
+    setState(() {
+      titleInDbAlready = false;
+    });
+    return false;
   }
 
   @override
@@ -214,6 +240,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ),
               )),
               TextFormField(
+                /*  validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.runtimeType != num) {
+                    return 'Please enter the amount';
+                  }
+                  return null;
+                }, */
                 controller: myController['amount'],
                 decoration: const InputDecoration(
                   icon: Icon(Icons.money),
@@ -225,6 +259,12 @@ class MyCustomFormState extends State<MyCustomForm> {
               //datepicker to make it easier for user to choose date
               TextFormField(
                   controller: myController['date'],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please choose date';
+                    }
+                    return null;
+                  },
                   decoration: const InputDecoration(
                     icon: Icon(Icons.calendar_month),
                     hintText: 'Enter date',
@@ -263,6 +303,16 @@ class MyCustomFormState extends State<MyCustomForm> {
                     icon: Icon(Icons.place_outlined), labelText: "Place"),
               ),
               TextFormField(
+                validator: (value) {
+                  //check if title already in db
+
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.runtimeType != String) {
+                    return 'Please add title';
+                  }
+                  return null;
+                },
                 controller: myController['title'],
                 decoration: const InputDecoration(
                     icon: Icon(Icons.abc), labelText: "Title"),
@@ -286,6 +336,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               ),
               CheckboxListTile(
                 title: Text('Persistent'),
+                subtitle: Text("If bill or salary check it"),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: persistent_value,
@@ -302,7 +353,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: online_value,
-              //  subtitle: Text("If transaction was online - check it"),
+                //  subtitle: Text("If transaction was online - check it"),
                 onChanged: (bool? value) {
                   setState(() {
                     online_value = value!;
@@ -395,13 +446,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 return AlertDialog(
                                   title: const Text('New category'),
                                   content: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       TextField(
                                         controller: categoryController,
                                         decoration: const InputDecoration(
                                             hintText: 'Type new category'),
                                       ),
-                                      Text(categoryExists)
                                     ],
                                   ),
                                   actions: <Widget>[
@@ -439,71 +490,124 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: ElevatedButton(
                         child: const Text('Submit'),
                         onPressed: () async {
-                          //create a transaction
-                          final tr = Transact(
-                            DateTime.parse(myController['date']!.text),
-                            int.parse(myController['amount']!.text),
-                            persistent_value,
-                            dropdownvalue,
-                            online_value,
-                            myController['notes']!.text,
-                            myController['place']!.text,
-                            expense_value,
-                            myController['title']!.text,
-                          );
+                          //check if datas are all valid
+                          if (await titleInDb(myController["title"]!.text) ==
+                              true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Add another title, this is already in your transactions')),
+                            );
+                            print("TRUE");
+                          } else {
+                            if (_formKey.currentState!.validate()) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Processing Data')),
+                              );
 
-                          //check if with that amount the category limit is overlapped
-                          final citiesRef = await FirebaseFirestore.instance
-                              .collection("category_limits")
-                              .where("uid",
-                                  isEqualTo: _authService.getuser()!.uid)
-                              .where("category".toLowerCase(),
-                                  isEqualTo: tr.category!.toLowerCase())
-                              //.where("expense", isEqualTo: true)
-                              .get();
-                          if (citiesRef.docs.isNotEmpty) {
-                            if (citiesRef.docs.first['limit'] + tr.amount >
-                                citiesRef.docs.first['limit']) {
-                              //TODO : hibauzenet pop up window
-                              print("TULLÉPED A HATART");
+                              //create a transaction
+                              final tr = Transact(
+                                DateTime.parse(myController['date']!.text),
+                                int.parse(myController['amount']!.text),
+                                persistent_value,
+                                dropdownvalue,
+                                online_value,
+                                myController['notes']!.text,
+                                myController['place']!.text,
+                                expense_value,
+                                myController['title']!.text,
+                              );
+
+                              //get the category limit document for the transactions category
+                              final citiesRef = await FirebaseFirestore.instance
+                                  .collection("category_limits")
+                                  .where("uid",
+                                      isEqualTo: _authService.getuser()!.uid)
+                                  .where("category", isEqualTo: tr.category!)
+                                  .get();
+
+                              final allTransactionInCategory =
+                                  await FirebaseFirestore.instance
+                                      .collection("transactions")
+                                      .where("uid",
+                                          isEqualTo:
+                                              _authService.getuser()!.uid)
+                                      .where("category",
+                                          isEqualTo: tr.category!)
+                                      .get();
+
+                              List categoryAmount = allTransactionInCategory
+                                  .docs
+                                  .map((e) => (e.data()['amount']))
+                                  .toList();
+                              num max = 0;
+                              for (int i = 0; i < categoryAmount.length; i++) {
+                                max = max + categoryAmount[i];
+                              }
+                              num diff = max -
+                                  int.parse(citiesRef.docs.first['limit']);
+
+                              // check if it is overlapped - warn the user about it
+                              if (citiesRef.docs.isNotEmpty) {
+                                if (max + tr.amount >
+                                    int.parse(citiesRef.docs.first['limit'])) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text('New category'),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                "You spent more in this category than your limit was by $diff. Please reconsider your budget",
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                }
+                              } else if (citiesRef.docs.isNotEmpty ||
+                                  tr.expense == true) {
+                                FirebaseFirestore.instance
+                                    .collection('category_limits')
+                                    .doc()
+                                    .set({
+                                  'category': tr.category.toString(),
+                                  'limit': "0",
+                                  'uid': _authService.getuser()!.uid
+                                });
+                              }
+                              //find the category with user uid, and check if it has limit
+
+                              //if not, normally add the transaction
+                              //if it has, check the amounts, and warn the user about possible over expense
+
+                              //store it in database
+                              FirebaseFirestore.instance
+                                  .collection('transactions')
+                                  .doc()
+                                  .set({
+                                'date': tr.date,
+                                'amount': tr.amount,
+                                'title': tr.title,
+                                'place': tr.place,
+                                'online': tr.online,
+                                'expense': tr.expense,
+                                'note': tr.note,
+                                'category': tr.category,
+                                'persistent': tr.persistent,
+                                'uid': _authService.getuser()!.uid
+                              });
+                              //put it in the calendar
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ListAllTrans()),
+                              );
                             }
-                          } else if (tr.expense == true) {
-                            FirebaseFirestore.instance
-                                .collection('category_limits')
-                                .doc()
-                                .set({
-                              'category': tr.category.toString(),
-                              'limit': "0",
-                              'uid': _authService.getuser()!.uid
-                            });
                           }
-                          //find the category with user uid, and check if it has limit
-
-                          //if not, normally add the transaction
-                          //if it has, check the amounts, and warn the user about possible over expense
-
-                          //store it in database
-                          FirebaseFirestore.instance
-                              .collection('transactions')
-                              .doc()
-                              .set({
-                            'date': tr.date,
-                            'amount': tr.amount,
-                            'title': tr.title,
-                            'place': tr.place,
-                            'online': tr.online,
-                            'expense': tr.expense,
-                            'note': tr.note,
-                            'category': tr.category,
-                            'persistent': tr.persistent,
-                            'uid': _authService.getuser()!.uid
-                          });
-                          //put it in the calendar
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ListAllTrans()),
-                          );
                         }),
                   ),
                   Container(

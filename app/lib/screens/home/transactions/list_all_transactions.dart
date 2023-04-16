@@ -64,11 +64,11 @@ class MyAppHomePage extends StatelessWidget {
             backgroundColor: Colors.lightBlue,
             child: document['expense'] == true
                 ? Icon(
-                    Icons.add,
+                    Icons.remove,
                     color: Colors.black,
                   )
                 : Icon(
-                    Icons.remove,
+                    Icons.add,
                     color: Colors.black,
                   ),
           ),

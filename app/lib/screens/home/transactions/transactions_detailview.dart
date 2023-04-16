@@ -46,11 +46,13 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ),
                     FutureBuilder(
-                        future: storage.downloadUrl(),
+                        future: storage.downloadUrl(
+                            _authService.getuser()!.uid, document["title"]),
                         builder: (BuildContext context,
                             AsyncSnapshot<String?> snapshot) {
                           if (!snapshot.hasData)
-                            return const Text("Waiting...");
+                            return const Text(
+                                "No picture for this transaction...");
                           if (snapshot.hasError)
                             return Text('Something went wrong');
 

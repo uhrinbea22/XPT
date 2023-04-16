@@ -1,8 +1,3 @@
-import 'dart:html';
-
-import 'package:app/screens/home/settings.dart';
-import 'package:app/screens/home/theme_manager.dart';
-import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -74,11 +69,11 @@ class ListAllTransByCateg extends StatelessWidget {
             backgroundColor: Colors.lightBlue,
             child: document['expense'] == true
                 ? Icon(
-                    Icons.add,
+                    Icons.remove,
                     color: Colors.black,
                   )
                 : Icon(
-                    Icons.remove,
+                    Icons.add,
                     color: Colors.black,
                   ),
           ),

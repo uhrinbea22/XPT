@@ -44,7 +44,8 @@ class _State extends State<RealtimeDiagram> {
   final AuthService _authService = AuthService();
   List<TransactionDetails> chartData = [];
   List<TransactionDetails> expenseData = [];
-  List<TransactionDetails> expense2Data = [];
+  List<TransactionDetails> limitData = [];
+  var maxTransactionAmount = 0;
 
   @override
   void dispose() {
@@ -57,11 +58,45 @@ class _State extends State<RealtimeDiagram> {
         .collection("transactions")
         .where('uid', isEqualTo: _authService.getuser()!.uid)
         .get();
-    List<TransactionDetails> list = snapShotsValue.docs
-        .map(
-            (e) => TransactionDetails(e.data()['category'], e.data()['amount']))
-        .toList();
-    if (!mounted) return;
+
+    List categories =
+        snapShotsValue.docs.map((e) => (e.data()['category'])).toList();
+
+    List amounts =
+        snapShotsValue.docs.map((e) => (e.data()['amount'])).toList();
+
+    List<String> categoriesOnce = [];
+    List<TransactionDetails> listWithDuplicates = [];
+    List<TransactionDetails> list = [];
+
+// find those categories which has more than one amount
+// than add those amounts
+    for (int i = 0; i < categories.length; i++) {
+      if (categoriesOnce.contains(categories[i])) {
+        TransactionDetails tr = listWithDuplicates
+            .firstWhere((element) => element.category == categories[i]);
+        tr.amount = (tr.amount! + amounts[i]) as int?;
+        listWithDuplicates.add(tr);
+      } else {
+        listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
+        categoriesOnce.add(categories[i]);
+      }
+    }
+
+// delete duplicates from list
+    for (int i = 0; i < listWithDuplicates.length; i++) {
+      if (list.contains(listWithDuplicates[i])) {
+      } else {
+        list.add(listWithDuplicates[i]);
+      }
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      if (list[i].amount! > maxTransactionAmount) {
+        maxTransactionAmount = list[i].amount!;
+      }
+    }
+
     setState(() {
       chartData = list;
     });
@@ -89,7 +124,7 @@ class _State extends State<RealtimeDiagram> {
     if (!mounted) return;
     if (mounted) {
       setState(() {
-        expense2Data = [
+        expenseData = [
           TransactionDetails("Expense", allExpenseAmount as int, Colors.black),
           TransactionDetails("Income", allIncomeAmount as int, Colors.green)
         ];
@@ -99,52 +134,94 @@ class _State extends State<RealtimeDiagram> {
 
   Future loadLimitData() async {
     //add amounts of categories and show them through the limit
-    num allExpenseAmount = 0;
-    num allIncomeAmount = 0;
-    num limit = 0;
-    List limitCategories = [];
-    Map limitMap = {};
-    Map amountMap = {};
-
-    var categoryLimitSnapshot = await FirebaseFirestore.instance
-        .collection("category_limits")
-        .where('uid', isEqualTo: _authService.getuser()!.uid)
-        .get();
-
-    List categoryNameList = categoryLimitSnapshot.docs.toList();
-
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("transactions")
         .where('uid', isEqualTo: _authService.getuser()!.uid)
         .get();
-    List list = snapShotsValue.docs.toList();
+
+    List categories =
+        snapShotsValue.docs.map((e) => (e.data()['category'])).toList();
+
+    List amounts =
+        snapShotsValue.docs.map((e) => (e.data()['amount'])).toList();
+
+    List<String> categoriesOnce = [];
+    List<TransactionDetails> listWithDuplicates = [];
+    List<TransactionDetails> list = [];
+
+// find those categories which has more than one amount
+// than add those amounts
+    for (int i = 0; i < categories.length; i++) {
+      if (categoriesOnce.contains(categories[i])) {
+        TransactionDetails tr = listWithDuplicates
+            .firstWhere((element) => element.category == categories[i]);
+        tr.amount = (tr.amount! + amounts[i]) as int?;
+        listWithDuplicates.add(tr);
+      } else {
+        listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
+        categoriesOnce.add(categories[i]);
+      }
+    }
+
+// delete duplicates from list
+    for (int i = 0; i < listWithDuplicates.length; i++) {
+      if (list.contains(listWithDuplicates[i])) {
+      } else {
+        list.add(listWithDuplicates[i]);
+      }
+    }
 
     for (int i = 0; i < list.length; i++) {
-      for (int j = 0; j < categoryNameList.length; j++) {
-        if (list[i]['category'] == categoryNameList[j]['category']) {
-          limit += list[i]['amount'];
-          limitCategories.add(list[i]['category']);
-          limitMap.addAll({list[i]['category']: categoryNameList[j]['limit']});
-          amountMap.addAll({list[i]['category']: limit});
+      if (list[i].amount! > maxTransactionAmount) {
+        maxTransactionAmount = list[i].amount!;
+      }
+    }
+
+    //list has the category name and the actual amount, we have to add the limit to that
+
+    var limitSnapshots = await FirebaseFirestore.instance
+        .collection("category_limits")
+        .where('uid', isEqualTo: _authService.getuser()!.uid)
+        .get();
+
+    List limitCategories =
+        limitSnapshots.docs.map((e) => (e.data()['category'])).toList();
+
+    List limitValues =
+        limitSnapshots.docs.map((e) => (e.data()['limit'])).toList();
+
+    for (int i = 0; i < limitValues.length; i++) {
+      print(limitValues[i]);
+    }
+    List<TransactionDetails> lista = [];
+
+    for (int i = 0; i < list.length; i++) {
+      for (int j = 0; j < limitCategories.length; j++) {
+        if (list[i].category == limitCategories[j]) {
+          var tr = TransactionDetails.limit(
+            list[i].category,
+            int.parse(limitValues[j]),
+            list[i].amount,
+          );
+          lista.add(tr);
+          print(limitValues[j]);
         }
       }
     }
-    //limitMap has the data we want to visualize
 
-    List<TransactionDetails> categoryLimitList = snapShotsValue.docs
-        .map((e) => TransactionDetails.expense(e.data()['amount'],
-            e.data()['expense'] ? 'Expense' : "Income", e.data()['color']))
-        .toList();
-
-    if (!mounted) return;
-    if (mounted) {
-      setState(() {
-        expenseData = [
-          TransactionDetails("Expense", allExpenseAmount as int),
-          TransactionDetails("Income", allIncomeAmount as int)
-        ];
-      });
+    for (int i = 0; i < lista.length; i++) {
+      print("Category");
+      print(lista[i].category);
+      print('amount');
+      print(lista[i].amount);
+      print('limit');
+      print(lista[i].categoryLimit);
+      print(lista[i].categoryLimit.runtimeType);
     }
+
+    setState(() {
+      limitData = lista;
+    });
   }
 
   @override
@@ -167,10 +244,12 @@ class _State extends State<RealtimeDiagram> {
                 border: Border.all(),
               ),
               child: SfCartesianChart(
-                title: ChartTitle(text: "ELSO"),
+                title: ChartTitle(text: "Transactions group by categories"),
                 primaryXAxis: CategoryAxis(),
-                primaryYAxis:
-                    NumericAxis(minimum: 0, maximum: 150000, interval: 1000),
+                primaryYAxis: NumericAxis(
+                    minimum: 0.0,
+                    maximum: double.parse(maxTransactionAmount.toString()),
+                    interval: 1000.0),
                 series: <ChartSeries>[
                   ColumnSeries<TransactionDetails, String>(
                       dataLabelSettings: DataLabelSettings(
@@ -192,14 +271,14 @@ class _State extends State<RealtimeDiagram> {
                 border: Border.all(),
               ),
               child: SfCircularChart(
-                title: ChartTitle(text: "masodik"),
+                title: ChartTitle(text: "Transactions group by categories"),
                 series: <PieSeries>[
                   PieSeries<TransactionDetails, String>(
                       dataLabelSettings: DataLabelSettings(
                         isVisible: true,
                         color: Colors.purple,
                       ),
-                      dataSource: expenseData,
+                      dataSource: chartData,
                       dataLabelMapper: (TransactionDetails details, _) =>
                           details.category,
                       xValueMapper: (TransactionDetails details, _) =>
@@ -209,26 +288,71 @@ class _State extends State<RealtimeDiagram> {
                 ],
               ),
             ),
-            //TODO : colors are not good
+            Container(
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                ),
+                child: SfCircularChart(
+                  title: ChartTitle(text: "Expense and income ratio"),
+                  series: <PieSeries>[
+                    PieSeries<TransactionDetails, String>(
+                        dataLabelSettings: DataLabelSettings(
+                          isVisible: true,
+                          color: Colors.purple,
+                        ),
+                        dataLabelMapper: (TransactionDetails details, _) =>
+                            details.category,
+                        dataSource: expenseData,
+                        xValueMapper: (TransactionDetails details, _) =>
+                            details.expense.toString(),
+                        yValueMapper: (TransactionDetails details, _) =>
+                            details.amount),
+                  ],
+                )),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(),
               ),
-              child: SfCircularChart(
-                title: ChartTitle(text: "harmadik"),
-                series: <PieSeries>[
-                  PieSeries<TransactionDetails, String>(
-                      dataLabelSettings: DataLabelSettings(
-                        isVisible: true,
-                        color: Colors.purple,
-                      ),
+              child: SfCartesianChart(
+                title: ChartTitle(text: "Transactions group by categories"),
+                primaryXAxis: CategoryAxis(),
+                primaryYAxis: NumericAxis(),
+                enableSideBySideSeriesPlacement: false,
+                legend: Legend(
+                  isVisible: true,
+                  legendItemBuilder:
+                      (String name, dynamic series, dynamic point, int index) {
+                    return SizedBox(
+                        height: 20.0,
+                        width: 50.0,
+                        child: Row(children: <Widget>[
+                          SizedBox(child: Text(series.name)),
+                        ]));
+                  },
+                ),
+                series: <ChartSeries>[
+                  ColumnSeries<TransactionDetails, String>(
+                      width: 0.4,
+                      dataSource: limitData,
                       dataLabelMapper: (TransactionDetails details, _) =>
-                          details.category,
-                      dataSource: expense2Data,
+                          "Category Limit",
                       xValueMapper: (TransactionDetails details, _) =>
-                          details.expense.toString(),
+                          details.category,
                       yValueMapper: (TransactionDetails details, _) =>
-                          details.amount),
+                          details.categoryLimit,
+                      color: Colors.pink,
+                      name: "Limit"),
+                  ColumnSeries<TransactionDetails, String>(
+                      dataSource: limitData,
+                      width: 0.2,
+                      dataLabelMapper: (TransactionDetails details, _) =>
+                          details.categoryLimit.toString(),
+                      xValueMapper: (TransactionDetails details, _) =>
+                          details.category,
+                      yValueMapper: (TransactionDetails details, _) =>
+                          details.amount,
+                      color: Colors.lightBlue,
+                      name: "Spent"),
                 ],
               ),
             ),
@@ -240,10 +364,12 @@ class _State extends State<RealtimeDiagram> {
 class TransactionDetails {
   TransactionDetails(this.category, this.amount, [this.color]);
   TransactionDetails.expense(this.amount, this.expense, [this.color]);
+  TransactionDetails.limit(this.category, this.categoryLimit, this.amount);
   String? category;
   int? amount;
   String? expense;
   Color? color;
+  int? categoryLimit;
 
   factory TransactionDetails.fromJson(Map<String, dynamic> parsedJson) {
     return TransactionDetails(

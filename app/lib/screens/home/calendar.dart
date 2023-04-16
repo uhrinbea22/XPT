@@ -66,7 +66,7 @@ class Cal extends State<MyCalendar> {
   void initState() {
     _controller = CalendarController();
     getDataFromFireStore().then((results) {
-      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
         setState(() {});
       });
     });

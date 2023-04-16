@@ -1,9 +1,9 @@
-import 'dart:html';
 import 'dart:io';
 import 'package:app/screens/home/theme_manager.dart';
 import 'package:app/screens/home/transactions/fileupload.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
+import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -150,7 +150,18 @@ class MyCustomFormState extends State<MyCustomForm> {
         children: [ */
     return Column(children: [
       ListTile(
-        leading: CircleAvatar(backgroundColor: Colors.grey),
+        leading: CircleAvatar(
+          backgroundColor: Colors.lightBlue,
+          child: document['expense'] == true
+              ? Icon(
+                  Icons.remove,
+                  color: Colors.black,
+                )
+              : Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
+        ),
         title: Row(
           children: [
             Expanded(
@@ -165,6 +176,14 @@ class MyCustomFormState extends State<MyCustomForm> {
             style: TextStyle(color: Colors.black)
             //Theme.of(context).textTheme.displaySmall,
             ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TransactionDetailview(document['title']),
+            ),
+          );
+        },
         /*  )
         ],
       ), */

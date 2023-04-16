@@ -4,14 +4,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 class Storage {
   final FirebaseStorage storage = FirebaseStorage.instance;
 
-
-  Future<String?> downloadUrl() async {
-       var downloadURL = await FirebaseStorage.instance
+  Future<String?> downloadUrl(String userid, String transactionId) async {
+    print("FUGGVENXMEGHIVVA");
+    var downloadURL = await FirebaseStorage.instance
         .ref()
-        .child("file/Gabinak3.png")
+        .child("$userid")
+        .child("$transactionId")
         .getDownloadURL();
     print(downloadURL);
     return downloadURL;
-
   }
 }
