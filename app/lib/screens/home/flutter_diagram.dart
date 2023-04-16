@@ -76,7 +76,7 @@ class _State extends State<RealtimeDiagram> {
         TransactionDetails tr = listWithDuplicates
             .firstWhere((element) => element.category == categories[i]);
         tr.amount = (tr.amount! + amounts[i]) as int?;
-        listWithDuplicates.add(tr);
+        // nem kell hozzaadni listWithDuplicates.add(tr);
       } else {
         listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
         categoriesOnce.add(categories[i]);
@@ -156,7 +156,7 @@ class _State extends State<RealtimeDiagram> {
         TransactionDetails tr = listWithDuplicates
             .firstWhere((element) => element.category == categories[i]);
         tr.amount = (tr.amount! + amounts[i]) as int?;
-        listWithDuplicates.add(tr);
+       // listWithDuplicates.add(tr);
       } else {
         listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
         categoriesOnce.add(categories[i]);

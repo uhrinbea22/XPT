@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(ListAllTrans());
@@ -50,6 +51,7 @@ class MyAppHomePage extends StatelessWidget {
   final String title;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    final numberFormat = new NumberFormat("#,###", "en_US");
     return Column(
       children: [
         // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
@@ -85,7 +87,7 @@ class MyAppHomePage extends StatelessWidget {
               ),
             ],
           ),
-          subtitle: Text(document['amount'].toString(),
+          subtitle: Text(numberFormat.format(document['amount']),
               style: TextStyle(color: Colors.black)
               //Theme.of(context).textTheme.displaySmall,
               ),
@@ -125,7 +127,7 @@ class MyAppHomePage extends StatelessWidget {
             .where('uid', isEqualTo: user!.uid)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Text("Waiting...");
+          if (!snapshot.hasData) return const Text("No data");
           if (snapshot.hasError) return Text('Something went wrong');
           // if (snapshot.hasData) return Text('has data');
 

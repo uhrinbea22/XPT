@@ -80,8 +80,8 @@ class MyCustomFormState extends State<MyCustomForm> {
           child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("transactions")
-                  .where("category", isNotEqualTo: '')
-                  //  .where("uid", isEqualTo: _authService.getuser()!.uid)
+                  //.where("category", isNotEqualTo: '')
+                  .where("uid", isEqualTo: _authService.getuser()!.uid)
                   .snapshots(),
               builder: (context, snapshot) {
                 // if not has data - loading
@@ -123,7 +123,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             stream: FirebaseFirestore.instance
                 .collection('transactions')
                 .where("uid", isEqualTo: _authService.getuser()!.uid)
-                .where("category", isEqualTo: selectedCategory)
+                //.where("category", isEqualTo: selectedCategory)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Text("Waiting...");

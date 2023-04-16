@@ -51,6 +51,7 @@ class TransactionDetailview extends StatelessWidget {
                         builder: (BuildContext context,
                             AsyncSnapshot<String?> snapshot) {
                           if (!snapshot.hasData)
+                            //rather return null or nothing
                             return const Text(
                                 "No picture for this transaction...");
                           if (snapshot.hasError)
@@ -314,7 +315,7 @@ class TransactionDetailview extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection("transactions")
             .where("title", isEqualTo: title)
-            //.where("uid", isEqualTo: user!.uid)
+            .where("uid", isEqualTo: user!.uid)
             .get()
             .asStream(),
         builder: (context, snapshot) {

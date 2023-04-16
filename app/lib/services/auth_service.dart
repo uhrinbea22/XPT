@@ -1,4 +1,5 @@
 import 'package:app/models/userModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -42,6 +43,14 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
+      FirebaseFirestore.instance.collection('mail').add({
+        'to': email,
+        'message': {
+          'subject': 'Hello from XPT!',
+          'text':
+              'Welcome in XPT Community, where we keep a budget and follow our transactions here. If you have any questions about the app, please let us know at xpt_expense_tracker_app@gmail.com',
+        },
+      });
       return _userModelFromFirebase(user);
     } catch (e) {
       return e.toString();
@@ -69,14 +78,14 @@ class AuthService {
     }
   }
 
-  Future<String> resetPassword({required String email}) async {
+  Future<bool> resetPassword({required String email}) async {
     // TODO : check if email has been registered already
 
-    String _status = "";
+    bool _status = false;
     await _auth
         .sendPasswordResetEmail(email: email)
-        .then((value) => _status = "success")
-        .catchError((e) => _status = "error");
+        .then((value) => _status = true)
+        .catchError((e) => _status = false);
     return _status;
   }
 }

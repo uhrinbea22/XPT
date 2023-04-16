@@ -53,9 +53,8 @@ class _SignUpState extends State<SignUp> {
               ),
               const SizedBox(height: 20.0),
               TextFormField(
-                validator: (value) => value!.length < 6
-                    ? 'Enter a password 6+ charts long'
-                    : null,
+                validator: (value) =>
+                    value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 obscureText: true,
                 onChanged: (value) {
                   setState(() => password = value);
@@ -74,7 +73,7 @@ class _SignUpState extends State<SignUp> {
                           await _authService.signUp(email, password);
                       if (result != null) {
                         setState(() {
-                          error = result.toString().split(']')[1];
+                          error = "Unsuccessful registration";
                           loading = false;
                         });
                       }

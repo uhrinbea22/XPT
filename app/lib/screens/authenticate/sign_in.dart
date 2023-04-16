@@ -17,6 +17,15 @@ class _SignInState extends State<SignIn> {
   String password = '';
   String resetPasswordStatus = '';
 
+  bool _isPressed = false;
+
+  // This function is called when the button gets pressed
+  void _myCallback() {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,11 +60,12 @@ class _SignInState extends State<SignIn> {
                     onChanged: (value) {
                       setState(() => email = value);
                     },
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 20.0),
                   TextFormField(
                     validator: (value) => value!.length < 6
-                        ? 'Enter a password 6+ charts long'
+                        ? 'Enter a password 6+ chars long'
                         : null,
                     obscureText: true,
                     onChanged: (value) {
@@ -64,18 +74,19 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
-                      child: const Text(
-                        'Sign in',
-                      ),
-                      onPressed: () async {
-                        dynamic result =
-                            await _authService.signIn(email, password);
-                        if (result == null) {
-                          setState(() {
-                            error = 'Could not sign in with the credentials';
-                          });
-                        }
-                      }),
+                    child: const Text(
+                      'Sign in',
+                    ),
+                    onPressed: () async {
+                      dynamic result =
+                          await _authService.signIn(email, password);
+                      if (result == null) {
+                        setState(() {
+                          error = 'Could not sign in with the credentials';
+                        });
+                      }
+                    },
+                  ),
                   const SizedBox(height: 12.0),
                   Text(
                     error,
@@ -83,21 +94,24 @@ class _SignInState extends State<SignIn> {
                   ),
                 ],
               ))),
-          ElevatedButton(
-              onPressed: () async {
-                final _status =
-                    await _authService.resetPassword(email: email.toString());
-                if (_status == "success") {
-                  setState(() {
-                    resetPasswordStatus = 'Email sent';
-                  });
-                } else {
-                  setState(() {
-                    resetPasswordStatus = 'Error happened!';
-                  });
-                }
-              },
-              child: const Text("Reset pasword")),
+          IgnorePointer(
+            ignoring: true,
+            child: ElevatedButton(
+                onPressed: () async {
+                  final _status =
+                      await _authService.resetPassword(email: email.toString());
+                  if (_status) {
+                    setState(() {
+                      resetPasswordStatus = 'Email sent';
+                    });
+                  } else {
+                    setState(() {
+                      resetPasswordStatus = 'Error happened!';
+                    });
+                  }
+                },
+                child: const Text("Reset pasword")),
+          ),
           Text(
             resetPasswordStatus,
             style: const TextStyle(color: Colors.red, fontSize: 14.0),

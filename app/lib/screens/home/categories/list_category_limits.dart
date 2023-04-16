@@ -15,22 +15,24 @@ class CategoryLimits extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   // return MyAppHomePage(title: "Category limits");
-     return MaterialApp(
+    // return MyAppHomePage(title: "Category limits");
+    return MaterialApp(
       title: 'Category Limits',
-        theme: Theme.of(context),
+      theme: Theme.of(context),
       home: MyAppHomePage(title: 'Category limits'),
-    ); 
+    );
   }
 }
 
 class MyAppHomePage extends StatelessWidget {
   MyAppHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
-  final limitController = TextEditingController();
+
   int limitValue = 0;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    final limitController = TextEditingController(text: document['limit']);
+
     return ListTile(
       leading: CircleAvatar(backgroundColor: Colors.grey),
       title: Row(
@@ -54,7 +56,8 @@ class MyAppHomePage extends StatelessWidget {
             builder: (context) {
               return AlertDialog(
                 title: const Text('Set max limit'),
-                content: TextField(
+                content: TextFormField(
+                  //initialValue: document['limit'].toString(),
                   keyboardType: TextInputType.number,
                   controller: limitController,
                   decoration: const InputDecoration(hintText: 'Type limit'),

@@ -17,6 +17,7 @@ import 'package:app/screens/home/categories/list_category_limits.dart';
 
 class NavDrawer extends StatelessWidget {
   final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Drawer(

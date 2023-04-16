@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -40,6 +41,7 @@ class CreateTransaction extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       theme: Theme.of(context),
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         drawer: NavDrawer(),
         appBar: AppBar(
@@ -174,25 +176,19 @@ class MyCustomFormState extends State<MyCustomForm> {
   Future<bool> titleInDb(String title) async {
     var limitSnapshots = await FirebaseFirestore.instance
         .collection("transactions")
-        .where('uid', isEqualTo: _authService.getuser()!.uid)
+        .where("uid", isEqualTo: _authService.getuser()!.uid)
+        .where('title', isEqualTo: title)
         .get();
 
-    List titles = limitSnapshots.docs.map((e) => (e.data()['title'])).toList();
-    print(titles);
-
-    for (int i = 0; i < titles.length; i++) {
-      if (titles.contains(title)) {
-        print("$title in db already");
-        setState(() {
-          titleInDbAlready = true;
-        });
-        return true;
-      }
-    }
-    print("$title is NOT in db");
-    setState(() {
-      titleInDbAlready = false;
-    });
+    if (limitSnapshots.docs.isNotEmpty) {
+      setState(() {
+        titleInDbAlready = true;
+      });
+      return true;
+    } else
+      setState(() {
+        titleInDbAlready = false;
+      });
     return false;
   }
 
@@ -240,8 +236,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ),
               )),
               TextFormField(
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r"[0-9]"),
+                  )
+                ],
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || int.parse(value) < 0) {
                     return 'Please enter the amount';
                   }
                   return null;
@@ -379,13 +381,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
                             .collection("transactions")
-                            .where("category", isNotEqualTo: '')
-                            //.where("category", i)
+                            //.where("category", isNotEqualTo: "")
+                            .where("uid",
+                                isEqualTo: _authService.getuser()!.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
                           // if not has data - loading
                           if (!snapshot.hasData) {
-                            return const Text("Loading.....");
+                            return const Text("No data");
                             //if has data
                           } else {
                             List<DropdownMenuItem> dropdownList = [];
@@ -488,14 +491,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                         child: const Text('Submit'),
                         onPressed: () async {
                           //check if datas are all valid
-                          if (await titleInDb(myController["title"]!.text) ==
-                              true) {
+                          if (await titleInDb(myController["title"]!.text)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text(
                                       'Add another title, this is already in your transactions')),
                             );
-                            print("TRUE");
                           } else {
                             if (_formKey.currentState!.validate()) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -542,8 +543,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                               for (int i = 0; i < categoryAmount.length; i++) {
                                 max = max + categoryAmount[i];
                               }
-                              num diff = max -
-                                  int.parse(citiesRef.docs.first['limit']);
+
+                              int limit = 0;
+                              if (citiesRef.docs.isNotEmpty) {
+                                limit =
+                                    int.parse(citiesRef.docs.first['limit']);
+                              }
+                              num diff = max - limit;
 
                               // check if it is overlapped - warn the user about it
                               if (citiesRef.docs.isNotEmpty) {
