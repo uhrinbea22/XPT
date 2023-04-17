@@ -16,6 +16,7 @@ class _SignInState extends State<SignIn> {
   String email = '';
   String password = '';
   String resetPasswordStatus = '';
+  bool absorbValue = false;
 
   bool _isPressed = false;
 
@@ -73,19 +74,27 @@ class _SignInState extends State<SignIn> {
                     },
                   ),
                   const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    child: const Text(
-                      'Sign in',
-                    ),
-                    onPressed: () async {
-                      dynamic result =
-                          await _authService.signIn(email, password);
-                      if (result == null) {
+                  AbsorbPointer(
+                    absorbing: absorbValue,
+                    child: ElevatedButton(
+                      child: const Text(
+                        'Sign in',
+                      ),
+                      onPressed: () async {
                         setState(() {
-                          error = 'Could not sign in with the credentials';
+                          absorbValue = true;
                         });
-                      }
-                    },
+
+                        dynamic result =
+                            await _authService.signIn(email, password);
+                        if (result == null) {
+                          setState(() {
+                            error = 'Could not sign in with the credentials';
+                            absorbValue = false;
+                          });
+                        }
+                      },
+                    ),
                   ),
                   const SizedBox(height: 12.0),
                   Text(

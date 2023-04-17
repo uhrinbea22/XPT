@@ -33,54 +33,31 @@ class TransactionDetailview extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Amount',
-                            ),
-                          ),
-                        ],
-                      ),
+                    Offstage(
+                      offstage: document['picture'] != "" ? false : true,
+                      child: FutureBuilder(
+                          future: storage.downloadUrl(
+                              _authService.getuser()!.uid, document["picture"]),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.waiting ||
+                                !snapshot.hasData) {
+                              return LoadingAnimationWidget.staggeredDotsWave(
+                                color: Colors.green,
+                                size: 50,
+                              );
+                            }
+                            if (snapshot.hasError)
+                              return Text('Something went wrong');
+                            return Container(
+                              width: 150,
+                              height: 175,
+                              child: Image.network(snapshot.data!),
+                            );
+                          }),
                     ),
-                    FutureBuilder(
-                        future: storage.downloadUrl(
-                            _authService.getuser()!.uid, document["title"]),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<String?> snapshot) {
-                          if (!snapshot.hasData)
-                            //rather return null or nothing
-                            return const Text(
-                                "No picture for this transaction...");
-                          if (snapshot.hasError)
-                            return Text('Something went wrong');
-
-                          return Container(
-                            width: 300,
-                            height: 250,
-                            child: Image.network(snapshot.data!),
-                          );
-                        }),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Icon(
-                            document['expense'] == false
-                                ? Icons.add
-                                : Icons.remove,
-                            color: Colors.black,
-                            size: 30.0,
-                          ),
-                          Text(document['amount'].toString()),
-                        ],
-                      ),
-                    ),
-                    Padding(
+                    /*  Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -92,9 +69,9 @@ class TransactionDetailview extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
+                    ), */
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -104,32 +81,75 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+                    /*  Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
                             child: Text(
-                              'Place',
+                              'Amount',
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    ), */
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
+                          Icon(
+                            document['expense'] == false
+                                ? Icons.add
+                                : Icons.remove,
+                            color: Colors.black,
+                            size: 20.0,
+                          ),
+                          Text(
+                            document['amount'].toString(),
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                    /* Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Icon(
+                            Icons.place_rounded,
+                            color: Colors.black,
+                            size: 20.0,
+                          ),
+                          /*   Expanded(
+                           
+                            child: Text(
+                              'Place',
+                            ),
+                          ), */
+                        ],
+                      ),
+                    ), */
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Icon(
+                            Icons.place_sharp,
+                            color: Colors.black,
+                            size: 20.0,
+                          ),
                           Expanded(
                             child: Text(document['place']),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+                    /*   Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -140,21 +160,27 @@ class TransactionDetailview extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(document['persistent']
-                                ? 'Regular '
-                                : 'Not regular '),
-                          ),
-                        ],
+                    ), */
+
+                    //only show when it is regular
+                    Offstage(
+                      offstage: document['persistent'] == true ? false : true,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: Text(document['persistent']
+                                  ? 'Regular '
+                                  : 'Not regular '),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Padding(
+
+                    /*    Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -166,19 +192,20 @@ class TransactionDetailview extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
+                    ), */
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
+                          Icon(Icons.category),
                           Expanded(
                             child: Text(document['category']),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
+                    /*     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -190,22 +217,24 @@ class TransactionDetailview extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
+                    ), */
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
+                          Icon(Icons.date_range),
                           Text((document['date'] as Timestamp)
                               .toDate()
-                              .toString()),
+                              .toString()
+                              .substring(0, 10)),
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
+                    /*   Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -217,21 +246,25 @@ class TransactionDetailview extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                                document['online'] ? 'Online' : 'Not online'),
-                          ),
-                        ],
+                    ), */
+                    Offstage(
+                      offstage: document['online'] == true ? false : true,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                  document['online'] ? 'Online' : 'Not online'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 4, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [

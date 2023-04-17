@@ -17,6 +17,7 @@ class _SignUpState extends State<SignUp> {
   String email = '';
   String password = '';
   String error = '';
+  bool absorbValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,24 +62,32 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const SizedBox(height: 20.0),
-              ElevatedButton(
-                  child: const Text(
-                    'Sign up',
-                    style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() => loading = true);
-                      dynamic result =
-                          await _authService.signUp(email, password);
-                      if (result != null) {
-                        setState(() {
-                          error = "Unsuccessful registration";
-                          loading = false;
-                        });
+              AbsorbPointer(
+                absorbing: absorbValue,
+                child: ElevatedButton(
+                    child: const Text(
+                      'Sign up',
+                      style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        absorbValue = true;
+                      });
+
+                      if (_formKey.currentState!.validate()) {
+                        setState(() => loading = true);
+                        dynamic result =
+                            await _authService.signUp(email, password);
+                        if (result != null) {
+                          setState(() {
+                            error = "Unsuccessful registration";
+                            absorbValue = false;
+                            loading = false;
+                          });
+                        }
                       }
-                    }
-                  }),
+                    }),
+              ),
               const SizedBox(height: 12.0),
               Text(
                 error,

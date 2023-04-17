@@ -128,9 +128,7 @@ class MyAppHomePage extends StatelessWidget {
             .where('uid', isEqualTo: user!.uid)
             .snapshots(),
         builder: (context, snapshot) {
-        
           if (snapshot.hasError) return Text('Something went wrong');
-  
 
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
