@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../services/auth_service.dart';
 
 class TransactionDetailview extends StatelessWidget {
@@ -319,8 +320,14 @@ class TransactionDetailview extends StatelessWidget {
             .get()
             .asStream(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Text("Waiting...");
           if (snapshot.hasError) return Text('Something went wrong');
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !snapshot.hasData) {
+            return LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.green,
+              size: 50,
+            );
+          }
 
           return ListView.builder(
             itemExtent: 1000.0,

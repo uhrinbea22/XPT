@@ -1,17 +1,10 @@
-import 'dart:math';
-import 'package:app/screens/home/flutter_diagram.dart';
-import 'package:app/screens/home/notification.dart';
-import 'package:app/screens/home/theme_manager.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../../firebase_options.dart';
 import '../../services/auth_service.dart';
@@ -23,10 +16,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(Calendar());
-  /* runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => new ThemeNotifier(),
-    child: Calendar(),
-  )); */
 }
 
 class Calendar extends StatelessWidget {
@@ -40,7 +29,6 @@ class Calendar extends StatelessWidget {
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(appTitle),
-          backgroundColor: Colors.grey,
         ),
         body: MyCalendar(),
       ),
@@ -60,7 +48,7 @@ class Cal extends State<MyCalendar> {
   List<Color> _colorCollection = <Color>[];
   MeetingDataSource? events;
   final databaseReference = FirebaseFirestore.instance;
-  late List<Meeting> meetings;
+  late List<TransactionEvent> meetings;
 
   @override
   void initState() {
@@ -90,25 +78,27 @@ class Cal extends State<MyCalendar> {
         .where('expense', isEqualTo: true)
         .get();
 
-    List<Meeting> incomes = incomeSnapShots.docs
-        .map((e) => Meeting(
-            e.data()['title'],
-            (e.data()['date'] as Timestamp).toDate(),
-            (e.data()['date'] as Timestamp).toDate(),
-            Colors.green,
-            true))
+    List<TransactionEvent> incomes = incomeSnapShots.docs
+        .map((e) => TransactionEvent(
+              e.data()['title'],
+              (e.data()['date'] as Timestamp).toDate(),
+              (e.data()['date'] as Timestamp).toDate(),
+              true,
+              Colors.green,
+            ))
         .toList();
 
-    List<Meeting> expenses = expenseSnapShots.docs
-        .map((e) => Meeting(
-            e.data()['title'],
-            (e.data()['date'] as Timestamp).toDate(),
-            (e.data()['date'] as Timestamp).toDate(),
-            Colors.black,
-            true))
+    List<TransactionEvent> expenses = expenseSnapShots.docs
+        .map((e) => TransactionEvent(
+              e.data()['title'],
+              (e.data()['date'] as Timestamp).toDate(),
+              (e.data()['date'] as Timestamp).toDate(),
+              true,
+              Colors.black,
+            ))
         .toList();
 
-    List<Meeting> bigList = incomes + expenses;
+    List<TransactionEvent> bigList = incomes + expenses;
 
     setState(() {
       events = MeetingDataSource(bigList);
@@ -126,7 +116,7 @@ class Cal extends State<MyCalendar> {
   }
 
   void calendarTapped(CalendarTapDetails calendarTapDetails) {
-    Meeting meeting = calendarTapDetails.appointments![0];
+    TransactionEvent meeting = calendarTapDetails.appointments![0];
     if (calendarTapDetails.targetElement == CalendarElement.appointment) {
       Navigator.push(
         context,
@@ -142,21 +132,33 @@ class Cal extends State<MyCalendar> {
         drawer: NavDrawer(),
         body: Column(
           children: [
-            ElevatedButton(
-              onPressed: () => setState(() {
-                if (_controller.view == CalendarView.day) {
-                  _controller.view = CalendarView.month;
-                } else {
-                  _controller.view = CalendarView.day;
-                }
-                print(_controller.view);
-              }),
-              child: Text('Change the view'),
+            Container(
+              color: Colors.white,
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                ElevatedButton(
+                  onPressed: () => setState(() {
+                    _controller.view = CalendarView.month;
+                  }),
+                  child: Text('Month view'),
+                ),
+                ElevatedButton(
+                  onPressed: () => setState(() {
+                    _controller.view = CalendarView.week;
+                  }),
+                  child: Text('Week view'),
+                ),
+                ElevatedButton(
+                  onPressed: () => setState(() {
+                    _controller.view = CalendarView.day;
+                  }),
+                  child: Text('Daily view'),
+                ),
+              ]),
             ),
             SfCalendar(
               controller: _controller,
               view: CalendarView.month,
-              //initialDisplayDate: DateTime(2023, 4, 5, 9, 0, 0),
               dataSource: events,
               monthViewSettings: MonthViewSettings(
                 showAgenda: true,
@@ -169,18 +171,8 @@ class Cal extends State<MyCalendar> {
 }
 
 class TransactionEvent {
-  TransactionEvent(this.eventName, this.startTime, this.endTime, this.isAllDay,
-      this.background);
-
-  String eventName;
-  DateTime startTime;
-  DateTime endTime;
-  bool isAllDay;
-  Color background;
-}
-
-class Meeting {
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+  TransactionEvent(
+      this.eventName, this.from, this.to, this.isAllDay, this.background);
 
   String eventName;
   DateTime from;
@@ -190,7 +182,7 @@ class Meeting {
 }
 
 class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Meeting> source) {
+  MeetingDataSource(List<TransactionEvent> source) {
     appointments = source;
   }
 

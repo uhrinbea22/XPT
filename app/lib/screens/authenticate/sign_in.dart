@@ -2,8 +2,8 @@ import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
-  final Function toggelView;
-  SignIn({required this.toggelView});
+  final Function toggleView;
+  SignIn({required this.toggleView});
   @override
   _SignInState createState() => _SignInState();
 }
@@ -37,7 +37,7 @@ class _SignInState extends State<SignIn> {
           actions: <Widget>[
             TextButton.icon(
                 onPressed: () {
-                  widget.toggelView();
+                  widget.toggleView();
                 },
                 style: TextButton.styleFrom(
                   primary: const Color.fromARGB(255, 25, 28, 29),

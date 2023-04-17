@@ -21,18 +21,14 @@ class NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
           const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
               child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.black, fontSize: 25),
-              )),
+            'Menu',
+            style: TextStyle(color: Colors.black, fontSize: 25),
+          )),
           ExpansionTile(
             leading: const Icon(Icons.border_color),
             title: const Text('Transactions'),
@@ -68,7 +64,6 @@ class NavDrawer extends StatelessWidget {
               ),
             ],
           ),
-
           ListTile(
             leading: const Icon(Icons.calendar_month),
             title: const Text('Calendar'),
@@ -99,7 +94,6 @@ class NavDrawer extends StatelessWidget {
               ),
             },
           ),
-
           ListTile(
             leading: const Icon(Icons.verified_user_sharp),
             title: const Text('Profile'),
@@ -110,7 +104,6 @@ class NavDrawer extends StatelessWidget {
               ),
             },
           ),
-          // TODO : move it to createTransaction
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),

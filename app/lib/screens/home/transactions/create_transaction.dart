@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -91,6 +92,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   File? _photo;
   final ImagePicker _picker = ImagePicker();
+  String imgName = "";
 
   @override
   void initState() {
@@ -129,14 +131,14 @@ class MyCustomFormState extends State<MyCustomForm> {
     //TODO : create directory with user_id and insert pic as the transaction__id
 
     if (_photo == null) return;
-    final fileName = myController['title']!.text.toString();
-    //basename(_photo!.path);
+    //final fileName = myController['title']!.text.toString();
+    imgName = basename(_photo!.path);
     String directory = _authService.getuser()!.uid;
 
     try {
       final ref = firebase_storage.FirebaseStorage.instance
           .ref("$directory/")
-          .child("/$fileName");
+          .child("/$imgName");
       await ref.putFile(_photo!);
     } catch (e) {
       print('error occured');
@@ -387,12 +389,15 @@ class MyCustomFormState extends State<MyCustomForm> {
                             .snapshots(),
                         builder: (context, snapshot) {
                           // if not has data - loading
-                          if (!snapshot.hasData) {
-                            return const Text("No data");
-                            //if has data
+                          if (snapshot.connectionState ==
+                                  ConnectionState.waiting ||
+                              !snapshot.hasData) {
+                            return LoadingAnimationWidget.staggeredDotsWave(
+                              color: Colors.green,
+                              size: 50,
+                            );
                           } else {
-                            List<DropdownMenuItem> dropdownList = [];
-
+                           
                             for (int i = 0;
                                 i < snapshot.data!.docs.length;
                                 i++) {
@@ -506,16 +511,16 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                               //create a transaction
                               final tr = Transact(
-                                DateTime.parse(myController['date']!.text),
-                                int.parse(myController['amount']!.text),
-                                persistent_value,
-                                dropdownvalue,
-                                online_value,
-                                myController['notes']!.text,
-                                myController['place']!.text,
-                                expense_value,
-                                myController['title']!.text,
-                              );
+                                  DateTime.parse(myController['date']!.text),
+                                  int.parse(myController['amount']!.text),
+                                  persistent_value,
+                                  dropdownvalue,
+                                  online_value,
+                                  myController['notes']!.text,
+                                  myController['place']!.text,
+                                  expense_value,
+                                  myController['title']!.text,
+                                  imgName);
 
                               //get the category limit document for the transactions category
                               final citiesRef = await FirebaseFirestore.instance

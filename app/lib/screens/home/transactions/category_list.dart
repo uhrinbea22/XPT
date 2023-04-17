@@ -10,6 +10,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import '../../../firebase_options.dart';
@@ -86,7 +87,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               builder: (context, snapshot) {
                 // if not has data - loading
                 if (!snapshot.hasData) {
-                  return const Text("Loading.....");
+                  return const Text("No data");
                   //if has data
                 } else {
                   for (int i = 0; i < snapshot.data!.docs.length; i++) {
@@ -126,8 +127,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                 //.where("category", isEqualTo: selectedCategory)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Text("Waiting...");
               if (snapshot.hasError) return Text('Something went wrong');
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  !snapshot.hasData) {
+                return LoadingAnimationWidget.staggeredDotsWave(
+                  color: Colors.green,
+                  size: 50,
+                );
+              }
               // if (snapshot.hasData) return Text('has data');
 
               return ListView.builder(

@@ -4,6 +4,7 @@ import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../services/auth_service.dart';
 
 void main() {
@@ -97,8 +98,14 @@ class MyAppHomePage extends StatelessWidget {
             .where("uid", isEqualTo: _authService.getuser()!.uid)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Text("Waiting...");
           if (snapshot.hasError) return Text('Something went wrong');
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              !snapshot.hasData) {
+            return LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.green,
+              size: 50,
+            );
+          }
           // if (snapshot.hasData) return Text('has data');
 
           if (snapshot.connectionState == ConnectionState.waiting) {

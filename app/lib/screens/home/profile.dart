@@ -50,7 +50,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
             ),
             Text(displayName == null ? "Set a displayname" : displayName),
 
-            //TODO : do this as setstate
+            
 
             TextFormField(
               controller: displayNameController,

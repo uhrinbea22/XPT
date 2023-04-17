@@ -12,7 +12,7 @@ class Transact {
   String? place;
   bool expense;
   // TODO : store the picture in Firebase Storage with title : transaction_id, with directory_id : user_id
-  //final Picture? string;
+  String? picture;
   String? title;
 
   Transact(
@@ -25,7 +25,8 @@ class Transact {
       this.place,
       this.expense,
       //this.picture,
-      this.title);
+      this.title,
+      this.picture);
 
   Map<String, dynamic> toJson() => _transactToJson(this);
 
@@ -45,7 +46,8 @@ class Transact {
         json['place'] as String,
         json['expense'] as bool,
         //json['picture'] as Picture,
-        json['title'] as String);
+        json['title'] as String,
+        json['picture'] as String);
   }
 
   Transact.fromMap(Map<String, dynamic> data)
@@ -58,6 +60,7 @@ class Transact {
         assert(data['place'] != null),
         assert(data['expense'] != null),
         assert(data['persistent'] != null),
+        assert(data['picture'] != null),
         title = data['title'],
         amount = data['amount'],
         date = data['date'],
@@ -66,7 +69,8 @@ class Transact {
         online = data['online'],
         note = data['note'],
         place = data['place'],
-        expense = data['expense'];
+        expense = data['expense'],
+        picture = data['picture'];
 
   Map<String, dynamic> _transactToJson(Transact tr) => <String, dynamic>{
         'amount': tr.amount,
