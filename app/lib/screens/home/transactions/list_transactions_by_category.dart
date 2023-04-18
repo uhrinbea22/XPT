@@ -8,57 +8,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
 
-getStringValuesSF() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  //Return String
-  String? stringValue = prefs.getString('theme');
-  print(stringValue);
-  return stringValue;
-}
-
-/* class ListAllTransByCateg extends StatelessWidget {
-  //const ListAllTransByCateg(citle);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: Theme.of(context),
-      home: MyAppHomePage(),
-    );
-  }
-} */
-
 class ListAllTransByCateg extends StatelessWidget {
   String title;
-  //TransactionDetailview(this.title, {Key? key}) : super(key: key);
   ListAllTransByCateg({Key? key, required this.title}) : super(key: key);
-  //final String selectedCategory = title;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: [
-        /*  Container(
-          child: FutureBuilder(
-            future: FirebaseFirestore.instance.collection('transactions').get(),
-            builder: (_, snapshot) {
-              if (snapshot.hasError) return Text('Error = ${snapshot.error}');
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text("Loading");
-              }
-
-              return ListView(
-                  children: snapshot.data.map((DocumentSnapshot document) {
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                return ListTile(
-                  title: Text(data['cateory']),
-                );
-              }).toList());
-            },
-          ),
-        ), */
-
-        // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
         ListTile(
           selectedColor: Colors.lightBlueAccent,
           shape: RoundedRectangleBorder(
@@ -67,7 +24,7 @@ class ListAllTransByCateg extends StatelessWidget {
           tileColor: Colors.white24,
           hoverColor: Colors.blueGrey,
           leading: CircleAvatar(
-            backgroundColor: Colors.lightBlue,
+            backgroundColor: Colors.grey,
             child: document['expense'] == true
                 ? Icon(
                     Icons.remove,
@@ -105,7 +62,7 @@ class ListAllTransByCateg extends StatelessWidget {
           },
         )
       ],
-    );
+    ));
   }
 
   @override
@@ -137,7 +94,7 @@ class ListAllTransByCateg extends StatelessWidget {
             return Text("Waiting");
           }
           return ListView.builder(
-            itemExtent: 80.0,
+            itemExtent: 100.0,
             itemCount: snapshot.data!.size,
             itemBuilder: ((context, index) =>
                 _buildListItem(context, snapshot.data!.docs[index])),

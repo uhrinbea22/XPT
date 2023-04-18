@@ -4,6 +4,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 
+class Xpt extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const Home(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -18,25 +28,12 @@ class Home extends StatelessWidget {
         title: Text('XPT - Track your money\n${_authService.getuser()!.email}'),
         backgroundColor: Color.fromARGB(255, 82, 144, 173),
         elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: Icon(Icons.person),
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.pink,
-            ),
-            label: Text('Sign out'),
-            onPressed: () async {
-              print(user.toString());
-              await _authService.signOut();
-            },
-          )
-        ],
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: ElevatedButton(
             child: Text(
-              'This is your Expense Tracker Application.',
+              'This is your Expense Tracker Application. Create a transaction! ',
               style: TextStyle(color: Color.fromARGB(255, 17, 19, 20)),
             ),
             onPressed: () {

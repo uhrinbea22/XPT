@@ -1,68 +1,124 @@
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/theme_manager.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(SettingsScreen());
 }
 
-// TODO : implement this for the whole app
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class AppThemes {
+  static const int LightBlue = 0;
+  static const int LightRed = 1;
+  static const int DarkBlue = 2;
+  static const int DarkRed = 3;
 
-  @override
-  State<SettingsScreen> createState() => _RunMyAppState();
+  static String toStr(int themeId) {
+    switch (themeId) {
+      case LightBlue:
+        return "Light Blue";
+      case LightRed:
+        return "Light Red";
+      case DarkBlue:
+        return "Dark Blue";
+      case DarkRed:
+        return "Dark Red";
+      default:
+        return "Unknown";
+    }
+  }
 }
 
-class _RunMyAppState extends State<SettingsScreen> {
-  ThemeMode _themeMode = ThemeMode.system;
-  void changeTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
+class SettingsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final dark = ThemeData.dark();
+    final darkButtonTheme =
+        dark.buttonTheme.copyWith(buttonColor: Colors.grey[700]);
+    final darkFABTheme = dark.floatingActionButtonTheme;
+
+    final themeCollection = ThemeCollection(themes: {
+      AppThemes.LightBlue: ThemeData(primarySwatch: Colors.blue),
+      AppThemes.LightRed: ThemeData(primarySwatch: Colors.red),
+      AppThemes.DarkBlue: dark.copyWith(
+          accentColor: Colors.blue,
+          buttonTheme: darkButtonTheme,
+          floatingActionButtonTheme:
+              darkFABTheme.copyWith(backgroundColor: Colors.blue)),
+      AppThemes.DarkRed: ThemeData.from(
+          colorScheme:
+              ColorScheme.dark(primary: Colors.red, secondary: Colors.red)),
     });
+
+    return DynamicTheme(
+        themeCollection: themeCollection,
+        defaultThemeId: AppThemes.LightBlue,
+        builder: (context, theme) {
+          return MaterialApp(
+            title: 'Settings',
+            theme: theme,
+            home: HomePage(title: 'Settings'),
+          );
+        });
   }
+}
+
+class HomePage extends StatefulWidget {
+  final String title;
+
+  const HomePage({Key? key, required this.title}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int dropdownValue = 0;
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences prefs;
-    return Consumer<ThemeNotifier>(
-      builder: (context, theme, _) => MaterialApp(
-        theme: theme.getTheme(),
-        home: Scaffold(
-          drawer: NavDrawer(),
-          appBar: AppBar(
-            title: Text('Hybrid Theme'),
-          ),
-          body: Row(
-            children: [
-              Container(
-                child: FlatButton(
-                  onPressed: () async => {
-                    print('Set Light Theme'),
-                    theme.setLightMode(),
-                    prefs = await SharedPreferences.getInstance(),
-                    prefs.setString('theme', "light")
-                  },
-                  child: Text('Set Light Theme'),
-                ),
-              ),
-              Container(
-                child: FlatButton(
-                  onPressed: () async => {
-                    print('Set Dark theme'),
-                    theme.setDarkMode(),
-                    prefs = await SharedPreferences.getInstance(),
-                    prefs.setString('theme', "dark")
-                  },
-                  child: Text('Set Dark theme'),
-                ),
-              ),
-            ],
-          ),
-        ),
+    final theme = Theme.of(context);
+    dropdownValue = DynamicTheme.of(context)!.themeId;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
       ),
+      drawer: NavDrawer(),
+      body: Center(
+          child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 24, bottom: 12),
+            child: Text('Select your theme here:'),
+          ),
+          DropdownButton(
+              icon: Icon(Icons.arrow_downward),
+              value: dropdownValue,
+              items: [
+                DropdownMenuItem(
+                  value: AppThemes.LightBlue,
+                  child: Text(AppThemes.toStr(AppThemes.LightBlue)),
+                ),
+                DropdownMenuItem(
+                  value: AppThemes.LightRed,
+                  child: Text(AppThemes.toStr(AppThemes.LightRed)),
+                ),
+                DropdownMenuItem(
+                  value: AppThemes.DarkBlue,
+                  child: Text(AppThemes.toStr(AppThemes.DarkBlue)),
+                ),
+                DropdownMenuItem(
+                  value: AppThemes.DarkRed,
+                  child: Text(AppThemes.toStr(AppThemes.DarkRed)),
+                )
+              ],
+              onChanged: (dynamic themeId) async {
+                await DynamicTheme.of(context)!.setTheme(themeId);
+                setState(() {
+                  dropdownValue = themeId;
+                });
+              }),
+        ],
+      )),
     );
   }
 }

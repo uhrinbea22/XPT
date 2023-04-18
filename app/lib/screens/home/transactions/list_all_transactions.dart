@@ -1,5 +1,3 @@
-import 'package:app/screens/home/settings.dart';
-import 'package:app/screens/home/theme_manager.dart';
 import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/list_transactions_by_category.dart';
@@ -15,18 +13,6 @@ import 'package:intl/intl.dart';
 
 void main() {
   runApp(ListAllTrans());
-  /*  runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => new ThemeNotifier(),
-    child: ListAllTrans(),
-  )); */
-}
-
-getStringValuesSF() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  //Return String
-  String? stringValue = prefs.getString('theme');
-  print(stringValue);
-  return stringValue;
 }
 
 class ListAllTrans extends StatelessWidget {
@@ -34,14 +20,9 @@ class ListAllTrans extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return MyAppHomePage(title: "All transactions");
     return MaterialApp(
       theme: Theme.of(context),
       title: 'List all transactions',
-      //getStringValuesSF() == "dark" ? ThemeMode.dark : ThemeMode.light,
-      /*  theme: getStringValuesSF().toString().contains("dark")
-          ? ThemeData.dark()
-          : ThemeData.light(), */
       home: const MyAppHomePage(title: 'All transactions'),
     );
   }
@@ -50,12 +31,12 @@ class ListAllTrans extends StatelessWidget {
 class MyAppHomePage extends StatelessWidget {
   const MyAppHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
+  final budget = 0;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     final numberFormat = new NumberFormat("#,###", "en_US");
     return Column(
       children: [
-        // listázás kategóriánként VAGY szűrés kulcsszóra a title-ben vagy note-ban
         ListTile(
           selectedColor: Colors.lightBlueAccent,
           shape: RoundedRectangleBorder(
@@ -64,7 +45,7 @@ class MyAppHomePage extends StatelessWidget {
           tileColor: Colors.white24,
           hoverColor: Colors.blueGrey,
           leading: CircleAvatar(
-            backgroundColor: Colors.lightBlue,
+            backgroundColor: Colors.tealAccent,
             child: document['expense'] == true
                 ? Icon(
                     Icons.remove,
@@ -75,23 +56,16 @@ class MyAppHomePage extends StatelessWidget {
                     color: Colors.black,
                   ),
           ),
-          /* leading: document['expense'] == true
-              ? Icon(Icons.add)
-              : Icon(Icons.remove), */
           title: Row(
             children: [
               Expanded(
                 child: Text(document['title'],
-                    style: TextStyle(color: Colors.black)
-                    //Theme.of(context).textTheme.displayMedium,
-                    ),
+                    style: TextStyle(color: Colors.black)),
               ),
             ],
           ),
           subtitle: Text(numberFormat.format(document['amount']),
-              style: TextStyle(color: Colors.black)
-              //Theme.of(context).textTheme.displaySmall,
-              ),
+              style: TextStyle(color: Colors.black)),
           onTap: () {
             Navigator.push(
               context,
@@ -126,10 +100,15 @@ class MyAppHomePage extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection('transactions')
             .where('uid', isEqualTo: user!.uid)
+            .where('date', isGreaterThanOrEqualTo: "2023-04-01")
+            .orderBy("date")
+            // .startAt(["2023-01-01"])
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Text('Something went wrong');
-
+          if (snapshot.hasError) {
+            print(snapshot.error);
+            return Text(snapshot.error.toString());
+          }
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
             return LoadingAnimationWidget.staggeredDotsWave(

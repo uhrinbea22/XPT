@@ -1,26 +1,12 @@
-import 'dart:io';
-import 'package:app/screens/home/theme_manager.dart';
-import 'package:app/screens/home/transactions/fileupload.dart';
-import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 import '../../../firebase_options.dart';
-import '../../../models/transact.dart';
 import '../../../services/auth_service.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:path/path.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +20,6 @@ class CategLiast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appTitle = 'List by categories';
-    // return MyCustomForm();
     return MaterialApp(
       title: appTitle,
       theme: Theme.of(context),
@@ -75,9 +60,11 @@ class MyCustomFormState extends State<MyCustomForm> {
     return Scaffold(
 //      appBar: AppBar(),
         //    drawer: NavDrawer(),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
       children: [
-        Flexible(
+        SingleChildScrollView(
+          //flex: 0,
           child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("transactions")
@@ -97,9 +84,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                     }
                   }
                   return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       DropdownButton<dynamic>(
+                        hint: Text("Choose category"),
                         items: categoryList.map((location) {
                           return DropdownMenuItem(
                             child: new Text(location),
@@ -118,8 +106,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                 }
               }),
         ),
-        Flexible(
-          flex: 1,
+        SingleChildScrollView(
+          //flex: 0,
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('transactions')
@@ -138,6 +126,8 @@ class MyCustomFormState extends State<MyCustomForm> {
               // if (snapshot.hasData) return Text('has data');
 
               return ListView.builder(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
                 itemExtent: 80.0,
                 itemCount: snapshot.data!.size,
                 itemBuilder: ((context, index) =>
@@ -147,7 +137,8 @@ class MyCustomFormState extends State<MyCustomForm> {
           ),
         )
       ],
-    ));
+      //
+    )));
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
@@ -155,7 +146,8 @@ class MyCustomFormState extends State<MyCustomForm> {
 /*     SingleChildScrollView(
       child: Column(
         children: [ */
-    return Column(children: [
+    return SingleChildScrollView(
+        child: Column(children: [
       ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.lightBlue,
@@ -191,10 +183,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           );
         },
-        /*  )
-        ],
-      ), */
       )
-    ]);
+    ]));
   }
 }

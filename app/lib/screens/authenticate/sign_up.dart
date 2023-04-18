@@ -27,17 +27,6 @@ class _SignUpState extends State<SignUp> {
         backgroundColor: Colors.lightBlue,
         elevation: 0.0,
         title: const Text('Sign up to XPT'),
-        actions: <Widget>[
-          TextButton.icon(
-              onPressed: () {
-                widget.toggleView();
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: const Color.fromARGB(120, 120, 255, 255),
-              ),
-              icon: const Icon(Icons.person),
-              label: const Text('Sign In'))
-        ],
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -92,7 +81,13 @@ class _SignUpState extends State<SignUp> {
               Text(
                 error,
                 style: const TextStyle(color: Colors.red, fontSize: 14.0),
-              )
+              ),
+              TextButton.icon(
+                  onPressed: () {
+                    widget.toggleView();
+                  },
+                  icon: const Icon(Icons.person),
+                  label: const Text('Sign In'))
             ],
           ),
         ),

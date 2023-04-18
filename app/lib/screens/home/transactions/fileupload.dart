@@ -26,8 +26,6 @@ class _ImageUploadsState extends State<ImageUploads> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    downloadURLExample();
     super.initState();
   }
 
@@ -59,18 +57,7 @@ class _ImageUploadsState extends State<ImageUploads> {
     });
   }
 
-  Future<String> downloadURLExample() async {
-    var downloadURL = await FirebaseStorage.instance
-        .ref()
-        .child("file/Gabinak3.png")
-        .getDownloadURL();
-    print(downloadURL);
-    return downloadURL;
-  }
-
   Future uploadFile() async {
-    //TODO : create directory with user_id and insert pic as the transaction__id
-
     if (_photo == null) return;
     final fileName = basename(_photo!.path);
     final destination = 'files/$fileName';

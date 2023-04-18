@@ -18,34 +18,14 @@ class _SignInState extends State<SignIn> {
   String resetPasswordStatus = '';
   bool absorbValue = false;
 
-  bool _isPressed = false;
-
-  // This function is called when the button gets pressed
-  void _myCallback() {
-    setState(() {
-      _isPressed = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 41, 39, 39),
+          backgroundColor: Colors.blueAccent,
           elevation: 0.0,
           title: const Text('Sign in to XPT'),
-          actions: <Widget>[
-            TextButton.icon(
-                onPressed: () {
-                  widget.toggleView();
-                },
-                style: TextButton.styleFrom(
-                  primary: const Color.fromARGB(255, 25, 28, 29),
-                ),
-                icon: const Icon(Icons.person),
-                label: const Text('Sign Up'))
-          ],
         ),
         body: Column(children: [
           Container(
@@ -77,9 +57,7 @@ class _SignInState extends State<SignIn> {
                   AbsorbPointer(
                     absorbing: absorbValue,
                     child: ElevatedButton(
-                      child: const Text(
-                        'Sign in',
-                      ),
+                      child: const Text('Sign in'),
                       onPressed: () async {
                         setState(() {
                           absorbValue = true;
@@ -103,8 +81,24 @@ class _SignInState extends State<SignIn> {
                   ),
                 ],
               ))),
-          IgnorePointer(
-            ignoring: true,
+          Text(
+            "You don't have an account?",
+            style: const TextStyle(
+              color: Colors.blueAccent,
+            ),
+          ),
+          TextButton.icon(
+              onPressed: () {
+                widget.toggleView();
+              },
+              icon: const Icon(Icons.person),
+              label: const Text('Sign Up')),
+          Text(
+            "Forgot password?",
+            style: const TextStyle(color: Colors.blueAccent),
+          ),
+          AbsorbPointer(
+            absorbing: absorbValue,
             child: ElevatedButton(
                 onPressed: () async {
                   final _status =

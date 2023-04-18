@@ -1,5 +1,4 @@
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/theme_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +45,9 @@ class _State extends State<RealtimeDiagram> {
   List<TransactionDetails> expenseData = [];
   List<TransactionDetails> limitData = [];
   var maxTransactionAmount = 0;
+
+  num allExpenseAmount = 0;
+  num allIncomeAmount = 0;
 
   @override
   void dispose() {
@@ -103,8 +105,6 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadExpenseData() async {
-    num allExpenseAmount = 0;
-    num allIncomeAmount = 0;
     var snapShotsValue = await FirebaseFirestore.instance
         .collection("transactions")
         .where('uid', isEqualTo: _authService.getuser()!.uid)
@@ -156,7 +156,7 @@ class _State extends State<RealtimeDiagram> {
         TransactionDetails tr = listWithDuplicates
             .firstWhere((element) => element.category == categories[i]);
         tr.amount = (tr.amount! + amounts[i]) as int?;
-       // listWithDuplicates.add(tr);
+        // listWithDuplicates.add(tr);
       } else {
         listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
         categoriesOnce.add(categories[i]);
@@ -239,6 +239,10 @@ class _State extends State<RealtimeDiagram> {
         body: SingleChildScrollView(
             child: Column(
           children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              child: Text("Current balance : ${allIncomeAmount - allExpenseAmount}"),
+            ),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(),

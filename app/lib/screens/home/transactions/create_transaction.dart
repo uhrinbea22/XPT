@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:app/screens/home/theme_manager.dart';
 import 'package:app/screens/home/transactions/fileupload.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
@@ -592,7 +591,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                             );
                                           });
                                     }
-                                  } else if (citiesRef.docs.isNotEmpty ||
+                                  } else if (citiesRef.docs.isNotEmpty &&
                                       tr.expense == true) {
                                     FirebaseFirestore.instance
                                         .collection('category_limits')
@@ -613,7 +612,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       .collection('transactions')
                                       .doc()
                                       .set({
-                                    'date': tr.date,
+                                    'date': myController['date']!.text,
                                     'amount': tr.amount,
                                     'title': tr.title,
                                     'place': tr.place,

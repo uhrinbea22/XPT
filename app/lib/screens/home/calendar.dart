@@ -54,7 +54,7 @@ class Cal extends State<MyCalendar> {
   void initState() {
     _controller = CalendarController();
     getDataFromFireStore().then((results) {
-      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         setState(() {});
       });
     });
@@ -130,7 +130,8 @@ class Cal extends State<MyCalendar> {
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: NavDrawer(),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
           children: [
             Container(
               color: Colors.white,
@@ -166,7 +167,7 @@ class Cal extends State<MyCalendar> {
               onTap: calendarTapped,
             ),
           ],
-        ));
+        )));
   }
 }
 

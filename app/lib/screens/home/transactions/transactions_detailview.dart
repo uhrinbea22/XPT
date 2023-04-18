@@ -1,5 +1,4 @@
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/storage_service.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,6 +7,28 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/storage_service.dart';
+
+class DetailView extends StatelessWidget {
+  DetailView(this.title, {Key? key}) : super(key: key);
+  String title;
+  @override
+  Widget build(BuildContext context) {
+    final appTitle = 'List by categories';
+    // return MyCustomForm();
+    return MaterialApp(
+      title: appTitle,
+      theme: Theme.of(context),
+      home: Scaffold(
+        drawer: NavDrawer(),
+        appBar: AppBar(
+          title: Text(appTitle),
+        ),
+        body: TransactionDetailview(title),
+      ),
+    );
+  }
+}
 
 class TransactionDetailview extends StatelessWidget {
   //title, date, persistent, category, onlie, note, place, expense, ?picture?
@@ -71,12 +92,15 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ), */
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            child: Text(document['title']),
+                            child: Text(
+                              document['title'],
+                              style: TextStyle(fontSize: 20),
+                            ),
                           ),
                         ],
                       ),
@@ -99,13 +123,13 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(
+                          /*   Icon(
                             document['expense'] == false
                                 ? Icons.add
                                 : Icons.remove,
                             color: Colors.black,
                             size: 20.0,
-                          ),
+                          ), */
                           Text(
                             document['amount'].toString(),
                             style: TextStyle(fontSize: 20),
@@ -137,11 +161,11 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(
+                          /*     Icon(
                             Icons.place_sharp,
                             color: Colors.black,
                             size: 20.0,
-                          ),
+                          ), */
                           Expanded(
                             child: Text(document['place']),
                           ),
@@ -198,7 +222,7 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.category),
+                          /*  Icon(Icons.category), */
                           Expanded(
                             child: Text(document['category']),
                           ),
@@ -223,11 +247,12 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.date_range),
-                          Text((document['date'] as Timestamp)
+                          Text((document['date']).toString()),
+                          /*  Icon(Icons.date_range), */
+                          /* Text((document['date'] as Timestamp)
                               .toDate()
                               .toString()
-                              .substring(0, 10)),
+                              .substring(0, 10)), */
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
                           ),
@@ -313,12 +338,13 @@ class TransactionDetailview extends StatelessWidget {
                                                   (transaction) async =>
                                                       await transaction.delete(
                                                           document.reference));
-                                          Navigator.push(
+                                          /*   Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ListAllTrans()),
-                                          );
+                                                    const ListAllTrans()
+                                                    ),
+                                          ); */
                                         },
                                       )
                                     ],
@@ -338,6 +364,8 @@ class TransactionDetailview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Timestamp todayTimestamp = Timestamp.fromDate(DateTime.now());
+
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     return Scaffold(
@@ -350,6 +378,7 @@ class TransactionDetailview extends StatelessWidget {
             .collection("transactions")
             .where("title", isEqualTo: title)
             .where("uid", isEqualTo: user!.uid)
+            //.orderBy("date")
             .get()
             .asStream(),
         builder: (context, snapshot) {
