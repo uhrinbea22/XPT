@@ -23,15 +23,19 @@ class ListAllTrans extends StatelessWidget {
     return MaterialApp(
       theme: Theme.of(context),
       title: 'List all transactions',
-      home: const MyAppHomePage(title: 'All transactions'),
+      home: MyAppHomePage(title: 'All transactions'),
     );
   }
 }
 
 class MyAppHomePage extends StatelessWidget {
-  const MyAppHomePage({Key? key, required this.title}) : super(key: key);
+  MyAppHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
   final budget = 0;
+  final String actualMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month}-01';
+  final String nextMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     final numberFormat = new NumberFormat("#,###", "en_US");
@@ -87,6 +91,8 @@ class MyAppHomePage extends StatelessWidget {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final AuthService _authService = AuthService();
@@ -100,9 +106,9 @@ class MyAppHomePage extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection('transactions')
             .where('uid', isEqualTo: user!.uid)
-            .where('date', isGreaterThanOrEqualTo: "2023-04-01")
-            .orderBy("date")
-            // .startAt(["2023-01-01"])
+            .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+            .where('date', isLessThan: nextMonthStart)
+            //.orderBy("dates")
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -134,6 +140,7 @@ class MyAppHomePage extends StatelessWidget {
                   builder: (context) => CreateTransaction(),
                 ));
           }),
+  
     );
   }
 }

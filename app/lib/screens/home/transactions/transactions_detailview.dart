@@ -338,13 +338,12 @@ class TransactionDetailview extends StatelessWidget {
                                                   (transaction) async =>
                                                       await transaction.delete(
                                                           document.reference));
-                                          /*   Navigator.push(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const ListAllTrans()
-                                                    ),
-                                          ); */
+                                                    const ListAllTrans()),
+                                          );
                                         },
                                       )
                                     ],

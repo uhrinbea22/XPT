@@ -280,8 +280,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                     DateTime? pickedDate = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101));
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2025));
                     if (pickedDate != null) {
                       String formattedDate =
                           DateFormat('yyyy-MM-dd').format(pickedDate);
@@ -292,7 +292,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       showDialog(
                           context: context,
                           builder: (context) {
-                            Future.delayed(const Duration(seconds: 5), () {
+                            Future.delayed(const Duration(seconds: 3), () {
                               Navigator.of(context).pop(true);
                             });
                             return const AlertDialog(
@@ -550,6 +550,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                                   _authService.getuser()!.uid)
                                           .where("category",
                                               isEqualTo: tr.category!)
+                                          //check the month too
                                           .get();
 
                                   List categoryAmount = allTransactionInCategory
@@ -599,6 +600,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                                         .set({
                                       'category': tr.category.toString(),
                                       'limit': "0",
+                                      'date':
+                                          '${DateTime.now().year}-0${DateTime.now().month}-${DateTime.now().day}',
                                       'uid': _authService.getuser()!.uid
                                     });
                                   }

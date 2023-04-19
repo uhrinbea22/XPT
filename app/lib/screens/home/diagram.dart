@@ -46,8 +46,13 @@ class _State extends State<RealtimeDiagram> {
   List<TransactionDetails> limitData = [];
   var maxTransactionAmount = 0;
 
+  bool allData = false;
   num allExpenseAmount = 0;
   num allIncomeAmount = 0;
+  final String actualMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month}-01';
+  final String nextMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
 
   @override
   void dispose() {
@@ -56,10 +61,17 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadChartData() async {
-    var snapShotsValue = await FirebaseFirestore.instance
-        .collection("transactions")
-        .where('uid', isEqualTo: _authService.getuser()!.uid)
-        .get();
+    var snapShotsValue = allData == false
+        ? await FirebaseFirestore.instance
+            .collection("transactions")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+            .where('date', isLessThan: nextMonthStart)
+            .get()
+        : await FirebaseFirestore.instance
+            .collection("transactions")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .get();
 
     List categories =
         snapShotsValue.docs.map((e) => (e.data()['category'])).toList();
@@ -105,10 +117,18 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadExpenseData() async {
-    var snapShotsValue = await FirebaseFirestore.instance
-        .collection("transactions")
-        .where('uid', isEqualTo: _authService.getuser()!.uid)
-        .get();
+    var snapShotsValue = allData
+        ? await FirebaseFirestore.instance
+            .collection("transactions")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .get()
+        : await FirebaseFirestore.instance
+            .collection("transactions")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+            .where('date', isLessThan: nextMonthStart)
+            .get();
+
     List<TransactionDetails> list = snapShotsValue.docs
         .map((e) => TransactionDetails.expense(
             e.data()['amount'], e.data()['expense'] ? 'Expense' : "Income"))
@@ -134,10 +154,17 @@ class _State extends State<RealtimeDiagram> {
 
   Future loadLimitData() async {
     //add amounts of categories and show them through the limit
-    var snapShotsValue = await FirebaseFirestore.instance
-        .collection("transactions")
-        .where('uid', isEqualTo: _authService.getuser()!.uid)
-        .get();
+    var snapShotsValue = allData
+        ? await FirebaseFirestore.instance
+            .collection("transactions")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .get()
+        : await FirebaseFirestore.instance
+            .collection("transactions")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+            .where('date', isLessThan: nextMonthStart)
+            .get();
 
     List categories =
         snapShotsValue.docs.map((e) => (e.data()['category'])).toList();
@@ -179,10 +206,17 @@ class _State extends State<RealtimeDiagram> {
 
     //list has the category name and the actual amount, we have to add the limit to that
 
-    var limitSnapshots = await FirebaseFirestore.instance
-        .collection("category_limits")
-        .where('uid', isEqualTo: _authService.getuser()!.uid)
-        .get();
+    var limitSnapshots = allData
+        ? await FirebaseFirestore.instance
+            .collection("category_limits")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .get()
+        : await FirebaseFirestore.instance
+            .collection("category_limits")
+            .where('uid', isEqualTo: _authService.getuser()!.uid)
+            .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+            .where('date', isLessThan: nextMonthStart)
+            .get();
 
     List limitCategories =
         limitSnapshots.docs.map((e) => (e.data()['category'])).toList();
@@ -229,139 +263,155 @@ class _State extends State<RealtimeDiagram> {
     loadChartData();
     loadExpenseData();
     loadLimitData();
+    allData = false;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: NavDrawer(),
-        body: SingleChildScrollView(
-            child: Column(
-          children: <Widget>[
-            Container(
+      drawer: NavDrawer(),
+      body: SingleChildScrollView(
+          child: Column(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            child:
+                Text("Current balance : ${allIncomeAmount - allExpenseAmount}"),
+          ),
+          Container(
               alignment: Alignment.center,
-              child: Text("Current balance : ${allIncomeAmount - allExpenseAmount}"),
+              child: ElevatedButton(
+                child: Text(allData ? "This month's data" : "All data"),
+                onPressed: () async {
+                  setState(() {
+                    allData = !allData;
+                    loadChartData();
+                    loadExpenseData();
+                    loadLimitData();
+                  });
+                },
+              )),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(),
             ),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(),
-              ),
-              child: SfCartesianChart(
-                title: ChartTitle(text: "Transactions group by categories"),
-                primaryXAxis: CategoryAxis(),
-                primaryYAxis: NumericAxis(
-                    minimum: 0.0,
-                    maximum: double.parse(maxTransactionAmount.toString()),
-                    interval: 1000.0),
-                series: <ChartSeries>[
-                  ColumnSeries<TransactionDetails, String>(
-                      dataLabelSettings: DataLabelSettings(
-                        isVisible: true,
-                        color: Colors.purple,
-                      ),
-                      dataSource: chartData,
-                      dataLabelMapper: (TransactionDetails details, _) =>
-                          details.category,
-                      xValueMapper: (TransactionDetails details, _) =>
-                          details.category,
-                      yValueMapper: (TransactionDetails details, _) =>
-                          details.amount),
-                ],
-              ),
+            child: SfCartesianChart(
+              title: ChartTitle(text: "Transactions group by categories"),
+              primaryXAxis: CategoryAxis(),
+              primaryYAxis: NumericAxis(
+                  minimum: 0.0,
+                  maximum: double.parse(maxTransactionAmount.toString()),
+                  interval: 1000.0),
+              series: <ChartSeries>[
+                ColumnSeries<TransactionDetails, String>(
+                    dataLabelSettings: DataLabelSettings(
+                      isVisible: true,
+                      color: Colors.purple,
+                    ),
+                    dataSource: chartData,
+                    dataLabelMapper: (TransactionDetails details, _) =>
+                        details.category,
+                    xValueMapper: (TransactionDetails details, _) =>
+                        details.category,
+                    yValueMapper: (TransactionDetails details, _) =>
+                        details.amount),
+              ],
             ),
-            Container(
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(),
+            ),
+            child: SfCircularChart(
+              title: ChartTitle(text: "Transactions group by categories"),
+              series: <PieSeries>[
+                PieSeries<TransactionDetails, String>(
+                    dataLabelSettings: DataLabelSettings(
+                      isVisible: true,
+                      color: Colors.purple,
+                    ),
+                    dataSource: chartData,
+                    dataLabelMapper: (TransactionDetails details, _) =>
+                        details.category,
+                    xValueMapper: (TransactionDetails details, _) =>
+                        details.category,
+                    yValueMapper: (TransactionDetails details, _) =>
+                        details.amount),
+              ],
+            ),
+          ),
+          Container(
               decoration: BoxDecoration(
                 border: Border.all(),
               ),
               child: SfCircularChart(
-                title: ChartTitle(text: "Transactions group by categories"),
+                title: ChartTitle(text: "Expense and income ratio"),
                 series: <PieSeries>[
                   PieSeries<TransactionDetails, String>(
                       dataLabelSettings: DataLabelSettings(
                         isVisible: true,
                         color: Colors.purple,
                       ),
-                      dataSource: chartData,
                       dataLabelMapper: (TransactionDetails details, _) =>
                           details.category,
+                      dataSource: expenseData,
                       xValueMapper: (TransactionDetails details, _) =>
-                          details.category,
+                          details.expense.toString(),
                       yValueMapper: (TransactionDetails details, _) =>
                           details.amount),
                 ],
-              ),
+              )),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(),
             ),
-            Container(
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                ),
-                child: SfCircularChart(
-                  title: ChartTitle(text: "Expense and income ratio"),
-                  series: <PieSeries>[
-                    PieSeries<TransactionDetails, String>(
-                        dataLabelSettings: DataLabelSettings(
-                          isVisible: true,
-                          color: Colors.purple,
-                        ),
-                        dataLabelMapper: (TransactionDetails details, _) =>
-                            details.category,
-                        dataSource: expenseData,
-                        xValueMapper: (TransactionDetails details, _) =>
-                            details.expense.toString(),
-                        yValueMapper: (TransactionDetails details, _) =>
-                            details.amount),
-                  ],
-                )),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(),
+            child: SfCartesianChart(
+              title: ChartTitle(text: "Spent money and their limit"),
+              primaryXAxis: CategoryAxis(),
+              primaryYAxis: NumericAxis(),
+              enableSideBySideSeriesPlacement: false,
+              legend: Legend(
+                isVisible: true,
+                legendItemBuilder:
+                    (String name, dynamic series, dynamic point, int index) {
+                  return SizedBox(
+                      height: 20.0,
+                      width: 50.0,
+                      child: Row(children: <Widget>[
+                        SizedBox(child: Text(series.name)),
+                      ]));
+                },
               ),
-              child: SfCartesianChart(
-                title: ChartTitle(text: "Spent money and their limit"),
-                primaryXAxis: CategoryAxis(),
-                primaryYAxis: NumericAxis(),
-                enableSideBySideSeriesPlacement: false,
-                legend: Legend(
-                  isVisible: true,
-                  legendItemBuilder:
-                      (String name, dynamic series, dynamic point, int index) {
-                    return SizedBox(
-                        height: 20.0,
-                        width: 50.0,
-                        child: Row(children: <Widget>[
-                          SizedBox(child: Text(series.name)),
-                        ]));
-                  },
-                ),
-                series: <ChartSeries>[
-                  ColumnSeries<TransactionDetails, String>(
-                      width: 0.4,
-                      dataSource: limitData,
-                      dataLabelMapper: (TransactionDetails details, _) =>
-                          "Category Limit",
-                      xValueMapper: (TransactionDetails details, _) =>
-                          details.category,
-                      yValueMapper: (TransactionDetails details, _) =>
-                          details.categoryLimit,
-                      color: Colors.pink,
-                      name: "Limit"),
-                  ColumnSeries<TransactionDetails, String>(
-                      dataSource: limitData,
-                      width: 0.2,
-                      dataLabelMapper: (TransactionDetails details, _) =>
-                          details.categoryLimit.toString(),
-                      xValueMapper: (TransactionDetails details, _) =>
-                          details.category,
-                      yValueMapper: (TransactionDetails details, _) =>
-                          details.amount,
-                      color: Colors.lightBlue,
-                      name: "Spent"),
-                ],
-              ),
+              series: <ChartSeries>[
+                ColumnSeries<TransactionDetails, String>(
+                    width: 0.4,
+                    dataSource: limitData,
+                    dataLabelMapper: (TransactionDetails details, _) =>
+                        "Category Limit",
+                    xValueMapper: (TransactionDetails details, _) =>
+                        details.category,
+                    yValueMapper: (TransactionDetails details, _) =>
+                        details.categoryLimit,
+                    color: Colors.pink,
+                    name: "Limit"),
+                ColumnSeries<TransactionDetails, String>(
+                    dataSource: limitData,
+                    width: 0.2,
+                    dataLabelMapper: (TransactionDetails details, _) =>
+                        details.categoryLimit.toString(),
+                    xValueMapper: (TransactionDetails details, _) =>
+                        details.category,
+                    yValueMapper: (TransactionDetails details, _) =>
+                        details.amount,
+                    color: Colors.lightBlue,
+                    name: "Spent"),
+              ],
             ),
-          ],
-        )));
+          ),
+        ],
+      )),
+    );
   }
 }
 

@@ -81,8 +81,8 @@ class Cal extends State<MyCalendar> {
     List<TransactionEvent> incomes = incomeSnapShots.docs
         .map((e) => TransactionEvent(
               e.data()['title'],
-              (e.data()['date'] as Timestamp).toDate(),
-              (e.data()['date'] as Timestamp).toDate(),
+              DateTime.parse(e.data()['date']),
+              DateTime.parse(e.data()['date']),
               true,
               Colors.green,
             ))
@@ -91,8 +91,8 @@ class Cal extends State<MyCalendar> {
     List<TransactionEvent> expenses = expenseSnapShots.docs
         .map((e) => TransactionEvent(
               e.data()['title'],
-              (e.data()['date'] as Timestamp).toDate(),
-              (e.data()['date'] as Timestamp).toDate(),
+              DateTime.parse(e.data()['date']),
+              DateTime.parse(e.data()['date']),
               true,
               Colors.black,
             ))

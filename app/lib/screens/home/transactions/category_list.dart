@@ -48,104 +48,108 @@ class MyCustomFormState extends State<MyCustomForm> {
   List categoryList = [];
   var categoryController = TextEditingController();
   String selectedCategory = "";
+  final String actualMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month}-01';
+  final String nextMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
 
   @override
   void initState() {
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final AuthService _authService = AuthService();
     return Scaffold(
-//      appBar: AppBar(),
-        //    drawer: NavDrawer(),
-        body: SingleChildScrollView(
-            child: Column(
-      children: [
-        SingleChildScrollView(
-          //flex: 0,
-          child: StreamBuilder<QuerySnapshot>(
+      body: SingleChildScrollView(
+          child: Column(
+        children: [
+          SingleChildScrollView(
+            child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("transactions")
+                    .where("uid", isEqualTo: _authService.getuser()!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  // if not has data - loading
+                  if (!snapshot.hasData) {
+                    return const Text("No data");
+                    //if has data
+                  } else {
+                    for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                      DocumentSnapshot snap = snapshot.data!.docs[i];
+                      if (!categoryList.contains(snap['category'].toString())) {
+                        categoryList.add(snap['category']);
+                      }
+                    }
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        DropdownButton<dynamic>(
+                          hint: Text("Choose category"),
+                          items: categoryList.map((location) {
+                            return DropdownMenuItem(
+                              child: new Text(location),
+                              value: location,
+                            );
+                          }).toList(),
+                          onChanged: (choosedCategory) {
+                            setState(() {
+                              selectedCategory = choosedCategory;
+                            });
+                          },
+                          isExpanded: false,
+                        ),
+                      ],
+                    );
+                  }
+                }),
+          ),
+          SingleChildScrollView(
+            //flex: 0,
+            child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection("transactions")
-                  //.where("category", isNotEqualTo: '')
-                  .where("uid", isEqualTo: _authService.getuser()!.uid)
+                  .collection('transactions')
+                  .where('uid', isEqualTo: _authService.getuser()!.uid)
+                  .where('category', isEqualTo: selectedCategory)
+                  .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+                  .where('date', isLessThan: nextMonthStart)
                   .snapshots(),
               builder: (context, snapshot) {
-                // if not has data - loading
-                if (!snapshot.hasData) {
-                  return const Text("No data");
-                  //if has data
-                } else {
-                  for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                    DocumentSnapshot snap = snapshot.data!.docs[i];
-                    if (!categoryList.contains(snap['category'].toString())) {
-                      categoryList.add(snap['category']);
-                    }
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      DropdownButton<dynamic>(
-                        hint: Text("Choose category"),
-                        items: categoryList.map((location) {
-                          return DropdownMenuItem(
-                            child: new Text(location),
-                            value: location,
-                          );
-                        }).toList(),
-                        onChanged: (choosedCategory) {
-                          setState(() {
-                            selectedCategory = choosedCategory;
-                          });
-                        },
-                        isExpanded: false,
-                      ),
-                    ],
+                if (snapshot.hasError) {
+                  print((snapshot.error));
+                  return Text('Something went wrong');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return LoadingAnimationWidget.staggeredDotsWave(
+                    color: Colors.green,
+                    size: 50,
                   );
                 }
-              }),
-        ),
-        SingleChildScrollView(
-          //flex: 0,
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('transactions')
-                .where("uid", isEqualTo: _authService.getuser()!.uid)
-                //.where("category", isEqualTo: selectedCategory)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) return Text('Something went wrong');
-              if (snapshot.connectionState == ConnectionState.waiting ||
-                  !snapshot.hasData) {
-                return LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.green,
-                  size: 50,
-                );
-              }
-              // if (snapshot.hasData) return Text('has data');
 
-              return ListView.builder(
-                physics: ScrollPhysics(),
-                shrinkWrap: true,
-                itemExtent: 80.0,
-                itemCount: snapshot.data!.size,
-                itemBuilder: ((context, index) =>
-                    _buildListItem(context, snapshot.data!.docs[index])),
-              );
-            },
-          ),
-        )
-      ],
-      //
-    )));
+                return ListView.builder(
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data!.size,
+                  itemBuilder: ((context, index) =>
+                      _buildListItem(context, snapshot.data!.docs[index])),
+                );
+              },
+            ),
+          )
+        ],
+        //
+      )),
+  
+    );
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    // return
-/*     SingleChildScrollView(
-      child: Column(
-        children: [ */
     return SingleChildScrollView(
         child: Column(children: [
       ListTile(
@@ -164,17 +168,13 @@ class MyCustomFormState extends State<MyCustomForm> {
         title: Row(
           children: [
             Expanded(
-              child:
-                  Text(document['title'], style: TextStyle(color: Colors.black)
-                      //Theme.of(context).textTheme.displayMedium,
-                      ),
+              child: Text(document['title'],
+                  style: TextStyle(color: Colors.black)),
             ),
           ],
         ),
         subtitle: Text(document['category'].toString(),
-            style: TextStyle(color: Colors.black)
-            //Theme.of(context).textTheme.displaySmall,
-            ),
+            style: TextStyle(color: Colors.black)),
         onTap: () {
           Navigator.push(
             context,
