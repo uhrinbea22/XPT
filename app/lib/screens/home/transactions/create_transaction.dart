@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app/consts/styles.dart';
 import 'package:app/screens/home/transactions/fileupload.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
@@ -36,7 +37,7 @@ void main() async {
 class CreateTransaction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Add new transaction';
+    final appTitle = 'Tranzakció hozzáadása';
     // return MyCustomForm();
     return MaterialApp(
       title: appTitle,
@@ -155,14 +156,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Gallery'),
+                      title: new Text('Galéria'),
                       onTap: () {
                         imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+                    title: new Text('Kamera'),
                     onTap: () {
                       imgFromCamera();
                       Navigator.of(context).pop();
@@ -247,15 +248,15 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty || int.parse(value) < 0) {
-                    return 'Please enter the amount';
+                    return 'Add meg az összeget';
                   }
                   return null;
                 },
                 controller: myController['amount'],
                 decoration: const InputDecoration(
                   icon: Icon(Icons.money),
-                  hintText: 'Enter the amount',
-                  labelText: 'Amount*',
+                  hintText: 'Add meg az összeget',
+                  labelText: 'Összeg*',
                   iconColor: Colors.grey,
                 ),
               ),
@@ -265,14 +266,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                   controller: myController['date'],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please choose date';
+                      return 'Add meg a dátumot';
                     }
                     return null;
                   },
                   decoration: const InputDecoration(
                     icon: Icon(Icons.calendar_month),
-                    hintText: 'Enter date',
-                    labelText: 'Date',
+                    hintText: 'Add meg a dátumot',
+                    labelText: 'Dátum',
                     iconColor: Colors.grey,
                   ),
                   readOnly: true,
@@ -296,7 +297,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                               Navigator.of(context).pop(true);
                             });
                             return const AlertDialog(
-                              title: Text('Date is not selected!'),
+                              title: Text('Dátum nincs kiválasztva!'),
                             );
                           });
                     }
@@ -304,7 +305,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               TextFormField(
                 controller: myController['place'],
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.place_outlined), labelText: "Place"),
+                    icon: Icon(Icons.place_outlined), labelText: "Hely"),
               ),
               TextFormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -312,25 +313,25 @@ class MyCustomFormState extends State<MyCustomForm> {
                   if (value == null ||
                       value.isEmpty ||
                       value.runtimeType != String) {
-                    return 'Please add title';
+                    return 'Add meg a megnevezést';
                   }
                   return null;
                 },
                 controller: myController['title'],
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.abc), labelText: "Title"),
+                    icon: Icon(Icons.abc), labelText: "Megnevezés"),
               ),
               TextFormField(
                 controller: myController['notes'],
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.note), labelText: "Notes"),
+                    icon: Icon(Icons.note), labelText: "Jegyzet"),
               ),
               CheckboxListTile(
-                title: Text('Expense'),
+                title: Text('Kiadás'),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: expense_value,
-                subtitle: Text("If expense check, if income leave it"),
+                subtitle: Text("Ha kiadás, csekkold be"),
                 onChanged: (bool? value) {
                   setState(() {
                     expense_value = value!;
@@ -338,8 +339,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                 },
               ),
               CheckboxListTile(
-                title: Text('Persistent'),
-                subtitle: Text("If bill or salary check it"),
+                title: Text('Rendszeres'),
+                subtitle: Text("Ha fizetés vagy számla, csekkold be"),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: persistent_value,
@@ -367,7 +368,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   Container(
                     child: Column(
                       children: [
-                        Text('Category : '),
+                        Text('Kategória : '),
                         Text(dropdownvalue),
                         Column(
                           children: [
@@ -449,14 +450,15 @@ class MyCustomFormState extends State<MyCustomForm> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text('New category'),
+                                  title: const Text('Új kategória'),
                                   content: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       TextField(
                                         controller: categoryController,
                                         decoration: const InputDecoration(
-                                            hintText: 'Type new category'),
+                                            hintText:
+                                                'Adj meg egy új kategóriát'),
                                       ),
                                     ],
                                   ),
@@ -467,7 +469,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                             categoryController.text)) {
                                           setState(() {
                                             showText =
-                                                "This category already exists!";
+                                                "Ez a kategória már létezik!";
                                           });
                                         } else
                                           setState(() {
@@ -478,7 +480,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                         Navigator.of(context).pop();
                                       },
                                       child: Text(
-                                        'Submit',
+                                        'Hozzáad',
                                       ),
                                     )
                                   ],
@@ -495,7 +497,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       child: AbsorbPointer(
                         absorbing: absorbValue,
                         child: ElevatedButton(
-                            child: const Text('Submit'),
+                            child: const Text('Hozzáad'),
                             onPressed: () async {
                               //check if datas are all valid
                               if (await titleInDb(
@@ -503,7 +505,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text(
-                                          'Add another title, this is already in your transactions')),
+                                          'Adj meg egy másik elnevezést, már létezik ilyen.')),
                                 );
                               } else {
                                 if (_formKey.currentState!.validate()) {
@@ -514,7 +516,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text('Processing Data')),
+                                        content: Text('Adat feldolgozása')),
                                   );
 
                                   //create a transaction
@@ -580,12 +582,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              title: const Text('New category'),
+                                              title: const Text('Új kategória'),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
-                                                    "You spent more in this category than your limit was by $diff. Please reconsider your budget",
+                                                    "Már többet költöttél, mint amennyit terveztél $diff $valuta -al.",
                                                   ),
                                                 ],
                                               ),
@@ -641,7 +643,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   Container(
                     padding: const EdgeInsets.only(left: 250.0, top: 20.0),
                     child: ElevatedButton(
-                      child: const Text('Back'),
+                      child: const Text('Vissza'),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },

@@ -18,9 +18,9 @@ class CategoryLimits extends StatelessWidget {
   Widget build(BuildContext context) {
     // return MyAppHomePage(title: "Category limits");
     return MaterialApp(
-      title: 'Category Limits',
+      title: 'Kategória limitek',
       theme: Theme.of(context),
-      home: MyAppHomePage(title: 'Category limits'),
+      home: MyAppHomePage(title: 'Kategória limitek'),
     );
   }
 }
@@ -56,16 +56,17 @@ class MyAppHomePage extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text('Set max limit'),
+                title: const Text('Max limit beállítása'),
                 content: TextFormField(
                   //initialValue: document['limit'].toString(),
                   keyboardType: TextInputType.number,
                   controller: limitController,
-                  decoration: const InputDecoration(hintText: 'Type limit'),
+                  decoration:
+                      const InputDecoration(hintText: 'Add meg a limitet'),
                 ),
                 actions: <Widget>[
                   ElevatedButton(
-                    child: const Text('Submit'),
+                    child: const Text('Rendben'),
                     onPressed: () {
                       FirebaseFirestore.instance
                           .collection('category_limits')
@@ -98,7 +99,7 @@ class MyAppHomePage extends StatelessWidget {
             .where("uid", isEqualTo: _authService.getuser()!.uid)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Text('Something went wrong');
+          if (snapshot.hasError) return Text('Hiba történt');
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
             return LoadingAnimationWidget.staggeredDotsWave(
@@ -109,7 +110,7 @@ class MyAppHomePage extends StatelessWidget {
           // if (snapshot.hasData) return Text('has data');
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Waiting");
+            return Text("Várakozás");
           }
           return ListView.builder(
             itemExtent: 80.0,

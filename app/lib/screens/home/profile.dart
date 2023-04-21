@@ -112,14 +112,14 @@ class MyCustomFormStat extends State<ProfileStateful> {
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Gallery'),
+                      title: new Text('Galéria'),
                       onTap: () {
                         imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+                    title: new Text('Kamera'),
                     onTap: () {
                       imgFromCamera();
                       Navigator.of(context).pop();
@@ -129,7 +129,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
                       onPressed: () async {
                         uploadFile();
                       },
-                      child: const Text("upload image"))
+                      child: const Text("Kép feltöltése"))
                 ],
               ),
             ),
@@ -176,7 +176,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
                         size: 20,
                       );
                     }
-                    if (snapshot.hasError) return Text('Something went wrong');
+                    if (snapshot.hasError) return Text('Hiba történt');
                     return CircleAvatar(
                         radius: 35,
                         backgroundColor: Colors.transparent,
@@ -195,12 +195,12 @@ class MyCustomFormStat extends State<ProfileStateful> {
               initialValue: user?.email,
               // controller: displayNameController,
               decoration: const InputDecoration(
-                  icon: Icon(Icons.email_rounded), labelText: "Email"),
+                  icon: Icon(Icons.email_rounded), labelText: "Email cím"),
             ),
             TextFormField(
               controller: displayNameController,
               decoration: const InputDecoration(
-                  icon: Icon(Icons.face_outlined), labelText: "Displayname"),
+                  icon: Icon(Icons.face_outlined), labelText: "Név"),
             ),
             ElevatedButton(
                 onPressed: () {
@@ -209,8 +209,8 @@ class MyCustomFormStat extends State<ProfileStateful> {
                     displayName = displayNameController.text;
                   });
                 },
-                child: const Text("Call me in this name ")),
-            Text("Upload avatar image"),
+                child: const Text("Név beállítása")),
+            Text("Fénykép feltöltése"),
             Center(
                 child: GestureDetector(
               onTap: () {
@@ -249,15 +249,15 @@ class MyCustomFormStat extends State<ProfileStateful> {
                       email: user!.email.toString());
                   if (_status) {
                     setState(() {
-                      resetPasswordStatus = 'Email sent';
+                      resetPasswordStatus = 'Email elküldve!';
                     });
                   } else {
                     setState(() {
-                      resetPasswordStatus = 'Error happened!';
+                      resetPasswordStatus = 'Hiba történt!';
                     });
                   }
                 },
-                child: const Text("Reset password")),
+                child: const Text("Jelszó visszaállítása")),
             Text(resetPasswordStatus)
           ],
         ));

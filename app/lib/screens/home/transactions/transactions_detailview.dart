@@ -138,7 +138,6 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
@@ -169,21 +168,6 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-                    /*   Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Regularity',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ), */
-
-                    //only show when it is regular
                     Offstage(
                       offstage: document['persistent'] == true ? false : true,
                       child: Padding(
@@ -193,16 +177,13 @@ class TransactionDetailview extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                  document['persistent']
-                                      ? 'Regular '
-                                      : 'Not regular ',
+                                  document['expense'] ? 'Számla ' : 'Fizetés',
                                   style: TextStyle(fontSize: 20)),
                             ),
                           ],
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
@@ -216,7 +197,6 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     Offstage(
                       offstage: document['online'] == true ? false : true,
                       child: Padding(
@@ -226,30 +206,19 @@ class TransactionDetailview extends StatelessWidget {
                           children: [
                             Icon(Icons.online_prediction),
                             Expanded(
-                              child: Text(
-                                  document['online'] ? 'Online' : 'Not online',
+                              child: Text("Online",
                                   style: TextStyle(fontSize: 20)),
                             ),
                           ],
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Icon(Icons.note),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                              /* child: Text(
-                                'Note',
-                              ), */
-                            ),
-                          ),
                         ],
                       ),
                     ),

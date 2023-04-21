@@ -51,14 +51,15 @@ class MyAppHomePage extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text('Set max limit'),
+                title: const Text('Max limit beállítása'),
                 content: TextField(
                   controller: limitController,
-                  decoration: const InputDecoration(hintText: 'Type limit'),
+                  decoration:
+                      const InputDecoration(hintText: 'Add meg a limitet'),
                 ),
                 actions: <Widget>[
                   ElevatedButton(
-                    child: const Text('Submit'),
+                    child: const Text('Hozzáad'),
                     onPressed: () {
                       limitValue = limitController.text;
                       Navigator.of(context).pop();
@@ -86,7 +87,7 @@ class MyAppHomePage extends StatelessWidget {
             .where("uid", isEqualTo: _authService.getuser()!.uid)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Text('Something went wrong');
+          if (snapshot.hasError) return Text('Hiba történt');
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
             return LoadingAnimationWidget.staggeredDotsWave(

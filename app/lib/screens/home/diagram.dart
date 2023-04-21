@@ -1,3 +1,4 @@
+import 'package:app/consts/styles.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,7 +19,7 @@ void main() async {
 class DiagramScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Diagrams';
+    final appTitle = 'Diagramok';
     return MaterialApp(
       title: appTitle,
       theme: Theme.of(context),
@@ -243,16 +244,6 @@ class _State extends State<RealtimeDiagram> {
       }
     }
 
-    for (int i = 0; i < lista.length; i++) {
-      print("Category");
-      print(lista[i].category);
-      print('amount');
-      print(lista[i].amount);
-      print('limit');
-      print(lista[i].categoryLimit);
-      print(lista[i].categoryLimit.runtimeType);
-    }
-
     setState(() {
       limitData = lista;
     });
@@ -276,13 +267,14 @@ class _State extends State<RealtimeDiagram> {
         children: <Widget>[
           Container(
             alignment: Alignment.center,
-            child:
-                Text("Current balance : ${allIncomeAmount - allExpenseAmount}"),
+            child: Text(
+                "Aktuális egyenleg : ${allIncomeAmount - allExpenseAmount} $valuta"),
           ),
           Container(
               alignment: Alignment.center,
               child: ElevatedButton(
-                child: Text(allData ? "This month's data" : "All data"),
+                child:
+                    Text(allData ? "Havi kimutatás" : "Összesített kimutatás"),
                 onPressed: () async {
                   setState(() {
                     allData = !allData;
@@ -297,7 +289,7 @@ class _State extends State<RealtimeDiagram> {
               border: Border.all(),
             ),
             child: SfCartesianChart(
-              title: ChartTitle(text: "Transactions group by categories"),
+              title: ChartTitle(text: "Tranzakciók vizsgálata kategóriánként"),
               primaryXAxis: CategoryAxis(),
               primaryYAxis: NumericAxis(
                   minimum: 0.0,
@@ -324,7 +316,7 @@ class _State extends State<RealtimeDiagram> {
               border: Border.all(),
             ),
             child: SfCircularChart(
-              title: ChartTitle(text: "Transactions group by categories"),
+              title: ChartTitle(text: "Tranzakciók vizsgálata kategóriánként"),
               series: <PieSeries>[
                 PieSeries<TransactionDetails, String>(
                     dataLabelSettings: DataLabelSettings(
@@ -346,7 +338,7 @@ class _State extends State<RealtimeDiagram> {
                 border: Border.all(),
               ),
               child: SfCircularChart(
-                title: ChartTitle(text: "Expense and income ratio"),
+                title: ChartTitle(text: "Bevételek és kiadások aránya"),
                 series: <PieSeries>[
                   PieSeries<TransactionDetails, String>(
                       dataLabelSettings: DataLabelSettings(
@@ -367,7 +359,9 @@ class _State extends State<RealtimeDiagram> {
               border: Border.all(),
             ),
             child: SfCartesianChart(
-              title: ChartTitle(text: "Spent money and their limit"),
+              title: ChartTitle(
+                  text:
+                      "Kategóriákra beállított limitek, és eddig elköltött összeg"),
               primaryXAxis: CategoryAxis(),
               primaryYAxis: NumericAxis(),
               enableSideBySideSeriesPlacement: false,
@@ -388,7 +382,7 @@ class _State extends State<RealtimeDiagram> {
                     width: 0.4,
                     dataSource: limitData,
                     dataLabelMapper: (TransactionDetails details, _) =>
-                        "Category Limit",
+                        "Kategória Limit",
                     xValueMapper: (TransactionDetails details, _) =>
                         details.category,
                     yValueMapper: (TransactionDetails details, _) =>
@@ -405,7 +399,7 @@ class _State extends State<RealtimeDiagram> {
                     yValueMapper: (TransactionDetails details, _) =>
                         details.amount,
                     color: Colors.lightBlue,
-                    name: "Spent"),
+                    name: "Elköltött"),
               ],
             ),
           ),

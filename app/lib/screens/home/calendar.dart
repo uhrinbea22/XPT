@@ -21,7 +21,7 @@ void main() async {
 class Calendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Calendar';
+    final appTitle = 'Naptár';
     return MaterialApp(
       title: appTitle,
       theme: Theme.of(context),
@@ -141,19 +141,19 @@ class Cal extends State<MyCalendar> {
                   onPressed: () => setState(() {
                     _controller.view = CalendarView.month;
                   }),
-                  child: Text('Month view'),
+                  child: Text('Havi nézet'),
                 ),
                 ElevatedButton(
                   onPressed: () => setState(() {
                     _controller.view = CalendarView.week;
                   }),
-                  child: Text('Week view'),
+                  child: Text('Heti nézet'),
                 ),
                 ElevatedButton(
                   onPressed: () => setState(() {
                     _controller.view = CalendarView.day;
                   }),
-                  child: Text('Daily view'),
+                  child: Text('Napi nézet'),
                 ),
               ]),
             ),

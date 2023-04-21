@@ -15,15 +15,15 @@ class AppThemes {
   static String toStr(int themeId) {
     switch (themeId) {
       case LightBlue:
-        return "Light Blue";
+        return "Világos kék";
       case LightRed:
-        return "Light Red";
+        return "Világos piros";
       case DarkBlue:
-        return "Dark Blue";
+        return "Sötét kék";
       case DarkRed:
-        return "Dark Red";
+        return "Sötét piros";
       default:
-        return "Unknown";
+        return "Válassz";
     }
   }
 }
@@ -54,9 +54,9 @@ class SettingsScreen extends StatelessWidget {
         defaultThemeId: AppThemes.LightBlue,
         builder: (context, theme) {
           return MaterialApp(
-            title: 'Settings',
+            title: 'Beállítások',
             theme: theme,
-            home: HomePage(title: 'Settings'),
+            home: HomePage(title: 'Beállítások'),
           );
         });
   }
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 24, bottom: 12),
-            child: Text('Select your theme here:'),
+            child: Text('Válaszd ki a preferált témát:'),
           ),
           DropdownButton(
               icon: Icon(Icons.arrow_downward),
@@ -117,10 +117,8 @@ class _HomePageState extends State<HomePage> {
                   dropdownValue = themeId;
                 });
               }),
-              
         ],
       )),
-     
     );
   }
 }

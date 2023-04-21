@@ -5,11 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // auth change user stream
   Stream<UserModel?> get onAuthStateChanged {
     return _auth
         .authStateChanges()
-        //.map((User? user) => _userModelFromFirebase(user));
         .map(_userModelFromFirebase);
   }
 
@@ -17,7 +15,6 @@ class AuthService {
     return _auth.currentUser;
   }
 
-  //create an userModel object based on Firebase User object
   UserModel? _userModelFromFirebase(User? user) {
     if (user != null) {
       return UserModel(uid: user.uid);
@@ -26,7 +23,6 @@ class AuthService {
     }
   }
 
-  //sing in with email & password
   Future signIn(String email, String password) async {
     try {
       return await _auth.signInWithEmailAndPassword(
@@ -37,12 +33,12 @@ class AuthService {
     }
   }
 
-//sign up with email & password
   Future signUp(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
+      // send welcome message
       FirebaseFirestore.instance.collection('mail').add({
         'to': email,
         'message': {
@@ -57,7 +53,6 @@ class AuthService {
     }
   }
 
-//sign out
   Future signOut() async {
     try {
       return await _auth.signOut();
@@ -66,7 +61,6 @@ class AuthService {
     }
   }
 
-//sign in anonymously, it's an asynchronous task, it's going to return a future
   Future signInAnonymously() async {
     try {
       UserCredential result = await _auth.signInAnonymously();
