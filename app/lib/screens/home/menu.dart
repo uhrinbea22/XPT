@@ -46,8 +46,7 @@ class NavDrawer extends StatelessWidget {
                           if (!snapshot.hasData) {
                             return CircleAvatar(backgroundColor: Colors.grey);
                           }
-                          if (snapshot.hasError)
-                            return Text('Something went wrong');
+                          if (snapshot.hasError) return Text('Hiba történt');
                           return CircleAvatar(
                               radius: 35,
                               backgroundColor: Colors.transparent,
@@ -66,10 +65,10 @@ class NavDrawer extends StatelessWidget {
           ),
           ExpansionTile(
             leading: const Icon(Icons.border_color),
-            title: const Text('Transactions'),
+            title: const Text('Tranzakciók'),
             children: [
               ListTile(
-                title: const Text("List transactions"),
+                title: const Text("Tranzakciók listázása"),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -79,7 +78,7 @@ class NavDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('List by categories'),
+                title: const Text('Kategóriára szűrés'),
                 onTap: () => {
                   Navigator.push(
                     context,
@@ -88,7 +87,7 @@ class NavDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text("Add new"),
+                title: const Text("Új hozzáadása"),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -101,7 +100,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.calendar_month),
-            title: const Text('Calendar'),
+            title: const Text('Naptár'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -111,7 +110,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.maximize),
-            title: const Text('Limits'),
+            title: const Text('Limitek'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -121,7 +120,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.line_style_rounded),
-            title: const Text('Diagrams'),
+            title: const Text('Diagramok'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -131,17 +130,17 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.verified_user_sharp),
-            title: const Text('Profile'),
+            title: const Text('Profil'),
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                MaterialPageRoute(builder: (context) => ProfileStateful()),
               ),
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            title: const Text('Beállítások'),
             onTap: () => {
               Navigator.push(
                 context,
@@ -151,7 +150,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
+            title: const Text('Kijelentkezés'),
             onTap: () async => {
               await _authService.signOut(),
               Navigator.push(

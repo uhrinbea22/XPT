@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -17,108 +18,180 @@ class _SignInState extends State<SignIn> {
   String password = '';
   String resetPasswordStatus = '';
   bool absorbValue = false;
+  bool _passVisibility = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.blueAccent,
           elevation: 0.0,
-          title: const Text('Sign in to XPT'),
+          title: const Text('Bejelentkezés'),
         ),
         body: Column(children: [
           Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: Form(
-                  child: Column(
-                children: <Widget>[
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    validator: (value) =>
-                        value!.isEmpty ? 'Enter an email' : null,
-                    onChanged: (value) {
-                      setState(() => email = value);
-                    },
-                    keyboardType: TextInputType.emailAddress,
+            padding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            child: Form(
+                child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20.0),
+                TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    labelText: "Email cím",
+                    floatingLabelStyle: const TextStyle(
+                        height: 1, color: Color.fromARGB(255, 160, 26, 179)),
+                    filled: true,
+                    fillColor: Colors.grey[200],
                   ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    validator: (value) => value!.length < 6
-                        ? 'Enter a password 6+ chars long'
-                        : null,
-                    obscureText: true,
-                    onChanged: (value) {
-                      setState(() => password = value);
-                    },
-                  ),
-                  const SizedBox(height: 20.0),
-                  AbsorbPointer(
-                    absorbing: absorbValue,
-                    child: ElevatedButton(
-                      child: const Text('Sign in'),
-                      onPressed: () async {
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Írd be az email címed!";
+                    }
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                      return "Helytelen formátum!";
+                    }
+                  },
+                  onChanged: (value) {
+                    setState(() => email = value);
+                  },
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 20.0),
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => value!.length < 6
+                      ? 'Jelszavadnak minimum 6 karakter hosszúnak kell lennie!'
+                      : null,
+                  obscureText: _passVisibility,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    labelText: "Jelszó",
+                    floatingLabelStyle: const TextStyle(
+                        height: 1, color: Color.fromARGB(255, 160, 26, 179)),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    suffixIcon: IconButton(
+                      icon: _passVisibility
+                          ? const Icon(Icons.visibility_off)
+                          : const Icon(Icons.visibility),
+                      onPressed: () {
                         setState(() {
-                          absorbValue = true;
+                          _passVisibility = !_passVisibility;
                         });
-
-                        dynamic result =
-                            await _authService.signIn(email, password);
-                        if (result == null) {
-                          setState(() {
-                            error = 'Could not sign in with the credentials';
-                            absorbValue = false;
-                          });
-                        }
                       },
                     ),
                   ),
-                  const SizedBox(height: 12.0),
-                  Text(
-                    error,
-                    style: const TextStyle(color: Colors.red, fontSize: 14.0),
+                  onChanged: (value) {
+                    setState(() => password = value);
+                  },
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: AbsorbPointer(
+                    absorbing: absorbValue,
+                    child: TextButton(
+                        onPressed: () async {
+                          final _status = await _authService.resetPassword(
+                              email: email.toString());
+                          if (_status) {
+                            setState(() {
+                              resetPasswordStatus =
+                                  'Email elküldve! Ellenőrizd postaládád!';
+                            });
+                          } else {
+                            setState(() {
+                              resetPasswordStatus = 'Hiba történt!';
+                            });
+                          }
+                        },
+                        child: const Text(
+                          "Elfelejtetted jeszavad?",
+                          style: TextStyle(
+                              fontSize: 10.0, fontStyle: FontStyle.italic),
+                        )),
                   ),
-                ],
-              ))),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    resetPasswordStatus,
+                    style: const TextStyle(
+                        color: Colors.purpleAccent, fontSize: 10.0),
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                AbsorbPointer(
+                  absorbing: absorbValue,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      setState(() {
+                        absorbValue = true;
+                      });
+
+                      dynamic result =
+                          await _authService.signIn(email, password);
+                      if (result == null) {
+                        setState(() {
+                          error = 'Sikertelen bejelentkezés!';
+                          absorbValue = false;
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blueAccent,
+                      onPrimary: Colors.white,
+                      onSurface: Colors.grey,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      elevation: 10.0,
+                    ),
+                    child: const Text('Bejelentkezés'),
+                  ),
+                ),
+              ],
+            )),
+          ),
+          const SizedBox(height: 2.0),
           Text(
-            "You don't have an account?",
+            error,
             style: const TextStyle(
-              color: Colors.blueAccent,
+              color: Colors.red,
+              fontSize: 12.0,
             ),
           ),
-          TextButton.icon(
+          const Text(
+            "Még nincs fiókod?",
+            style: TextStyle(
+                color: Colors.blueAccent,
+                fontSize: 10,
+                fontStyle: FontStyle.italic),
+          ),
+          const SizedBox(height: 5.0),
+          TextButton(
               onPressed: () {
                 widget.toggleView();
               },
-              icon: const Icon(Icons.person),
-              label: const Text('Sign Up')),
-          Text(
-            "Forgot password?",
-            style: const TextStyle(color: Colors.blueAccent),
-          ),
-          AbsorbPointer(
-            absorbing: absorbValue,
-            child: ElevatedButton(
-                onPressed: () async {
-                  final _status =
-                      await _authService.resetPassword(email: email.toString());
-                  if (_status) {
-                    setState(() {
-                      resetPasswordStatus = 'Email sent';
-                    });
-                  } else {
-                    setState(() {
-                      resetPasswordStatus = 'Error happened!';
-                    });
-                  }
-                },
-                child: const Text("Reset pasword")),
-          ),
-          Text(
-            resetPasswordStatus,
-            style: const TextStyle(color: Colors.red, fontSize: 14.0),
-          ),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blueAccent,
+                onPrimary: Colors.white,
+                onSurface: Colors.grey,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                elevation: 10.0,
+              ),
+              child: const Text('Regisztráció'))
         ]));
   }
 }

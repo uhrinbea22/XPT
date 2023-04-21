@@ -1,29 +1,51 @@
 import 'dart:io';
 import 'package:app/screens/home/menu.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../firebase_options.dart';
+import '../../services/auth_service.dart';
+import 'package:app/firebase_options.dart';
+import 'package:app/screens/home/menu.dart';
 import 'package:app/services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../services/auth_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
-void main() {
-  runApp(const ProfileScreen());
-}
-
+/* 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(ProfileStateful());
+} */
+/* 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen();
+  const ProfileScreen({Key? key}) : super(key: key);
 
+  // const ProfileScreen();
   @override
   Widget build(BuildContext context) {
+    final appTitle = 'Profil';
     return MaterialApp(
-      title: 'Profile',
+      title: appTitle,
       theme: Theme.of(context),
-      home: ProfileStateful(),
+      home: Scaffold(
+        drawer: NavDrawer(),
+        appBar: AppBar(
+          title: Text(appTitle),
+        ),
+        body: ProfileStateful(),
+      ),
     );
   }
-}
+} */
 
 class ProfileStateful extends StatefulWidget {
   final AuthService _authService = AuthService();
@@ -48,8 +70,8 @@ class MyCustomFormStat extends State<ProfileStateful> {
 
   @override
   void initState() {
-    displayNameController.text = _authService.getuser()!.displayName!;
-    displayName = _authService.getuser()!.displayName!;
+    //displayNameController.text = _authService.getuser()!.displayName! ?? "";
+    //displayName = _authService.getuser()!.displayName!;
     super.initState();
   }
 
@@ -67,13 +89,9 @@ class MyCustomFormStat extends State<ProfileStateful> {
   }
 
   Future uploadFile() async {
-    //TODO : create directory with user_id and insert pic as the transaction__id
-
     if (_photo == null) return;
-    //final fileName = myController['title']!.text.toString();
     imgName = "profile";
     String directory = _authService.getuser()!.uid;
-
     try {
       final ref = firebase_storage.FirebaseStorage.instance
           .ref("$directory/")
@@ -144,7 +162,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
         ),
         body: Column(
           children: [
-            /*  Offstage(
+            Offstage(
               offstage: false,
               child: FutureBuilder(
                   future: storage.downloadUrl(
@@ -171,7 +189,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
                           ),
                         ));
                   }),
-            ), */
+            ),
             TextFormField(
               readOnly: true,
               initialValue: user?.email,

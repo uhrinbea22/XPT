@@ -1,3 +1,4 @@
+import 'package:app/consts/styles.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,8 +20,9 @@ void main() async {
 class CategLiast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'List by categories';
+    final appTitle = 'Kategóriára szűrés';
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: appTitle,
       theme: Theme.of(context),
       home: Scaffold(
@@ -58,8 +60,6 @@ class MyCustomFormState extends State<MyCustomForm> {
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final AuthService _authService = AuthService();
@@ -76,7 +76,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 builder: (context, snapshot) {
                   // if not has data - loading
                   if (!snapshot.hasData) {
-                    return const Text("No data");
+                    return const Text("Hiba történt");
                     //if has data
                   } else {
                     for (int i = 0; i < snapshot.data!.docs.length; i++) {
@@ -89,7 +89,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         DropdownButton<dynamic>(
-                          hint: Text("Choose category"),
+                          hint: Text("Válassz kategóriát"),
                           items: categoryList.map((location) {
                             return DropdownMenuItem(
                               child: new Text(location),
@@ -121,7 +121,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print((snapshot.error));
-                  return Text('Something went wrong');
+                  return Text('Hiba történt');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting ||
                     !snapshot.hasData) {
@@ -145,45 +145,68 @@ class MyCustomFormState extends State<MyCustomForm> {
         ],
         //
       )),
-  
     );
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return SingleChildScrollView(
-        child: Column(children: [
-      ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.lightBlue,
-          child: document['expense'] == true
-              ? Icon(
-                  Icons.remove,
-                  color: Colors.black,
-                )
-              : Icon(
-                  Icons.add,
-                  color: Colors.black,
+      child: Column(
+        children: [
+          ListTile(
+            selectedColor: Colors.lightBlueAccent,
+            visualDensity: VisualDensity.compact,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            tileColor: Colors.white30,
+            leading: Icon(
+              Icons.double_arrow_rounded,
+              color: Colors.black,
+            ),
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(document['title'],
+                      style: const TextStyle(color: Colors.black)),
                 ),
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(document['title'],
-                  style: TextStyle(color: Colors.black)),
+                Expanded(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: document['expense'] == true
+                          ? Icon(
+                              Icons.remove_outlined,
+                              color: Colors.black,
+                            )
+                          : Icon(
+                              Icons.add_outlined,
+                              color: Colors.black,
+                            ),
+                    ),
+                    Text('${document['amount']}$valuta',
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18))
+                  ],
+                ))
+              ],
             ),
-          ],
-        ),
-        subtitle: Text(document['category'].toString(),
-            style: TextStyle(color: Colors.black)),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TransactionDetailview(document['title']),
+            subtitle: Text(
+              document['date'],
             ),
-          );
-        },
-      )
-    ]));
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      TransactionDetailview(document['title']),
+                ),
+              );
+            },
+          )
+        ],
+      ),
+    );
   }
 }

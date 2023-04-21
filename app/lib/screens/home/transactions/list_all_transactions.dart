@@ -5,11 +5,14 @@ import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
 import 'package:intl/intl.dart';
+import 'package:app/consts/styles.dart';
 
 void main() {
   runApp(ListAllTrans());
@@ -21,9 +24,10 @@ class ListAllTrans extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: Theme.of(context),
-      title: 'List all transactions',
-      home: MyAppHomePage(title: 'All transactions'),
+      title: 'Tranzakciók listázása',
+      home: MyAppHomePage(title: 'Tranzakciók'),
     );
   }
 }
@@ -40,36 +44,50 @@ class MyAppHomePage extends StatelessWidget {
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     final numberFormat = new NumberFormat("#,###", "en_US");
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
           selectedColor: Colors.lightBlueAccent,
+          visualDensity: VisualDensity.compact,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50.0),
           ),
-          tileColor: Colors.white24,
-          hoverColor: Colors.blueGrey,
-          leading: CircleAvatar(
-            backgroundColor: Colors.tealAccent,
-            child: document['expense'] == true
-                ? Icon(
-                    Icons.remove,
-                    color: Colors.black,
-                  )
-                : Icon(
-                    Icons.add,
-                    color: Colors.black,
-                  ),
+          tileColor: Colors.white30,
+          leading: Icon(
+            Icons.double_arrow_rounded,
+            color: Colors.black,
           ),
           title: Row(
             children: [
               Expanded(
                 child: Text(document['title'],
-                    style: TextStyle(color: Colors.black)),
+                    style: const TextStyle(color: Colors.black)),
               ),
+              Expanded(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    child: document['expense'] == true
+                        ? Icon(
+                            Icons.remove_outlined,
+                            color: Colors.black,
+                          )
+                        : Icon(
+                            Icons.add_outlined,
+                            color: Colors.black,
+                          ),
+                  ),
+                  Text('${document['amount']}$valuta',
+                      style: const TextStyle(color: Colors.black, fontSize: 18))
+                ],
+              ))
             ],
           ),
-          subtitle: Text(numberFormat.format(document['amount']),
-              style: TextStyle(color: Colors.black)),
+          subtitle: Text(
+            document['date'],
+          ),
           onTap: () {
             Navigator.push(
               context,
@@ -91,16 +109,24 @@ class MyAppHomePage extends StatelessWidget {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    final AuthService _authService = AuthService();
-    User? user = _authService.getuser();
+    final AuthService authService = AuthService();
+    User? user = authService.getuser();
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text(title),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -108,11 +134,9 @@ class MyAppHomePage extends StatelessWidget {
             .where('uid', isEqualTo: user!.uid)
             .where('date', isGreaterThanOrEqualTo: actualMonthStart)
             .where('date', isLessThan: nextMonthStart)
-            //.orderBy("dates")
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            print(snapshot.error);
             return Text(snapshot.error.toString());
           }
           if (snapshot.connectionState == ConnectionState.waiting ||
@@ -132,7 +156,7 @@ class MyAppHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           hoverColor: Colors.purple,
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(
                 context,
@@ -140,7 +164,6 @@ class MyAppHomePage extends StatelessWidget {
                   builder: (context) => CreateTransaction(),
                 ));
           }),
-  
     );
   }
 }
