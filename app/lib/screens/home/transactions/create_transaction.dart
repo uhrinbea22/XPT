@@ -39,7 +39,6 @@ class CreateTransaction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appTitle = 'Tranzakció hozzáadása';
-    // return MyCustomForm();
     return MaterialApp(
       title: appTitle,
       theme: Theme.of(context),
@@ -388,7 +387,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                           children: [
                             Text(
                               showText,
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(color: Colors.red, fontSize: 10),
                             )
                           ],
                         ),
@@ -504,7 +503,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               Row(
                 children: [
                   Container(
-                      padding: const EdgeInsets.only(left: 150.0, top: 20.0),
+                      padding: const EdgeInsets.only(left: 100.0, top: 20.0),
                       child: AbsorbPointer(
                         absorbing: absorbValue,
                         child: ElevatedButton(
@@ -578,7 +577,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       i++) {
                                     max = max + categoryAmount[i];
                                   }
-
+                                  max = max + tr.amount;
                                   int limit = 0;
                                   if (citiesRef.docs.isNotEmpty) {
                                     limit = int.parse(
@@ -595,7 +594,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              title: const Text('Új kategória'),
+                                              title:
+                                                  const Text('Limit átlépése'),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
@@ -654,7 +654,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                             }),
                       )),
                   Container(
-                    padding: const EdgeInsets.only(left: 250.0, top: 20.0),
+                    padding: const EdgeInsets.only(left: 50.0, top: 20.0),
                     child: ElevatedButton(
                       child: const Text('Vissza'),
                       onPressed: () {

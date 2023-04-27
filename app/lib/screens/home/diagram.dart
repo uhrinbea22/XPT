@@ -208,9 +208,6 @@ class _State extends State<RealtimeDiagram> {
     }
 
     //list has the category name and the actual amount, we have to add the limit to that
-/*     print(listWithDuplicates);
-    print(categoriesOnce);
-    print(list); */
 
     var limitSnapshots = allData
         ? await FirebaseFirestore.instance
@@ -230,46 +227,12 @@ class _State extends State<RealtimeDiagram> {
     List limitValues =
         limitSnapshots.docs.map((e) => (e.data()['limit'])).toList();
 
-    for (int i = 0; i < limitValues.length; i++) {
-      /*  print("LIMIT VALUE : ");
-      print(limitValues[i]);
-      print("LIMIT CATEGORY : ");
-      print(limitCategories[i]); */
-    }
-/* 
-    var index;
-    for (int i = 0; i < list.length; i++) {
-      if (limitCategories.contains(list[i].category))
-        index = limitCategories.indexOf(list[i].category);
-      list[i].categoryLimit = limitValues[index];
-       print(limitValues[i]);
-      print("LIMIT CATEGORY : ");
-      print(limitCategories[i]); 
-    } */
-
-    /*    for (int j = 0; j < list.length; j++) {
-      print("category");
-      print(list[j].category);
-      print("amount");
-      print(list[j].amount);
-      print("limit");
-      print(list[j].categoryLimit);
-    }
- */
     List<TransactionDetails> lista = [];
 
     for (int i = 0; i < list.length; i++) {
       for (int j = 0; j < limitCategories.length; j++) {
         if (limitCategories.contains(list[i].category)) {
           var index = limitCategories.indexOf(list[i].category);
-          print(index);
-          /*  print("LIMIT I.edik : ");
-          print(list[i].amount);
-          print("LIMIT CATEGORIES i.edik : ");
-          print(limitCategories[i]);
-          print("LIMIT CATEGORIES index.edik : ");
-          print(limitCategories[index]); */
-
           var tr = TransactionDetails.limit(
             list[i].category.toString(),
             int.parse(limitValues[index]),
@@ -283,13 +246,6 @@ class _State extends State<RealtimeDiagram> {
     for (int i = 0; i < list.length; i++) {
       if (limitCategories.contains(list[i].category)) {
         var index = limitCategories.indexOf(list[i].category);
-        /*  print("LIMIT CATEGORIES index.edik : ");
-        print(limitCategories[index]);
-        print("LISTA CATEGORIES I.edik : ");
-        print(lista[i].category);
-        print("LISTA AMOUNT I.edik : ");
-        print(lista[i].amount);  */
-
         var tr = TransactionDetails.limit(
           list[i].category.toString(),
           int.parse(limitValues[index]),
@@ -298,16 +254,6 @@ class _State extends State<RealtimeDiagram> {
         lista.add(tr);
       }
     }
-
-    for (int j = 0; j < list.length; j++) {
-      print("category");
-      print(list[j].category);
-      print("amount");
-      print(list[j].amount);
-      print("limit");
-      print(list[j].categoryLimit);
-    }
-
     setState(() {
       limitData = lista;
     });
@@ -330,11 +276,15 @@ class _State extends State<RealtimeDiagram> {
           child: Column(
         children: <Widget>[
           Container(
+            padding: EdgeInsets.all(5.0),
             alignment: Alignment.center,
             child: Text(
-                "Aktuális egyenleg : ${allIncomeAmount - allExpenseAmount} $valuta"),
+              "Aktuális egyenleg : ${allIncomeAmount - allExpenseAmount} $valuta",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
           Container(
+              /*  */
               alignment: Alignment.center,
               child: ElevatedButton(
                 child:
@@ -434,16 +384,15 @@ class _State extends State<RealtimeDiagram> {
                 legendItemBuilder:
                     (String name, dynamic series, dynamic point, int index) {
                   return SizedBox(
-                      height: 20.0,
-                      width: 50.0,
-                      child: Row(children: <Widget>[
-                        SizedBox(child: Text(series.name)),
-                      ]));
+                    height: 30.0,
+                    width: 60.0,
+                    child: SizedBox(child: Text(series.name)),
+                  );
                 },
               ),
               series: <ChartSeries>[
                 ColumnSeries<TransactionDetails, String>(
-                    width: 0.4,
+                    width: 0.35,
                     dataSource: limitData,
                     dataLabelMapper: (TransactionDetails details, _) =>
                         "Kategória Limit",
@@ -455,7 +404,7 @@ class _State extends State<RealtimeDiagram> {
                     name: "Limit"),
                 ColumnSeries<TransactionDetails, String>(
                     dataSource: limitData,
-                    width: 0.2,
+                    width: 0.25,
                     dataLabelMapper: (TransactionDetails details, _) =>
                         details.categoryLimit.toString(),
                     xValueMapper: (TransactionDetails details, _) =>

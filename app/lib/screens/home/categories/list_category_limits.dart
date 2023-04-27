@@ -38,18 +38,14 @@ class MyAppHomePage extends StatelessWidget {
       title: Row(
         children: [
           Expanded(
-            child: Text(document['category'].toString(),
-                style: TextStyle(color: Colors.black)
-                //Theme.of(context).textTheme.displayMedium,
-                ),
-          ),
+              child: Text(
+            document['category'].toString(),
+          )),
           Expanded(
               child: Row(
             children: [
               Icon(Icons.report_outlined),
-              Text(document['limit'], style: TextStyle(color: Colors.black)
-                  //Theme.of(context).textTheme.displayMedium,
-                  ),
+              Text(document['limit']),
             ],
           ))
         ],
@@ -61,7 +57,6 @@ class MyAppHomePage extends StatelessWidget {
               return AlertDialog(
                 title: const Text('Max limit beállítása'),
                 content: TextFormField(
-                  //initialValue: document['limit'].toString(),
                   keyboardType: TextInputType.number,
                   controller: limitController,
                   decoration:
@@ -76,7 +71,7 @@ class MyAppHomePage extends StatelessWidget {
                           .doc(document.id)
                           .set({'limit': limitController.text},
                               SetOptions(merge: true)).then((value) {});
-                      // categoryRef.update({"limit": 100});
+
                       Navigator.of(context).pop();
                     },
                   )
@@ -110,8 +105,6 @@ class MyAppHomePage extends StatelessWidget {
               size: 50,
             );
           }
-          // if (snapshot.hasData) return Text('has data');
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text("Várakozás");
           }

@@ -1,5 +1,6 @@
 import 'package:app/models/userModel.dart';
 import 'package:app/screens/authenticate/authenticate.dart';
+import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ class Wrapper extends StatelessWidget {
     if (userModel == null) {
       return Authenticate();
     } else {
-      return Home();
+      return DiagramScreen();
     }
   }
 }

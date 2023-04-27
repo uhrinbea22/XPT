@@ -19,11 +19,7 @@ class DetailView extends StatelessWidget {
     return MaterialApp(
       theme: Theme.of(context),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        drawer: NavDrawer(),
-        appBar: AppBar(),
-        body: TransactionDetailview(title),
-      ),
+      home: TransactionDetailview(title),
     );
   }
 }
@@ -173,7 +169,6 @@ class TransactionDetailview extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      //      Text('.'),
                                     ],
                                   )
                                 : Text(
@@ -265,29 +260,6 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-                    /* Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 00, 10, 20),
-                      child: Material(
-                        elevation: 20,
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        child: Container(
-                          
-                          height: 22,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey.shade200,
-                            borderRadius: BorderRadius.all(Radius.circular(50)),
-                          ),
-                          child: Text(
-                            document['expense'] == true ? "Kiadás" : "Bevétel",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ), */
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: FloatingActionButton(
@@ -311,11 +283,10 @@ class TransactionDetailview extends StatelessWidget {
                                                       await transaction.delete(
                                                           document.reference));
                                           Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ListAllTrans()),
-                                          );
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ListAllTrans()));
                                         },
                                       )
                                     ],

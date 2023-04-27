@@ -12,7 +12,10 @@ import '../../../consts/styles.dart';
 class HorizontalSwipeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MainScreen());
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: Theme.of(context),
+        home: MainScreen());
   }
 }
 
