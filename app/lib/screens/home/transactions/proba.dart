@@ -13,12 +13,8 @@ import '../../../services/auth_service.dart';
 import 'package:intl/intl.dart';
 import 'package:app/consts/styles.dart';
 
-void main() {
-  runApp(ListAllTrans());
-}
-
-class ListAllTrans extends StatelessWidget {
-  const ListAllTrans();
+class ListAll extends StatelessWidget {
+  const ListAll();
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +22,21 @@ class ListAllTrans extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: Theme.of(context),
       title: 'Tranzakciók listázása',
-      home: MyCustomForm(),
+      home: CustomForm(),
     );
   }
 }
 
-class MyCustomForm extends StatefulWidget {
+class CustomForm extends StatefulWidget {
   var _streamCategoriesList;
   @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
+  MyCustomFormState2 createState() {
+    return MyCustomFormState2();
   }
 }
 
-class MyCustomFormState extends State<MyCustomForm> {
-  var title = "Tranzakciók listázása";
+class MyCustomFormState2 extends State<CustomForm> {
+  var title = "Bevételek listázása";
   final budget = 0;
   final String actualMonthStart =
       '${DateTime.now().year}-0${DateTime.now().month}-01';
@@ -132,9 +128,11 @@ class MyCustomFormState extends State<MyCustomForm> {
             .where('uid', isEqualTo: user!.uid)
             .where('date', isGreaterThanOrEqualTo: actualMonthStart)
             .where('date', isLessThan: nextMonthStart)
+            .where('expense', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            print(snapshot.error);
             return Text(snapshot.error.toString());
           }
           if (snapshot.connectionState == ConnectionState.waiting ||

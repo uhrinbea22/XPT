@@ -176,7 +176,10 @@ class TransactionDetailview extends StatelessWidget {
                                       //      Text('.'),
                                     ],
                                   )
-                                : Text(document['place']),
+                                : Text(
+                                    document['place'],
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                           ),
                         ],
                       ),

@@ -5,6 +5,8 @@ import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/profile.dart';
+import 'package:app/screens/home/transactions/proba.dart';
+import 'package:app/screens/home/transactions/swipe.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:app/services/storage_service.dart';
@@ -25,8 +27,8 @@ class NavDrawer extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Offstage(
                     offstage: false,
@@ -42,28 +44,55 @@ class NavDrawer extends StatelessWidget {
                               size: 20,
                             );
                           }
-
                           if (!snapshot.hasData) {
-                            return CircleAvatar(
-                                //ide az assets-ből user_avatar.png-fajlt
-                                backgroundImage:
-                                    NetworkImage('assets/user_avatar.png'));
+                            return Row(
+                              children: <Widget>[
+                                Container(
+                                    height: 60,
+                                    width: 60,
+                                    child: CircleAvatar(
+                                      //ide az assets-ből user_avatar.png-fajlt
+                                      child: Image.asset(
+                                        'user_avatar.png',
+                                        width: 300,
+                                        height: 300,
+                                      ),
+                                    )),
+                              ],
+                            );
                           }
                           if (snapshot.hasError) return Text('Hiba történt');
-                          return CircleAvatar(
-                              radius: 35,
-                              backgroundColor: Colors.transparent,
-                              child: ClipOval(
-                                child: Image.network(
-                                  snapshot.data!,
-                                  fit: BoxFit.fill,
-                                  width: 100,
-                                  height: 100,
-                                ),
-                              ));
+
+                          return Row(
+                            children: <Widget>[
+                              Container(
+                                  height: 60,
+                                  width: 60,
+                                  child: CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: Colors.transparent,
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          snapshot.data!,
+                                          fit: BoxFit.fill,
+                                          width: 300,
+                                          height: 300,
+                                        ),
+                                      ))),
+                            ],
+                          );
                         }),
                   ),
-                  Text(_authService.getuser()!.displayName.toString()),
+                  Row(
+                    children: [
+                      Text(
+                        _authService.getuser()!.displayName == null
+                            ? _authService.getuser()!.email.toString()
+                            : _authService.getuser()!.displayName.toString(),
+                        style: TextStyle(fontSize: 25),
+                      ),
+                    ],
+                  )
                 ]),
           ),
           ExpansionTile(
@@ -160,6 +189,16 @@ class NavDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (context) => const Wrapper()),
               ),
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('SWIPE'),
+            onTap: () async => {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HorizontalSwipeScreen())),
             },
           ),
         ],

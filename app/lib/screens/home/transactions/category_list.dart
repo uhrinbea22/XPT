@@ -73,12 +73,16 @@ class MyCustomFormState extends State<MyCustomForm> {
           Container(
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: onlyThisMonth ? Colors.grey : Colors.pink),
                 onPressed: () => setState(() {
                   onlyThisMonth = false;
                 }),
                 child: Text('Minden tranzakció'),
               ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: onlyThisMonth ? Colors.pink : Colors.grey),
                 onPressed: () => setState(() {
                   onlyThisMonth = true;
                 }),
@@ -107,6 +111,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
+                        Text(selectedCategory),
                         DropdownButton<dynamic>(
                           hint: Text("Válassz kategóriát"),
                           items: categoryList.map((category) {
@@ -118,7 +123,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                           onChanged: (choosedCategory) {
                             setState(() {
                               selectedCategory = choosedCategory;
-                              hintText = choosedCategory;
                             });
                           },
                           isExpanded: false,
@@ -138,17 +142,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                       .where('category', isEqualTo: selectedCategory)
                       .where('date', isGreaterThanOrEqualTo: actualMonthStart)
                       .where('date', isLessThan: nextMonthStart)
-                      //only expenses
-                      .where("expense", isEqualTo: true)
                       .snapshots()
                   : FirebaseFirestore.instance
                       .collection('transactions')
                       .where('uid', isEqualTo: _authService.getuser()!.uid)
                       .where('category', isEqualTo: selectedCategory)
-                      //.where('date', isGreaterThanOrEqualTo: actualMonthStart)
-                      //.where('date', isLessThan: nextMonthStart)
-                      //only expenses
-                      .where("expense", isEqualTo: true)
                       .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
