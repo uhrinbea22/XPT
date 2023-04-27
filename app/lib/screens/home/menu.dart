@@ -44,7 +44,10 @@ class NavDrawer extends StatelessWidget {
                           }
 
                           if (!snapshot.hasData) {
-                            return CircleAvatar(backgroundColor: Colors.grey);
+                            return CircleAvatar(
+                                //ide az assets-ből user_avatar.png-fajlt
+                                backgroundImage:
+                                    NetworkImage('assets/user_avatar.png'));
                           }
                           if (snapshot.hasError) return Text('Hiba történt');
                           return CircleAvatar(

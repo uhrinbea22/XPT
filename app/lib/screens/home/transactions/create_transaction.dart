@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:app/consts/styles.dart';
 import 'package:app/screens/home/transactions/fileupload.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
@@ -94,6 +95,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   File? _photo;
   final ImagePicker _picker = ImagePicker();
   String imgName = "";
+
+  var _selectedOption;
 
   @override
   void initState() {
@@ -273,7 +276,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   decoration: const InputDecoration(
                     icon: Icon(Icons.calendar_month),
                     hintText: 'Add meg a dátumot',
-                    labelText: 'Dátum',
+                    labelText: 'Dátum*',
                     iconColor: Colors.grey,
                   ),
                   readOnly: true,
@@ -319,25 +322,36 @@ class MyCustomFormState extends State<MyCustomForm> {
                 },
                 controller: myController['title'],
                 decoration: const InputDecoration(
-                    icon: Icon(Icons.abc), labelText: "Megnevezés"),
+                    icon: Icon(Icons.abc), labelText: "Megnevezés*"),
               ),
               TextFormField(
                 controller: myController['notes'],
                 decoration: const InputDecoration(
                     icon: Icon(Icons.note), labelText: "Jegyzet"),
               ),
-              CheckboxListTile(
-                title: Text('Kiadás'),
-                checkColor: Colors.grey,
-                activeColor: Colors.blue,
-                value: expense_value,
-                subtitle: Text("Ha kiadás, csekkold be"),
-                onChanged: (bool? value) {
-                  setState(() {
-                    expense_value = value!;
-                  });
-                },
-              ),
+
+              Column(children: [
+                RadioListTile(
+                  title: Text('Kiadás'),
+                  value: 'Kiadás',
+                  groupValue: _selectedOption,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedOption = value as String?;
+                    });
+                  },
+                ),
+                RadioListTile(
+                  title: Text('Bevétel'),
+                  value: 'Bevétel',
+                  groupValue: _selectedOption,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedOption = value as String?;
+                    });
+                  },
+                )
+              ]),
               CheckboxListTile(
                 title: Text('Rendszeres'),
                 subtitle: Text("Ha fizetés vagy számla, csekkold be"),
@@ -368,7 +382,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   Container(
                     child: Column(
                       children: [
-                        Text('Kategória : '),
+                        Text('Kategória* : '),
                         Text(dropdownvalue),
                         Column(
                           children: [
@@ -441,10 +455,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     padding: const EdgeInsets.only(left: 20.0, top: 0.0),
                     child: FloatingActionButton(
                         mini: true,
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.blueGrey,
-                        hoverColor: Colors.purple,
-                        child: Icon(Icons.add),
+                        child: Icon(Icons.add_outlined),
                         onPressed: () {
                           showDialog(
                               context: context,
@@ -529,7 +540,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       online_value,
                                       myController['notes']!.text,
                                       myController['place']!.text,
-                                      expense_value,
+                                      _selectedOption == "Bevétel"
+                                          ? false
+                                          : true,
                                       myController['title']!.text,
                                       imgName);
 
@@ -594,8 +607,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                                             );
                                           });
                                     }
-                                  } else if (citiesRef.docs.isNotEmpty &&
-                                      tr.expense == true) {
+                                  } else if (citiesRef.docs.isEmpty &&
+                                      tr.expense) {
                                     FirebaseFirestore.instance
                                         .collection('category_limits')
                                         .doc()

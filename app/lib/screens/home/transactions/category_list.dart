@@ -55,6 +55,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   final String nextMonthStart =
       '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
 
+  bool onlyThisMonth = true;
+  var hintText = Text("Válassz kategóriát");
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +70,22 @@ class MyCustomFormState extends State<MyCustomForm> {
       body: SingleChildScrollView(
           child: Column(
         children: [
+          Container(
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  onlyThisMonth = false;
+                }),
+                child: Text('Minden tranzakció'),
+              ),
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  onlyThisMonth = true;
+                }),
+                child: Text('Ehavi tranzakciók'),
+              ),
+            ]),
+          ),
           SingleChildScrollView(
             child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -90,15 +109,16 @@ class MyCustomFormState extends State<MyCustomForm> {
                       children: <Widget>[
                         DropdownButton<dynamic>(
                           hint: Text("Válassz kategóriát"),
-                          items: categoryList.map((location) {
+                          items: categoryList.map((category) {
                             return DropdownMenuItem(
-                              child: new Text(location),
-                              value: location,
+                              child: new Text(category),
+                              value: category,
                             );
                           }).toList(),
                           onChanged: (choosedCategory) {
                             setState(() {
                               selectedCategory = choosedCategory;
+                              hintText = choosedCategory;
                             });
                           },
                           isExpanded: false,
@@ -111,13 +131,25 @@ class MyCustomFormState extends State<MyCustomForm> {
           SingleChildScrollView(
             //flex: 0,
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('transactions')
-                  .where('uid', isEqualTo: _authService.getuser()!.uid)
-                  .where('category', isEqualTo: selectedCategory)
-                  .where('date', isGreaterThanOrEqualTo: actualMonthStart)
-                  .where('date', isLessThan: nextMonthStart)
-                  .snapshots(),
+              stream: onlyThisMonth
+                  ? FirebaseFirestore.instance
+                      .collection('transactions')
+                      .where('uid', isEqualTo: _authService.getuser()!.uid)
+                      .where('category', isEqualTo: selectedCategory)
+                      .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+                      .where('date', isLessThan: nextMonthStart)
+                      //only expenses
+                      .where("expense", isEqualTo: true)
+                      .snapshots()
+                  : FirebaseFirestore.instance
+                      .collection('transactions')
+                      .where('uid', isEqualTo: _authService.getuser()!.uid)
+                      .where('category', isEqualTo: selectedCategory)
+                      //.where('date', isGreaterThanOrEqualTo: actualMonthStart)
+                      //.where('date', isLessThan: nextMonthStart)
+                      //only expenses
+                      .where("expense", isEqualTo: true)
+                      .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print((snapshot.error));

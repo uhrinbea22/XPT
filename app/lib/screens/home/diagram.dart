@@ -118,6 +118,8 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadExpenseData() async {
+    allExpenseAmount = 0;
+    allIncomeAmount = 0;
     var snapShotsValue = allData
         ? await FirebaseFirestore.instance
             .collection("transactions")
@@ -146,8 +148,8 @@ class _State extends State<RealtimeDiagram> {
     if (mounted) {
       setState(() {
         expenseData = [
-          TransactionDetails("Expense", allExpenseAmount as int, Colors.black),
-          TransactionDetails("Income", allIncomeAmount as int, Colors.green)
+          TransactionDetails("Kiadás", allExpenseAmount as int, Colors.black),
+          TransactionDetails("Bevétel", allIncomeAmount as int, Colors.green)
         ];
       });
     }
@@ -206,6 +208,9 @@ class _State extends State<RealtimeDiagram> {
     }
 
     //list has the category name and the actual amount, we have to add the limit to that
+/*     print(listWithDuplicates);
+    print(categoriesOnce);
+    print(list); */
 
     var limitSnapshots = allData
         ? await FirebaseFirestore.instance
@@ -226,22 +231,81 @@ class _State extends State<RealtimeDiagram> {
         limitSnapshots.docs.map((e) => (e.data()['limit'])).toList();
 
     for (int i = 0; i < limitValues.length; i++) {
+      /*  print("LIMIT VALUE : ");
       print(limitValues[i]);
+      print("LIMIT CATEGORY : ");
+      print(limitCategories[i]); */
     }
+/* 
+    var index;
+    for (int i = 0; i < list.length; i++) {
+      if (limitCategories.contains(list[i].category))
+        index = limitCategories.indexOf(list[i].category);
+      list[i].categoryLimit = limitValues[index];
+       print(limitValues[i]);
+      print("LIMIT CATEGORY : ");
+      print(limitCategories[i]); 
+    } */
+
+    /*    for (int j = 0; j < list.length; j++) {
+      print("category");
+      print(list[j].category);
+      print("amount");
+      print(list[j].amount);
+      print("limit");
+      print(list[j].categoryLimit);
+    }
+ */
     List<TransactionDetails> lista = [];
 
     for (int i = 0; i < list.length; i++) {
       for (int j = 0; j < limitCategories.length; j++) {
-        if (list[i].category == limitCategories[j]) {
+        if (limitCategories.contains(list[i].category)) {
+          var index = limitCategories.indexOf(list[i].category);
+          print(index);
+          /*  print("LIMIT I.edik : ");
+          print(list[i].amount);
+          print("LIMIT CATEGORIES i.edik : ");
+          print(limitCategories[i]);
+          print("LIMIT CATEGORIES index.edik : ");
+          print(limitCategories[index]); */
+
           var tr = TransactionDetails.limit(
-            list[i].category,
-            int.parse(limitValues[j]),
+            list[i].category.toString(),
+            int.parse(limitValues[index]),
             list[i].amount,
           );
           lista.add(tr);
-          print(limitValues[j]);
         }
       }
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      if (limitCategories.contains(list[i].category)) {
+        var index = limitCategories.indexOf(list[i].category);
+        /*  print("LIMIT CATEGORIES index.edik : ");
+        print(limitCategories[index]);
+        print("LISTA CATEGORIES I.edik : ");
+        print(lista[i].category);
+        print("LISTA AMOUNT I.edik : ");
+        print(lista[i].amount);  */
+
+        var tr = TransactionDetails.limit(
+          list[i].category.toString(),
+          int.parse(limitValues[index]),
+          list[i].amount,
+        );
+        lista.add(tr);
+      }
+    }
+
+    for (int j = 0; j < list.length; j++) {
+      print("category");
+      print(list[j].category);
+      print("amount");
+      print(list[j].amount);
+      print("limit");
+      print(list[j].categoryLimit);
     }
 
     setState(() {

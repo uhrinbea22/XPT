@@ -134,7 +134,6 @@ class Cal extends State<MyCalendar> {
             child: Column(
           children: [
             Container(
-              color: Colors.white,
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(

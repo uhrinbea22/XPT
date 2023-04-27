@@ -37,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
     final darkFABTheme = dark.floatingActionButtonTheme;
 
     final themeCollection = ThemeCollection(themes: {
-      AppThemes.LightBlue: ThemeData(primarySwatch: Colors.blue),
+      AppThemes.LightBlue: ThemeData(primarySwatch: Colors.lightBlue),
       AppThemes.LightRed: ThemeData(primarySwatch: Colors.red),
       AppThemes.DarkBlue: dark.copyWith(
           accentColor: Colors.blue,

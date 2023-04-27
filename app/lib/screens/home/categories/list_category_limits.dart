@@ -35,7 +35,6 @@ class MyAppHomePage extends StatelessWidget {
     final limitController = TextEditingController(text: document['limit']);
 
     return ListTile(
-      leading: CircleAvatar(backgroundColor: Colors.grey),
       title: Row(
         children: [
           Expanded(
@@ -45,10 +44,14 @@ class MyAppHomePage extends StatelessWidget {
                 ),
           ),
           Expanded(
-            child: Text(document['limit'], style: TextStyle(color: Colors.black)
-                //Theme.of(context).textTheme.displayMedium,
-                ),
-          ),
+              child: Row(
+            children: [
+              Icon(Icons.report_outlined),
+              Text(document['limit'], style: TextStyle(color: Colors.black)
+                  //Theme.of(context).textTheme.displayMedium,
+                  ),
+            ],
+          ))
         ],
       ),
       onTap: () {

@@ -3,11 +3,13 @@ import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/storage_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailView extends StatelessWidget {
   DetailView(this.title, {Key? key}) : super(key: key);
@@ -37,6 +39,15 @@ class TransactionDetailview extends StatelessWidget {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     Storage storage = Storage();
+
+    _launchURL() async {
+      Uri _url = Uri.parse(document['place']);
+      if (await launchUrl(_url)) {
+        //sikeres volt
+      } else {
+        throw 'Could not launch $_url';
+      }
+    }
 
     return Scaffold(
       drawer: NavDrawer(),
@@ -82,25 +93,17 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-                    /*  Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Title',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ), */
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.subtitles),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                              child: Icon(
+                                Icons.subtitles_outlined,
+                              )),
                           Text(
                             document['title'],
                             style: TextStyle(fontSize: 20),
@@ -108,29 +111,17 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
-                    /*  Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 16, 20, 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Amount',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ), */
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(
-                            Icons.monetization_on,
-                            color: Colors.black,
-                            size: 20.0,
-                          ),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                              child: Icon(
+                                Icons.attach_money_outlined,
+                              )),
                           Text(
                             document['amount'].toString(),
                             style: TextStyle(fontSize: 20),
@@ -143,7 +134,12 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.category),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                              child: Icon(
+                                Icons.view_cozy_outlined,
+                              )),
                           Expanded(
                             child: Text(document['category'],
                                 style: TextStyle(fontSize: 20)),
@@ -156,14 +152,31 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(
-                            Icons.place,
-                            color: Colors.black,
-                            size: 20.0,
-                          ),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                              child: Icon(
+                                Icons.storefront_outlined,
+                              )),
                           Expanded(
-                            child: Text(document['place'],
-                                style: TextStyle(fontSize: 20)),
+                            child: document['online'] == true
+                                ? Wrap(
+                                    children: <Widget>[
+                                      InkWell(
+                                        onTap: _launchURL,
+                                        child: Text(
+                                          document['place'],
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
+                                      //      Text('.'),
+                                    ],
+                                  )
+                                : Text(document['place']),
                           ),
                         ],
                       ),
@@ -189,7 +202,12 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.date_range),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                              child: Icon(
+                                Icons.date_range_outlined,
+                              )),
                           Text(
                             (document['date']).toString(),
                             style: TextStyle(fontSize: 20),
@@ -204,7 +222,12 @@ class TransactionDetailview extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Icon(Icons.online_prediction),
+                            Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                                child: Icon(
+                                  Icons.wifi_outlined,
+                                )),
                             Expanded(
                               child: Text("Online",
                                   style: TextStyle(fontSize: 20)),
@@ -218,7 +241,12 @@ class TransactionDetailview extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.note),
+                          Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                              child: Icon(
+                                Icons.note_outlined,
+                              )),
                         ],
                       ),
                     ),
@@ -234,6 +262,29 @@ class TransactionDetailview extends StatelessWidget {
                         ],
                       ),
                     ),
+                    /* Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(10, 00, 10, 20),
+                      child: Material(
+                        elevation: 20,
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        child: Container(
+                          
+                          height: 22,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade200,
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                          ),
+                          child: Text(
+                            document['expense'] == true ? "Kiadás" : "Bevétel",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ), */
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: FloatingActionButton(

@@ -16,9 +16,9 @@ class ListAllTrans extends StatelessWidget {
   Widget build(BuildContext context) {
     //return MyAppHomePage(title: "Set limit");
     return MaterialApp(
-      title: 'Set limit ',
+      title: 'Limit beálítása',
       theme: Theme.of(context),
-      home: MyAppHomePage(title: 'Set limit'),
+      home: MyAppHomePage(title: 'Limit beállítása'),
     );
   }
 }
