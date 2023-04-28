@@ -83,12 +83,14 @@ class NavDrawer extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text(
-                        _authService.getuser()!.displayName == null
-                            ? _authService.getuser()!.email.toString()
-                            : _authService.getuser()!.displayName.toString(),
-                        style: TextStyle(fontSize: 25),
-                      ),
+                      Expanded(
+                        child: Text(
+                          _authService.getuser()!.displayName == null
+                              ? _authService.getuser()!.email.toString()
+                              : _authService.getuser()!.displayName.toString(),
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      )
                     ],
                   )
                 ]),

@@ -68,7 +68,7 @@ class _SignInState extends State<SignIn> {
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) => value!.length < 6
-                      ? 'Jelszavadnak minimum 6 karakter hosszúnak kell lennie!'
+                      ? 'A jelszú túl rövid! (min 6 karakter)'
                       : null,
                   obscureText: _passVisibility,
                   decoration: InputDecoration(

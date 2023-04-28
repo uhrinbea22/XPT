@@ -21,9 +21,11 @@ class DiagramScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appTitle = 'Diagramok';
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: appTitle,
       theme: Theme.of(context),
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(appTitle),

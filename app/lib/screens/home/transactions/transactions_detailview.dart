@@ -37,15 +37,17 @@ class TransactionDetailview extends StatelessWidget {
     Storage storage = Storage();
 
     _launchURL() async {
-      Uri _url = Uri.parse(document['place']);
+      Uri _url = Uri.parse('https://${document['place']}');
       if (await launchUrl(_url)) {
         //sikeres volt
+        launchUrl(_url);
       } else {
         throw 'Could not launch $_url';
       }
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -311,6 +313,7 @@ class TransactionDetailview extends StatelessWidget {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text('Tranzakció részletei'),

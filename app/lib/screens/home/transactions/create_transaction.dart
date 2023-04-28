@@ -40,6 +40,7 @@ class CreateTransaction extends StatelessWidget {
       theme: Theme.of(context),
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(appTitle),
@@ -203,7 +204,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                height: 32,
+                height: 20,
               ),
               Center(
                   child: GestureDetector(
@@ -218,8 +219,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                           borderRadius: BorderRadius.circular(50),
                           child: Image.file(
                             _photo!,
-                            width: 100,
-                            height: 100,
+                            width: 25,
+                            height: 25,
                             fit: BoxFit.fitHeight,
                           ),
                         )
@@ -626,6 +627,18 @@ class MyCustomFormState extends State<MyCustomForm> {
                                   var date;
                                   if (tr.persistent == true) {
                                     for (int i = actualMonth; i <= 12; i++) {
+                                      if (i <= 2) {
+                                        //februar honap lekezelese
+                                        if (myController['date']!.text[8]
+                                                    as int >=
+                                                2 &&
+                                            myController['date']!.text[9]
+                                                    as int >
+                                                8) {
+                                          date =
+                                              '${DateTime.now().year}-0${i}-${myController['date']!.text[8]}${28}';
+                                        }
+                                      }
                                       if (i < 10) {
                                         date =
                                             '${DateTime.now().year}-0${i}-${myController['date']!.text[8]}${myController['date']!.text[9]}';

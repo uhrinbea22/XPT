@@ -77,6 +77,7 @@ class MyAppHomePage extends StatelessWidget {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text(title),

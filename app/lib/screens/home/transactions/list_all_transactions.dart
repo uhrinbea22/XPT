@@ -33,6 +33,7 @@ class ListTransactions extends StatelessWidget {
   Widget build(BuildContext context) {
     User? user = authService.getuser();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
       appBar: AppBar(title: Text("Tranzakciók")),
       body: Center(

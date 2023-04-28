@@ -156,44 +156,19 @@ class MyCustomFormStat extends State<ProfileStateful> {
     Storage storage = Storage();
     User? user = _authService.getuser();
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(title),
         ),
         body: Column(
           children: [
-            Offstage(
-              offstage: false,
-              child: FutureBuilder(
-                  future: storage.downloadUrl(
-                      _authService.getuser()!.uid, "profile"),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String?> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting ||
-                        !snapshot.hasData) {
-                      return LoadingAnimationWidget.staggeredDotsWave(
-                        color: Colors.blue,
-                        size: 20,
-                      );
-                    }
-                    if (snapshot.hasError) return Text('Hiba történt');
-                    return CircleAvatar(
-                        radius: 35,
-                        backgroundColor: Colors.transparent,
-                        child: ClipOval(
-                          child: Image.network(
-                            snapshot.data!,
-                            fit: BoxFit.fill,
-                            width: 100,
-                            height: 100,
-                          ),
-                        ));
-                  }),
+            ListTile(
+              title: Text("Profil beállítások"),
             ),
             TextFormField(
               readOnly: true,
               initialValue: user?.email,
-              // controller: displayNameController,
               decoration: const InputDecoration(
                   icon: Icon(Icons.email_rounded), labelText: "Email cím"),
             ),
@@ -210,7 +185,9 @@ class MyCustomFormStat extends State<ProfileStateful> {
                   });
                 },
                 child: const Text("Név beállítása")),
-            Text("Fénykép feltöltése"),
+            Padding(
+                padding: EdgeInsetsDirectional.all(10),
+                child: Text("Avatar feltöltése")),
             Center(
                 child: GestureDetector(
               onTap: () {

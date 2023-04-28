@@ -54,9 +54,7 @@ class MyCustomFormState extends State<MyCustomForm> {
       '${DateTime.now().year}-0${DateTime.now().month}-01';
   final String nextMonthStart =
       '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
-
   bool onlyThisMonth = true;
-  var hintText = Text("Válassz kategóriát");
 
   @override
   void initState() {
@@ -67,6 +65,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   Widget build(BuildContext context) {
     final AuthService _authService = AuthService();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
           child: Column(
         children: [
@@ -113,7 +112,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                       children: <Widget>[
                         Text(selectedCategory),
                         DropdownButton<dynamic>(
-                          hint: Text("Válassz kategóriát"),
                           items: categoryList.map((category) {
                             return DropdownMenuItem(
                               child: new Text(category),

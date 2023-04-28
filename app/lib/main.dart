@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         value: AuthService().onAuthStateChanged,
         builder: (context, snapshot) {
           return MaterialApp(
-            debugShowCheckedModeBanner: false, // Set this to false
+            debugShowCheckedModeBanner: false, 
             home: const Wrapper(),
           );
         });

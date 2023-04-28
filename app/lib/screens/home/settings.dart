@@ -54,6 +54,7 @@ class SettingsScreen extends StatelessWidget {
         defaultThemeId: AppThemes.LightBlue,
         builder: (context, theme) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Beállítások',
             theme: theme,
             home: HomePage(title: 'Beállítások'),
@@ -79,6 +80,7 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
     dropdownValue = DynamicTheme.of(context)!.themeId;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(widget.title),
       ),

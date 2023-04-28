@@ -24,8 +24,10 @@ class Calendar extends StatelessWidget {
     final appTitle = 'Naptár';
     return MaterialApp(
       title: appTitle,
+      debugShowCheckedModeBanner: false,
       theme: Theme.of(context),
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         appBar: AppBar(
           title: Text(appTitle),

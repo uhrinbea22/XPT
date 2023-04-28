@@ -40,9 +40,9 @@ class AuthService {
       FirebaseFirestore.instance.collection('mail').add({
         'to': email,
         'message': {
-          'subject': 'Hello from XPT!',
+          'subject': 'Üdv!',
           'text':
-              'Welcome in XPT Community, where we keep a budget and follow our transactions here. If you have any questions about the app, please let us know at xpt_expense_tracker_app@gmail.com',
+              'Üdv köztünk, a PénZen applikáció használói közt. Kövesd nyomon tranzakcióidat, és légy tudatosabb. Bármi kérdésed van, keress meg minket a pénzen@gmail.com email címen!',
         },
       });
       return _userModelFromFirebase(user);
