@@ -19,16 +19,16 @@ void main() async {
 class DiagramScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Diagramok';
+    const screenTitle = 'Diagramok';
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: appTitle,
+      title: screenTitle,
       theme: Theme.of(context),
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         appBar: AppBar(
-          title: Text(appTitle),
+          title: const Text(screenTitle),
         ),
         body: RealtimeDiagram(),
       ),
@@ -48,7 +48,6 @@ class _State extends State<RealtimeDiagram> {
   List<TransactionDetails> expenseData = [];
   List<TransactionDetails> limitData = [];
   var maxTransactionAmount = 0;
-
   bool allData = false;
   num allExpenseAmount = 0;
   num allIncomeAmount = 0;
@@ -86,21 +85,19 @@ class _State extends State<RealtimeDiagram> {
     List<TransactionDetails> listWithDuplicates = [];
     List<TransactionDetails> list = [];
 
-// find those categories which has more than one amount
-// than add those amounts
+    /// find those categories which has more than one amount and sum those
     for (int i = 0; i < categories.length; i++) {
       if (categoriesOnce.contains(categories[i])) {
         TransactionDetails tr = listWithDuplicates
             .firstWhere((element) => element.category == categories[i]);
         tr.amount = (tr.amount! + amounts[i]) as int?;
-        // nem kell hozzaadni listWithDuplicates.add(tr);
       } else {
         listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
         categoriesOnce.add(categories[i]);
       }
     }
 
-// delete duplicates from list
+    /// delete duplicates from list
     for (int i = 0; i < listWithDuplicates.length; i++) {
       if (list.contains(listWithDuplicates[i])) {
       } else {
@@ -120,6 +117,7 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadExpenseData() async {
+    ///load all or only the proper month's the expenses and incomes
     allExpenseAmount = 0;
     allIncomeAmount = 0;
     var snapShotsValue = allData
@@ -158,7 +156,7 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadLimitData() async {
-    //add amounts of categories and show them through the limit
+    ///sum amounts of categories and compare to category limit
     var snapShotsValue = allData
         ? await FirebaseFirestore.instance
             .collection("transactions")
@@ -181,21 +179,20 @@ class _State extends State<RealtimeDiagram> {
     List<TransactionDetails> listWithDuplicates = [];
     List<TransactionDetails> list = [];
 
-// find those categories which has more than one amount
-// than add those amounts
+    /// find those categories which has more than one amount
+    /// than add those amounts
     for (int i = 0; i < categories.length; i++) {
       if (categoriesOnce.contains(categories[i])) {
         TransactionDetails tr = listWithDuplicates
             .firstWhere((element) => element.category == categories[i]);
         tr.amount = (tr.amount! + amounts[i]) as int?;
-        // listWithDuplicates.add(tr);
       } else {
         listWithDuplicates.add(TransactionDetails(categories[i], amounts[i]));
         categoriesOnce.add(categories[i]);
       }
     }
 
-// delete duplicates from list
+    /// delete duplicates from list
     for (int i = 0; i < listWithDuplicates.length; i++) {
       if (list.contains(listWithDuplicates[i])) {
       } else {
@@ -209,8 +206,7 @@ class _State extends State<RealtimeDiagram> {
       }
     }
 
-    //list has the category name and the actual amount, we have to add the limit to that
-
+    ///list has the category name and the actual amount, we have to add the limit to that
     var limitSnapshots = allData
         ? await FirebaseFirestore.instance
             .collection("category_limits")
@@ -231,7 +227,7 @@ class _State extends State<RealtimeDiagram> {
 
     List<TransactionDetails> lista = [];
 
-    for (int i = 0; i < list.length; i++) {
+/*     for (int i = 0; i < list.length; i++) {
       for (int j = 0; j < limitCategories.length; j++) {
         if (limitCategories.contains(list[i].category)) {
           var index = limitCategories.indexOf(list[i].category);
@@ -244,7 +240,7 @@ class _State extends State<RealtimeDiagram> {
         }
       }
     }
-
+ */
     for (int i = 0; i < list.length; i++) {
       if (limitCategories.contains(list[i].category)) {
         var index = limitCategories.indexOf(list[i].category);

@@ -1,9 +1,7 @@
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -25,21 +23,16 @@ class DetailView extends StatelessWidget {
 }
 
 class TransactionDetailview extends StatelessWidget {
-  //title, date, persistent, category, onlie, note, place, expense, ?picture?
-
   String title;
   TransactionDetailview(this.title, {Key? key}) : super(key: key);
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+  final AuthService _authService = AuthService();
+  Storage storage = Storage();
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    final AuthService _authService = AuthService();
-    User? user = _authService.getuser();
-    Storage storage = Storage();
-
     _launchURL() async {
       Uri _url = Uri.parse('https://${document['place']}');
       if (await launchUrl(_url)) {
-        //sikeres volt
         launchUrl(_url);
       } else {
         throw 'Could not launch $_url';
@@ -83,7 +76,8 @@ class TransactionDetailview extends StatelessWidget {
                           }),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -92,11 +86,12 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
+                          const Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                               child: Icon(
@@ -104,17 +99,18 @@ class TransactionDetailview extends StatelessWidget {
                               )),
                           Text(
                             document['title'],
-                            style: TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
+                          const Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                               child: Icon(
@@ -122,17 +118,18 @@ class TransactionDetailview extends StatelessWidget {
                               )),
                           Text(
                             document['amount'].toString(),
-                            style: TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
+                          const Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                               child: Icon(
@@ -140,17 +137,18 @@ class TransactionDetailview extends StatelessWidget {
                               )),
                           Expanded(
                             child: Text(document['category'],
-                                style: TextStyle(fontSize: 20)),
+                                style: const TextStyle(fontSize: 20)),
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
+                          const Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                               child: Icon(
@@ -164,7 +162,7 @@ class TransactionDetailview extends StatelessWidget {
                                         onTap: _launchURL,
                                         child: Text(
                                           document['place'],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.blue,
                                             decoration:
                                                 TextDecoration.underline,
@@ -175,7 +173,7 @@ class TransactionDetailview extends StatelessWidget {
                                   )
                                 : Text(
                                     document['place'],
-                                    style: TextStyle(fontSize: 20),
+                                    style: const TextStyle(fontSize: 20),
                                   ),
                           ),
                         ],
@@ -184,25 +182,27 @@ class TransactionDetailview extends StatelessWidget {
                     Offstage(
                       offstage: document['persistent'] == true ? false : true,
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 10, 20, 20),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
                               child: Text(
                                   document['expense'] ? 'Számla ' : 'Fizetés',
-                                  style: TextStyle(fontSize: 20)),
+                                  style: const TextStyle(fontSize: 20)),
                             ),
                           ],
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
+                          const Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                               child: Icon(
@@ -210,7 +210,7 @@ class TransactionDetailview extends StatelessWidget {
                               )),
                           Text(
                             (document['date']).toString(),
-                            style: TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
@@ -218,17 +218,18 @@ class TransactionDetailview extends StatelessWidget {
                     Offstage(
                       offstage: document['online'] == true ? false : true,
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 10, 20, 20),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Padding(
+                            const Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                                 child: Icon(
                                   Icons.wifi_outlined,
                                 )),
-                            Expanded(
+                            const Expanded(
                               child: Text("Online",
                                   style: TextStyle(fontSize: 20)),
                             ),
@@ -237,11 +238,12 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
+                          const Padding(
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                               child: Icon(
@@ -251,24 +253,26 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
                             child: Text(document['note'],
-                                style: TextStyle(fontSize: 20)),
+                                style: const TextStyle(fontSize: 20)),
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                       child: FloatingActionButton(
                           hoverColor: Colors.purple,
-                          child: Icon(Icons.delete_forever),
+                          child: const Icon(Icons.delete_forever),
                           onPressed: () {
-                            //warn user
+                            //warn user about deleting forever
                             showDialog(
                                 context: context,
                                 builder: (context) {
@@ -282,13 +286,13 @@ class TransactionDetailview extends StatelessWidget {
                                           FirebaseFirestore.instance
                                               .runTransaction(
                                                   (transaction) async =>
-                                                      await transaction.delete(
+                                                      transaction.delete(
                                                           document.reference));
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ListAllTrans()));
+                                                      ListAllTransactions()));
                                         },
                                       )
                                     ],
@@ -308,26 +312,22 @@ class TransactionDetailview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Timestamp todayTimestamp = Timestamp.fromDate(DateTime.now());
-
-    final AuthService _authService = AuthService();
     User? user = _authService.getuser();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
       appBar: AppBar(
-        title: Text('Tranzakció részletei'),
+        title: const Text('Tranzakció részletei'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("transactions")
             .where("title", isEqualTo: title)
             .where("uid", isEqualTo: user!.uid)
-            //.orderBy("date")
             .get()
             .asStream(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Text('Hiba történt');
+          if (snapshot.hasError) return const Text('Hiba történt');
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
             return LoadingAnimationWidget.staggeredDotsWave(
@@ -335,7 +335,6 @@ class TransactionDetailview extends StatelessWidget {
               size: 50,
             );
           }
-
           return ListView.builder(
             itemExtent: 1000.0,
             itemCount: snapshot.data!.size,

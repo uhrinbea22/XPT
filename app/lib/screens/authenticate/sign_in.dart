@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
+///Sign in screen
 class SignIn extends StatefulWidget {
   final Function toggleView;
   SignIn({required this.toggleView});
@@ -13,6 +14,7 @@ class _SignInState extends State<SignIn> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+  ///Declare important variables
   String error = '';
   String email = '';
   String password = '';
@@ -50,6 +52,8 @@ class _SignInState extends State<SignIn> {
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
+
+                  ///validate the user data
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -140,6 +144,7 @@ class _SignInState extends State<SignIn> {
                         absorbValue = true;
                       });
 
+                      ///sign in the user using Firebase AuthService
                       dynamic result =
                           await _authService.signIn(email, password);
                       if (result == null) {
@@ -181,6 +186,7 @@ class _SignInState extends State<SignIn> {
           const SizedBox(height: 5.0),
           TextButton(
               onPressed: () {
+                ///navigate to registration page if user has no account yet
                 widget.toggleView();
               },
               style: ElevatedButton.styleFrom(

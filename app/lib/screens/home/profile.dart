@@ -219,6 +219,9 @@ class MyCustomFormStat extends State<ProfileStateful> {
                       ),
               ),
             )),
+            ListTile(
+              title: Text("Biztonság"),
+            ),
             ElevatedButton(
                 onPressed: () async {
                   //send reset password email

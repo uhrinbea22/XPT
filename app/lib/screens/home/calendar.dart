@@ -21,7 +21,7 @@ void main() async {
 class Calendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Naptár';
+    const appTitle = 'Naptár';
     return MaterialApp(
       title: appTitle,
       debugShowCheckedModeBanner: false,
@@ -30,7 +30,7 @@ class Calendar extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         appBar: AppBar(
-          title: Text(appTitle),
+          title: const Text(appTitle),
         ),
         body: MyCalendar(),
       ),
@@ -47,8 +47,7 @@ class MyCalendar extends StatefulWidget {
 
 class Cal extends State<MyCalendar> {
   late CalendarController _controller;
-  List<Color> _colorCollection = <Color>[];
-  MeetingDataSource? events;
+  TransactionDataSource? events;
   final databaseReference = FirebaseFirestore.instance;
   late List<TransactionEvent> meetings;
 
@@ -67,13 +66,14 @@ class Cal extends State<MyCalendar> {
     final AuthService _authService = AuthService();
     User? user = _authService.getuser();
 
-//incomes - different color
+    ///incomes - different color
     var incomeSnapShots = await FirebaseFirestore.instance
         .collection("transactions")
         .where('uid', isEqualTo: user!.uid)
         .where('expense', isEqualTo: false)
         .get();
-//expenses - different color
+
+    ///expenses - different color
     var expenseSnapShots = await FirebaseFirestore.instance
         .collection("transactions")
         .where('uid', isEqualTo: user.uid)
@@ -103,7 +103,7 @@ class Cal extends State<MyCalendar> {
     List<TransactionEvent> bigList = incomes + expenses;
 
     setState(() {
-      events = MeetingDataSource(bigList);
+      events = TransactionDataSource(bigList);
     });
   }
 
@@ -142,19 +142,19 @@ class Cal extends State<MyCalendar> {
                   onPressed: () => setState(() {
                     _controller.view = CalendarView.month;
                   }),
-                  child: Text('Havi nézet'),
+                  child: const Text('Havi nézet'),
                 ),
                 ElevatedButton(
                   onPressed: () => setState(() {
                     _controller.view = CalendarView.week;
                   }),
-                  child: Text('Heti nézet'),
+                  child: const Text('Heti nézet'),
                 ),
                 ElevatedButton(
                   onPressed: () => setState(() {
                     _controller.view = CalendarView.day;
                   }),
-                  child: Text('Napi nézet'),
+                  child: const Text('Napi nézet'),
                 ),
               ]),
             ),
@@ -162,7 +162,7 @@ class Cal extends State<MyCalendar> {
               controller: _controller,
               view: CalendarView.month,
               dataSource: events,
-              monthViewSettings: MonthViewSettings(
+              monthViewSettings: const MonthViewSettings(
                 showAgenda: true,
               ),
               onTap: calendarTapped,
@@ -183,8 +183,9 @@ class TransactionEvent {
   bool isAllDay;
 }
 
-class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<TransactionEvent> source) {
+///
+class TransactionDataSource extends CalendarDataSource {
+  TransactionDataSource(List<TransactionEvent> source) {
     appointments = source;
   }
 

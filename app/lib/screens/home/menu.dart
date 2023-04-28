@@ -104,7 +104,8 @@ class NavDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ListAllTrans()),
+                    MaterialPageRoute(
+                        builder: (context) => ListAllTransactions()),
                   );
                 },
               ),
@@ -113,7 +114,8 @@ class NavDrawer extends StatelessWidget {
                 onTap: () => {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CategLiast()),
+                    MaterialPageRoute(
+                        builder: (context) => TransactionsByCategoryPage()),
                   ),
                 },
               ),
@@ -123,7 +125,7 @@ class NavDrawer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CreateTransaction()),
+                        builder: (context) => CreateTransactionPage()),
                   );
                 },
               ),

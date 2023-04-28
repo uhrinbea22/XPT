@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 
+//Sign up screen
 class SignUp extends StatefulWidget {
   final Function toggleView;
   SignUp({required this.toggleView});

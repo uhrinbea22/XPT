@@ -1,6 +1,4 @@
-import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
-import 'package:app/screens/home/transactions/transactions_detailview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,24 +14,21 @@ class CategoryLimits extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return MyAppHomePage(title: "Category limits");
     return MaterialApp(
       title: 'Kategória limitek',
       theme: Theme.of(context),
-      home: MyAppHomePage(title: 'Kategória limitek'),
+      home: const CategoryLimitsScreen(title: 'Kategória limitek'),
     );
   }
 }
 
-class MyAppHomePage extends StatelessWidget {
-  MyAppHomePage({Key? key, required this.title}) : super(key: key);
+class CategoryLimitsScreen extends StatelessWidget {
+  const CategoryLimitsScreen({Key? key, required this.title}) : super(key: key);
   final String title;
-
-  int limitValue = 0;
+  final int limitValue = 0;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     final limitController = TextEditingController(text: document['limit']);
-
     return ListTile(
       title: Row(
         children: [
@@ -44,7 +39,7 @@ class MyAppHomePage extends StatelessWidget {
           Expanded(
               child: Row(
             children: [
-              Icon(Icons.report_outlined),
+              const Icon(Icons.report_outlined),
               Text(document['limit']),
             ],
           ))
@@ -63,15 +58,16 @@ class MyAppHomePage extends StatelessWidget {
                       const InputDecoration(hintText: 'Add meg a limitet'),
                 ),
                 actions: <Widget>[
+                  ///set max limit to category
                   ElevatedButton(
                     child: const Text('Rendben'),
                     onPressed: () {
+                      ///update in db
                       FirebaseFirestore.instance
                           .collection('category_limits')
                           .doc(document.id)
                           .set({'limit': limitController.text},
                               SetOptions(merge: true)).then((value) {});
-
                       Navigator.of(context).pop();
                     },
                   )
@@ -95,10 +91,10 @@ class MyAppHomePage extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('category_limits')
-            .where("uid", isEqualTo: _authService.getuser()!.uid)
+            .where("uid", isEqualTo: user!.uid)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return Text('Hiba történt');
+          if (snapshot.hasError) return const Text('Hiba történt');
           if (snapshot.connectionState == ConnectionState.waiting ||
               !snapshot.hasData) {
             return LoadingAnimationWidget.staggeredDotsWave(
@@ -107,7 +103,7 @@ class MyAppHomePage extends StatelessWidget {
             );
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Várakozás");
+            return const Text("Várakozás");
           }
           return ListView.builder(
             itemExtent: 80.0,

@@ -9,7 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../consts/styles.dart';
 import 'create_transaction.dart';
 
-class ListAllTrans extends StatelessWidget {
+class ListAllTransactions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,7 +25,6 @@ class ListTransactions extends StatelessWidget {
   final String nextMonthStart =
       '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
   final AuthService authService = AuthService();
-
   final controller = PageController(initialPage: 0);
   var currentPageValue = 0.0;
 
@@ -35,14 +34,15 @@ class ListTransactions extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
-      appBar: AppBar(title: Text("Tranzakciók")),
+      appBar: AppBar(title: const Text("Tranzakciók")),
       body: Center(
           child: PageView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         pageSnapping: true,
         controller: controller,
         children: <Widget>[
           Container(
+            ///list only the actual month's transactions
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('transactions')
@@ -74,7 +74,7 @@ class ListTransactions extends StatelessWidget {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('transactions')
-                  .where('uid', isEqualTo: user!.uid)
+                  .where('uid', isEqualTo: user.uid)
                   .where('date', isGreaterThanOrEqualTo: actualMonthStart)
                   .where('date', isLessThan: nextMonthStart)
                   .where('expense', isEqualTo: false)
@@ -103,7 +103,7 @@ class ListTransactions extends StatelessWidget {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('transactions')
-                  .where('uid', isEqualTo: user!.uid)
+                  .where('uid', isEqualTo: user.uid)
                   .where('date', isGreaterThanOrEqualTo: actualMonthStart)
                   .where('date', isLessThan: nextMonthStart)
                   .where("expense", isEqualTo: true)
@@ -132,7 +132,7 @@ class ListTransactions extends StatelessWidget {
       )),
       floatingActionButton: FloatingActionButton(
           hoverColor: Colors.purple,
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(
                 context,
@@ -144,9 +144,6 @@ class ListTransactions extends StatelessWidget {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    final numberFormat = new NumberFormat("#,###", "en_US");
-    var title = controller.page;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,7 +154,7 @@ class ListTransactions extends StatelessWidget {
             borderRadius: BorderRadius.circular(50.0),
           ),
           tileColor: Colors.white30,
-          leading: Icon(
+          leading: const Icon(
             Icons.double_arrow_rounded,
             color: Colors.black,
           ),
@@ -174,11 +171,11 @@ class ListTransactions extends StatelessWidget {
                   CircleAvatar(
                     backgroundColor: Colors.transparent,
                     child: document['expense'] == true
-                        ? Icon(
+                        ? const Icon(
                             Icons.remove_outlined,
                             color: Colors.black,
                           )
-                        : Icon(
+                        : const Icon(
                             Icons.add_outlined,
                             color: Colors.black,
                           ),

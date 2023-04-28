@@ -13,12 +13,9 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 import '../../../firebase_options.dart';
 import '../../../models/transact.dart';
 import '../../../services/auth_service.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
@@ -28,10 +25,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(CreateTransaction());
+  runApp(CreateTransactionPage());
 }
 
-class CreateTransaction extends StatelessWidget {
+class CreateTransactionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appTitle = 'Tranzakció hozzáadása';
@@ -45,22 +42,21 @@ class CreateTransaction extends StatelessWidget {
         appBar: AppBar(
           title: Text(appTitle),
         ),
-        body: MyCustomForm(),
+        body: CreateTransaction(),
       ),
     );
   }
 }
 
-class MyCustomForm extends StatefulWidget {
-  var _streamCategoriesList;
+class CreateTransaction extends StatefulWidget {
   @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
+  CreateTransactionState createState() {
+    return CreateTransactionState();
   }
 }
 
-class MyCustomFormState extends State<MyCustomForm> {
-  ImageUploads imgUpload = new ImageUploads();
+class CreateTransactionState extends State<CreateTransaction> {
+  ImageUploads imgUpload = ImageUploads();
 
   String dropdownvalue = 'Kategória';
   final Map<String, TextEditingController> myController = {
@@ -87,12 +83,14 @@ class MyCustomFormState extends State<MyCustomForm> {
   var categoryController = TextEditingController();
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
-
   File? _photo;
   final ImagePicker _picker = ImagePicker();
   String imgName = "";
-
   var _selectedOption = "Kiadás";
+  final String actualMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month}-01';
+  final String nextMonthStart =
+      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
 
   @override
   void initState() {
@@ -121,20 +119,15 @@ class MyCustomFormState extends State<MyCustomForm> {
         _photo = File(pickedFile.path);
         uploadFile();
       } else {
-        //TODO : warn user that no image is selected
         print('No image selected.');
       }
     });
   }
 
   Future uploadFile() async {
-    //TODO : create directory with user_id and insert pic as the transaction__id
-
     if (_photo == null) return;
-    //final fileName = myController['title']!.text.toString();
     imgName = basename(_photo!.path);
     String directory = _authService.getuser()!.uid;
-
     try {
       final ref = firebase_storage.FirebaseStorage.instance
           .ref("$directory/")
@@ -151,20 +144,20 @@ class MyCustomFormState extends State<MyCustomForm> {
         builder: (BuildContext bc) {
           return SafeArea(
             child: Container(
-              child: new Wrap(
+              child: Wrap(
                 children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Galéria'),
+                  ListTile(
+                      leading: Icon(Icons.photo_library),
+                      title: Text('Galéria'),
                       onTap: () {
-                        imgFromGallery();
+                        imgUpload.imgFromGallery();
                         Navigator.of(context).pop();
                       }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Kamera'),
+                  ListTile(
+                    leading: Icon(Icons.photo_camera),
+                    title: Text('Kamera'),
                     onTap: () {
-                      imgFromCamera();
+                      imgUpload.imgFromCamera();
                       Navigator.of(context).pop();
                     },
                   ),
@@ -187,10 +180,11 @@ class MyCustomFormState extends State<MyCustomForm> {
         titleInDbAlready = true;
       });
       return true;
-    } else
+    } else {
       setState(() {
         titleInDbAlready = false;
       });
+    }
     return false;
   }
 
@@ -203,7 +197,7 @@ class MyCustomFormState extends State<MyCustomForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Center(
@@ -213,7 +207,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 },
                 child: CircleAvatar(
                   radius: 55,
-                  backgroundColor: Color(0xffFDCF09),
+                  backgroundColor: const Color(0xffFDCF09),
                   child: _photo != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(50),
@@ -259,7 +253,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                   iconColor: Colors.grey,
                 ),
               ),
-              //datepicker to make it easier for user to choose date
               TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: myController['date'],
@@ -325,10 +318,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                 decoration: const InputDecoration(
                     icon: Icon(Icons.note), labelText: "Jegyzet"),
               ),
-
               Column(children: [
                 RadioListTile(
-                  title: Text('Kiadás'),
+                  title: const Text('Kiadás'),
                   value: 'Kiadás',
                   groupValue: _selectedOption,
                   onChanged: (value) {
@@ -338,7 +330,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   },
                 ),
                 RadioListTile(
-                  title: Text('Bevétel'),
+                  title: const Text('Bevétel'),
                   value: 'Bevétel',
                   groupValue: _selectedOption,
                   onChanged: (value) {
@@ -349,12 +341,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                 )
               ]),
               CheckboxListTile(
-                title: Text('Rendszeres'),
-                subtitle: Text("Ha fizetés vagy számla, csekkold be"),
+                title: const Text('Rendszeres'),
+                subtitle: const Text("Ha fizetés vagy számla, csekkold be"),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: persistent_value,
-                //subtitle: Text("If it is bill or salary - check it"),
                 onChanged: (bool? value) {
                   setState(() {
                     persistent_value = value!;
@@ -366,7 +357,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
                 value: online_value,
-                //  subtitle: Text("If transaction was online - check it"),
                 onChanged: (bool? value) {
                   setState(() {
                     online_value = value!;
@@ -378,7 +368,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   Container(
                     child: Column(
                       children: [
-                        Text('Kategória* : '),
+                        const Text('Kategória* : '),
                         Text(dropdownvalue),
                         Column(
                           children: [
@@ -395,12 +385,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                     child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
                             .collection("transactions")
-                            //.where("category", isNotEqualTo: "")
                             .where("uid",
                                 isEqualTo: _authService.getuser()!.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          // if not has data - loading
                           if (snapshot.connectionState ==
                                   ConnectionState.waiting ||
                               !snapshot.hasData) {
@@ -412,7 +400,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                             for (int i = 0;
                                 i < snapshot.data!.docs.length;
                                 i++) {
-                              //add only when it is not alerady in it - check cases too
+                              //add only when it is not already in it - check cases too
                               DocumentSnapshot snap = snapshot.data!.docs[i];
                               if (!categoryList
                                   .contains(snap['category'].toString())) {
@@ -451,7 +439,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     padding: const EdgeInsets.only(left: 20.0, top: 0.0),
                     child: FloatingActionButton(
                         mini: true,
-                        child: Icon(Icons.add_outlined),
+                        child: const Icon(Icons.add_outlined),
                         onPressed: () {
                           showDialog(
                               context: context,
@@ -478,11 +466,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                                             showText =
                                                 "Ez a kategória már létezik!";
                                           });
-                                        } else
+                                        } else {
                                           setState(() {
                                             dropdownvalue =
                                                 categoryController.text;
                                           });
+                                        }
                                         dropdownvalue = categoryController.text;
                                         Navigator.of(context).pop();
                                       },
@@ -506,7 +495,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         child: ElevatedButton(
                             child: const Text('Hozzáad'),
                             onPressed: () async {
-                              //check if datas are all valid
+                              ///check if datas are all valid
                               if (await titleInDb(
                                   myController["title"]!.text)) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -516,17 +505,16 @@ class MyCustomFormState extends State<MyCustomForm> {
                                 );
                               } else {
                                 if (_formKey.currentState!.validate()) {
-                                  // make button disabled, to prevent double data sending
+                                  /// make button disabled, to prevent double data sending
                                   setState(() {
                                     absorbValue = true;
                                   });
-
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text('Adat feldolgozása')),
                                   );
 
-                                  //create a transaction
+                                  ///create a transaction
                                   final tr = Transact(
                                       DateTime.parse(
                                           myController['date']!.text),
@@ -542,7 +530,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       myController['title']!.text,
                                       imgName);
 
-                                  //get the category limit document for the transactions category
+                                  ///get the category limit document for the transactions category
                                   final citiesRef = await FirebaseFirestore
                                       .instance
                                       .collection("category_limits")
@@ -562,8 +550,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                                           .where("category",
                                               isEqualTo: tr.category!)
                                           //check the month too
+                                          .where('date',
+                                              isGreaterThanOrEqualTo:
+                                                  actualMonthStart)
+                                          .where('date',
+                                              isLessThan: nextMonthStart)
                                           .get();
 
+                                  ///add all the spent money on that category
                                   List categoryAmount = allTransactionInCategory
                                       .docs
                                       .map((e) => (e.data()['amount']))
@@ -574,15 +568,19 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       i++) {
                                     max = max + categoryAmount[i];
                                   }
+
+                                  ///add the amount of the new transaction
+                                  ///if it is bigger than the limit, warn user
                                   max = max + tr.amount;
                                   int limit = 0;
                                   if (citiesRef.docs.isNotEmpty) {
                                     limit = int.parse(
                                         citiesRef.docs.first['limit']);
                                   }
+
+                                  ///difference between the spent amount and the limit
                                   num diff = max - limit;
 
-                                  // check if it is overlapped - warn the user about it
                                   if (citiesRef.docs.isNotEmpty) {
                                     if (max + tr.amount >
                                         int.parse(
@@ -604,8 +602,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                                             );
                                           });
                                     }
+
+                                    ///if category limit does not exists, and the transaction is expense than add limit with 0 amount
                                   } else if (citiesRef.docs.isEmpty &&
-                                      tr.expense) {
+                                      tr.expense == true) {
                                     FirebaseFirestore.instance
                                         .collection('category_limits')
                                         .doc()
@@ -617,18 +617,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       'uid': _authService.getuser()!.uid
                                     });
                                   }
-                                  //find the category with user uid, and check if it has limit
 
-                                  //if not, normally add the transaction
-                                  //if it has, check the amounts, and warn the user about possible over expense
-
-                                  //store it in database
                                   int actualMonth = DateTime.now().month;
                                   var date;
                                   if (tr.persistent == true) {
                                     for (int i = actualMonth; i <= 12; i++) {
                                       if (i <= 2) {
-                                        //februar honap lekezelese
+                                        ///handle february
                                         if (myController['date']!.text[8]
                                                     as int >=
                                                 2 &&
@@ -647,13 +642,18 @@ class MyCustomFormState extends State<MyCustomForm> {
                                             '${DateTime.now().year}-${i}-${myController['date']!.text[8]}${myController['date']!.text[9]}';
                                       }
 
+                                      ///add data to db
+                                      ///add it every month until the end of the year
+                                      ///add approriate title according to the month
+                                      var dateMonth = '${date[5]}${date[6]}';
                                       FirebaseFirestore.instance
                                           .collection('transactions')
                                           .doc()
                                           .set({
                                         'date': date,
                                         'amount': tr.amount,
-                                        'title': tr.title,
+                                        'title':
+                                            '${tr.title}${" ("}${dateMonth}${". havi)"}',
                                         'place': tr.place,
                                         'online': tr.online,
                                         'expense': tr.expense,
@@ -664,7 +664,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                                         'uid': _authService.getuser()!.uid
                                       });
                                     }
-                                  } else {
+                                  }
+
+                                  ///if transaction is not persistent add it to db only once
+                                  else {
                                     FirebaseFirestore.instance
                                         .collection('transactions')
                                         .doc()
@@ -682,11 +685,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                                       'uid': _authService.getuser()!.uid
                                     });
                                   }
-                                  //put it in the calendar
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ListAllTrans()),
+                                        builder: (context) =>
+                                            ListAllTransactions()),
                                   );
                                 }
                               }

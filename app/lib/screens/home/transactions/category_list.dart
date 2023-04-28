@@ -14,10 +14,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(CategLiast());
+  runApp(TransactionsByCategoryPage());
 }
 
-class CategLiast extends StatelessWidget {
+class TransactionsByCategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appTitle = 'Kategóriára szűrés';
@@ -30,21 +30,21 @@ class CategLiast extends StatelessWidget {
         appBar: AppBar(
           title: Text(appTitle),
         ),
-        body: MyCustomForm(),
+        body: TransactionsByCategories(),
       ),
     );
   }
 }
 
-class MyCustomForm extends StatefulWidget {
+class TransactionsByCategories extends StatefulWidget {
   var _streamCategoriesList;
   @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
+  TransactionsByCategoriesState createState() {
+    return TransactionsByCategoriesState();
   }
 }
 
-class MyCustomFormState extends State<MyCustomForm> {
+class TransactionsByCategoriesState extends State<TransactionsByCategories> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   List categoryList = [];
@@ -63,12 +63,12 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   @override
   Widget build(BuildContext context) {
-    final AuthService _authService = AuthService();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
           child: Column(
         children: [
+          ///set date range for transactions which we want to list
           Container(
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               ElevatedButton(
@@ -77,7 +77,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 onPressed: () => setState(() {
                   onlyThisMonth = false;
                 }),
-                child: Text('Minden tranzakció'),
+                child: const Text('Minden tranzakció'),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -85,7 +85,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 onPressed: () => setState(() {
                   onlyThisMonth = true;
                 }),
-                child: Text('Ehavi tranzakciók'),
+                child: const Text('Ehavi tranzakciók'),
               ),
             ]),
           ),
@@ -96,10 +96,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                     .where("uid", isEqualTo: _authService.getuser()!.uid)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  // if not has data - loading
                   if (!snapshot.hasData) {
                     return const Text("Hiba történt");
-                    //if has data
                   } else {
                     for (int i = 0; i < snapshot.data!.docs.length; i++) {
                       DocumentSnapshot snap = snapshot.data!.docs[i];
@@ -110,12 +108,12 @@ class MyCustomFormState extends State<MyCustomForm> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        Text(selectedCategory),
                         DropdownButton<dynamic>(
+                          hint: Text(selectedCategory),
                           items: categoryList.map((category) {
                             return DropdownMenuItem(
-                              child: new Text(category),
                               value: category,
+                              child: Text(category),
                             );
                           }).toList(),
                           onChanged: (choosedCategory) {
@@ -131,7 +129,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                 }),
           ),
           SingleChildScrollView(
-            //flex: 0,
             child: StreamBuilder<QuerySnapshot>(
               stream: onlyThisMonth
                   ? FirebaseFirestore.instance
@@ -148,8 +145,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  print((snapshot.error));
-                  return Text('Hiba történt');
+                  return const Text('Hiba történt');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting ||
                     !snapshot.hasData) {
@@ -160,7 +156,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 }
 
                 return ListView.builder(
-                  physics: ScrollPhysics(),
+                  physics: const ScrollPhysics(),
                   shrinkWrap: true,
                   itemExtent: 80.0,
                   itemCount: snapshot.data!.size,
@@ -171,7 +167,6 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           )
         ],
-        //
       )),
     );
   }
@@ -187,7 +182,7 @@ class MyCustomFormState extends State<MyCustomForm> {
               borderRadius: BorderRadius.circular(50.0),
             ),
             tileColor: Colors.white30,
-            leading: Icon(
+            leading: const Icon(
               Icons.double_arrow_rounded,
               color: Colors.black,
             ),
@@ -204,11 +199,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                     CircleAvatar(
                       backgroundColor: Colors.transparent,
                       child: document['expense'] == true
-                          ? Icon(
+                          ? const Icon(
                               Icons.remove_outlined,
                               color: Colors.black,
                             )
-                          : Icon(
+                          : const Icon(
                               Icons.add_outlined,
                               color: Colors.black,
                             ),

@@ -8,27 +8,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart';
 
-// TODO !! : use this in create_transaction
-
 class ImageUploads extends StatefulWidget {
   ImageUploads({Key? key}) : super(key: key);
 
   @override
-  _ImageUploadsState createState() => _ImageUploadsState();
+  ImageUploadsState createState() => ImageUploadsState();
+
+  void imgFromCamera() {}
+
+  void imgFromGallery() {}
 }
 
-class _ImageUploadsState extends State<ImageUploads> {
+class ImageUploadsState extends State<ImageUploads> {
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
   File? _photo;
   final ImagePicker _picker = ImagePicker();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future imgFromGallery() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
@@ -43,6 +39,25 @@ class _ImageUploadsState extends State<ImageUploads> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  /*  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _photo = File(pickedFile.path);
+        uploadFile();
+      } else {
+        //TODO : warn user that no image is selected
+        print('No image selected.');
+      }
+    });
+  }
+ */
   Future imgFromCamera() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
