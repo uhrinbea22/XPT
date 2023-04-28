@@ -5,8 +5,6 @@ import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/diagram.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/profile.dart';
-import 'package:app/screens/home/transactions/proba.dart';
-import 'package:app/screens/home/transactions/swipe.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth_service.dart';
 import 'package:app/services/storage_service.dart';
@@ -104,8 +102,7 @@ class NavDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const ListAllTrans()),
+                    MaterialPageRoute(builder: (context) => ListAllTrans()),
                   );
                 },
               ),
@@ -189,16 +186,6 @@ class NavDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (context) => const Wrapper()),
               ),
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('SWIPE'),
-            onTap: () async => {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HorizontalSwipeScreen())),
             },
           ),
         ],

@@ -1,54 +1,151 @@
-import 'package:app/screens/home/transactions/create_transaction.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/transactions_detailview.dart';
+import 'package:app/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../services/auth_service.dart';
 import 'package:intl/intl.dart';
-import 'package:app/consts/styles.dart';
-
-void main() {
-  runApp(ListAllTrans());
-}
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../consts/styles.dart';
+import 'create_transaction.dart';
 
 class ListAllTrans extends StatelessWidget {
-  const ListAllTrans();
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: Theme.of(context),
-      title: 'Tranzakciók listázása',
-      home: MyCustomForm(),
-    );
+        debugShowCheckedModeBanner: false,
+        theme: Theme.of(context),
+        home: ListTransactions());
   }
 }
 
-class MyCustomForm extends StatefulWidget {
-  var _streamCategoriesList;
-  @override
-  MyCustomFormState createState() {
-    return MyCustomFormState();
-  }
-}
-
-class MyCustomFormState extends State<MyCustomForm> {
-  var title = "Tranzakciók listázása";
-  final budget = 0;
+class ListTransactions extends StatelessWidget {
   final String actualMonthStart =
       '${DateTime.now().year}-0${DateTime.now().month}-01';
   final String nextMonthStart =
       '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
+  final AuthService authService = AuthService();
+
+  final controller = PageController(initialPage: 0);
+  var currentPageValue = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    User? user = authService.getuser();
+    return Scaffold(
+      drawer: NavDrawer(),
+      appBar: AppBar(title: Text("Tranzakciók")),
+      body: Center(
+          child: PageView(
+        physics: BouncingScrollPhysics(),
+        pageSnapping: true,
+        controller: controller,
+        children: <Widget>[
+          Container(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('transactions')
+                  .where('uid', isEqualTo: user!.uid)
+                  .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+                  .where('date', isLessThan: nextMonthStart)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return LoadingAnimationWidget.staggeredDotsWave(
+                    color: Colors.green,
+                    size: 50,
+                  );
+                }
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data!.size,
+                  itemBuilder: ((context, index) =>
+                      _buildListItem(context, snapshot.data!.docs[index])),
+                );
+              },
+            ),
+          ),
+          Container(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('transactions')
+                  .where('uid', isEqualTo: user!.uid)
+                  .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+                  .where('date', isLessThan: nextMonthStart)
+                  .where('expense', isEqualTo: false)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return LoadingAnimationWidget.staggeredDotsWave(
+                    color: Colors.green,
+                    size: 50,
+                  );
+                }
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data!.size,
+                  itemBuilder: ((context, index) =>
+                      _buildListItem(context, snapshot.data!.docs[index])),
+                );
+              },
+            ),
+          ),
+          Container(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('transactions')
+                  .where('uid', isEqualTo: user!.uid)
+                  .where('date', isGreaterThanOrEqualTo: actualMonthStart)
+                  .where('date', isLessThan: nextMonthStart)
+                  .where("expense", isEqualTo: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    !snapshot.hasData) {
+                  return LoadingAnimationWidget.staggeredDotsWave(
+                    color: Colors.green,
+                    size: 50,
+                  );
+                }
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data!.size,
+                  itemBuilder: ((context, index) =>
+                      _buildListItem(context, snapshot.data!.docs[index])),
+                );
+              },
+            ),
+          ),
+        ],
+      )),
+      floatingActionButton: FloatingActionButton(
+          hoverColor: Colors.purple,
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateTransaction(),
+                ));
+          }),
+    );
+  }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     final numberFormat = new NumberFormat("#,###", "en_US");
+    var title = controller.page;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,64 +201,6 @@ class MyCustomFormState extends State<MyCustomForm> {
           },
         )
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final AuthService authService = AuthService();
-    User? user = authService.getuser();
-    return Scaffold(
-      drawer: NavDrawer(),
-      appBar: AppBar(
-        title: Text(title),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('transactions')
-            .where('uid', isEqualTo: user!.uid)
-            .where('date', isGreaterThanOrEqualTo: actualMonthStart)
-            .where('date', isLessThan: nextMonthStart)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              !snapshot.hasData) {
-            return LoadingAnimationWidget.staggeredDotsWave(
-              color: Colors.green,
-              size: 50,
-            );
-          }
-          return ListView.builder(
-            itemExtent: 80.0,
-            itemCount: snapshot.data!.size,
-            itemBuilder: ((context, index) =>
-                _buildListItem(context, snapshot.data!.docs[index])),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-          hoverColor: Colors.purple,
-          child: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateTransaction(),
-                ));
-          }),
     );
   }
 }

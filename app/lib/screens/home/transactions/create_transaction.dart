@@ -29,10 +29,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(CreateTransaction());
-  /* runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => new ThemeNotifier(),
-    child: CreateTransaction(),
-  )); */
 }
 
 class CreateTransaction extends StatelessWidget {
@@ -65,7 +61,7 @@ class MyCustomForm extends StatefulWidget {
 class MyCustomFormState extends State<MyCustomForm> {
   ImageUploads imgUpload = new ImageUploads();
 
-  String dropdownvalue = 'Food';
+  String dropdownvalue = 'Kategória';
   final Map<String, TextEditingController> myController = {
     'amount': TextEditingController(),
     'category': TextEditingController(),
@@ -95,7 +91,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   final ImagePicker _picker = ImagePicker();
   String imgName = "";
 
-  var _selectedOption;
+  var _selectedOption = "Kiadás";
 
   @override
   void initState() {
@@ -336,7 +332,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   groupValue: _selectedOption,
                   onChanged: (value) {
                     setState(() {
-                      _selectedOption = value as String?;
+                      _selectedOption = (value as String?)!;
                     });
                   },
                 ),
@@ -346,7 +342,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   groupValue: _selectedOption,
                   onChanged: (value) {
                     setState(() {
-                      _selectedOption = value as String?;
+                      _selectedOption = (value as String?)!;
                     });
                   },
                 )
@@ -626,28 +622,58 @@ class MyCustomFormState extends State<MyCustomForm> {
                                   //if it has, check the amounts, and warn the user about possible over expense
 
                                   //store it in database
-                                  FirebaseFirestore.instance
-                                      .collection('transactions')
-                                      .doc()
-                                      .set({
-                                    'date': myController['date']!.text,
-                                    'amount': tr.amount,
-                                    'title': tr.title,
-                                    'place': tr.place,
-                                    'online': tr.online,
-                                    'expense': tr.expense,
-                                    'note': tr.note,
-                                    'category': tr.category,
-                                    'persistent': tr.persistent,
-                                    'picture': tr.picture,
-                                    'uid': _authService.getuser()!.uid
-                                  });
+                                  int actualMonth = DateTime.now().month;
+                                  var date;
+                                  if (tr.persistent == true) {
+                                    for (int i = actualMonth; i <= 12; i++) {
+                                      if (i < 10) {
+                                        date =
+                                            '${DateTime.now().year}-0${i}-${myController['date']!.text[8]}${myController['date']!.text[9]}';
+                                      } else {
+                                        date =
+                                            '${DateTime.now().year}-${i}-${myController['date']!.text[8]}${myController['date']!.text[9]}';
+                                      }
+
+                                      FirebaseFirestore.instance
+                                          .collection('transactions')
+                                          .doc()
+                                          .set({
+                                        'date': date,
+                                        'amount': tr.amount,
+                                        'title': tr.title,
+                                        'place': tr.place,
+                                        'online': tr.online,
+                                        'expense': tr.expense,
+                                        'note': tr.note,
+                                        'category': tr.category,
+                                        'persistent': tr.persistent,
+                                        'picture': tr.picture,
+                                        'uid': _authService.getuser()!.uid
+                                      });
+                                    }
+                                  } else {
+                                    FirebaseFirestore.instance
+                                        .collection('transactions')
+                                        .doc()
+                                        .set({
+                                      'date': myController['date']!.text,
+                                      'amount': tr.amount,
+                                      'title': tr.title,
+                                      'place': tr.place,
+                                      'online': tr.online,
+                                      'expense': tr.expense,
+                                      'note': tr.note,
+                                      'category': tr.category,
+                                      'persistent': tr.persistent,
+                                      'picture': tr.picture,
+                                      'uid': _authService.getuser()!.uid
+                                    });
+                                  }
                                   //put it in the calendar
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ListAllTrans()),
+                                        builder: (context) => ListAllTrans()),
                                   );
                                 }
                               }
