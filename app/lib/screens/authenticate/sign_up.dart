@@ -26,7 +26,7 @@ class _SignUpState extends State<SignUp> {
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         elevation: 0.0,
-        title: const Text('Regisztrálj az XPT-re!'),
+        title: const Text('Regisztrálj a PénZen-re!'),
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),

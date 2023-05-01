@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -70,8 +71,6 @@ class MyCustomFormStat extends State<ProfileStateful> {
 
   @override
   void initState() {
-    //displayNameController.text = _authService.getuser()!.displayName! ?? "";
-    //displayName = _authService.getuser()!.displayName!;
     super.initState();
   }
 
@@ -164,7 +163,8 @@ class MyCustomFormStat extends State<ProfileStateful> {
         body: Column(
           children: [
             ListTile(
-              title: Text("Profil beállítások"),
+              title: Text("Profil beállítások",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             TextFormField(
               readOnly: true,
@@ -201,8 +201,8 @@ class MyCustomFormStat extends State<ProfileStateful> {
                         borderRadius: BorderRadius.circular(50),
                         child: Image.file(
                           _photo!,
-                          width: 50,
-                          height: 50,
+                          width: 100,
+                          height: 100,
                           fit: BoxFit.fitHeight,
                         ),
                       )
@@ -220,7 +220,10 @@ class MyCustomFormStat extends State<ProfileStateful> {
               ),
             )),
             ListTile(
-              title: Text("Biztonság"),
+              title: Text(
+                "Biztonság",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             ElevatedButton(
                 onPressed: () async {

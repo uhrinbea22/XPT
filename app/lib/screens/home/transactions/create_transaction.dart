@@ -150,14 +150,14 @@ class CreateTransactionState extends State<CreateTransaction> {
                       leading: Icon(Icons.photo_library),
                       title: Text('Galéria'),
                       onTap: () {
-                        imgUpload.imgFromGallery();
+                        imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   ListTile(
                     leading: Icon(Icons.photo_camera),
                     title: Text('Kamera'),
                     onTap: () {
-                      imgUpload.imgFromCamera();
+                      imgFromCamera();
                       Navigator.of(context).pop();
                     },
                   ),
@@ -213,8 +213,8 @@ class CreateTransactionState extends State<CreateTransaction> {
                           borderRadius: BorderRadius.circular(50),
                           child: Image.file(
                             _photo!,
-                            width: 25,
-                            height: 25,
+                            width: 100,
+                            height: 100,
                             fit: BoxFit.fitHeight,
                           ),
                         )

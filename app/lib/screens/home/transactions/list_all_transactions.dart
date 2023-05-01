@@ -34,7 +34,20 @@ class ListTransactions extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
-      appBar: AppBar(title: const Text("Tranzakciók")),
+      appBar: AppBar(
+        title: const Text("Tranzakciók"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.arrow_right_alt,
+            ),
+            onPressed: () {
+              controller.nextPage(
+                  duration: Duration(milliseconds: 400), curve: Curves.easeIn);
+            },
+          )
+        ],
+      ),
       body: Center(
           child: PageView(
         physics: const BouncingScrollPhysics(),
@@ -137,7 +150,7 @@ class ListTransactions extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CreateTransaction(),
+                  builder: (context) => CreateTransactionPage(),
                 ));
           }),
     );
