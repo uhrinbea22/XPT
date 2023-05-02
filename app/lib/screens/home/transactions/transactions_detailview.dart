@@ -1,3 +1,4 @@
+import 'package:app/consts/styles.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -145,7 +146,7 @@ class TransactionDetailview extends StatelessWidget {
                                 Icons.attach_money_outlined,
                               )),
                           Text(
-                            document['amount'].toString(),
+                            document['amount'].toString() + valuta,
                             style: const TextStyle(fontSize: 20),
                           ),
                         ],
@@ -300,7 +301,40 @@ class TransactionDetailview extends StatelessWidget {
                                       ElevatedButton(
                                         child: const Text(
                                             "Igen, törlöm ezt a tranzakciót!"),
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          ///if all the transactins are deleted where the category is in category_limits, delete the limit too
+                                          var querySnapshot =
+                                              await FirebaseFirestore.instance
+                                                  .collection('transactions')
+                                                  .where('uid',
+                                                      isEqualTo: _authService
+                                                          .getuser()!
+                                                          .uid)
+                                                  .where('category',
+                                                      isEqualTo:
+                                                          document['category'])
+                                                  .get();
+                                          final docsLength =
+                                              querySnapshot.docs.length;
+                                          if (docsLength > 0) {
+                                            FirebaseFirestore.instance
+                                                .collection('category_limits')
+                                                .where('uid',
+                                                    isEqualTo: _authService
+                                                        .getuser()!
+                                                        .uid)
+                                                .where('category',
+                                                    isEqualTo:
+                                                        document['category'])
+                                                .get()
+                                                .then((snapshot) {
+                                              for (DocumentSnapshot doc
+                                                  in snapshot.docs) {
+                                                doc.reference.delete();
+                                              }
+                                            });
+                                          }
+
                                           FirebaseFirestore.instance
                                               .runTransaction(
                                                   (transaction) async =>
