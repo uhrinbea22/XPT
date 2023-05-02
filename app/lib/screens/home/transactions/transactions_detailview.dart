@@ -8,6 +8,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/storage_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 
 class DetailView extends StatelessWidget {
   DetailView(this.title, {Key? key}) : super(key: key);
@@ -52,29 +53,6 @@ class TransactionDetailview extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Offstage(
-                      offstage: document['picture'] != "" ? false : true,
-                      child: FutureBuilder(
-                          future: storage.downloadUrl(
-                              _authService.getuser()!.uid, document["picture"]),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String?> snapshot) {
-                            if (snapshot.connectionState ==
-                                    ConnectionState.waiting ||
-                                !snapshot.hasData) {
-                              return LoadingAnimationWidget.staggeredDotsWave(
-                                color: Colors.green,
-                                size: 50,
-                              );
-                            }
-                            if (snapshot.hasError) return Text('Hiba történt');
-                            return Container(
-                              width: 150,
-                              height: 175,
-                              child: Image.network(snapshot.data!),
-                            );
-                          }),
-                    ),
                     Padding(
                       padding:
                           const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
@@ -89,17 +67,67 @@ class TransactionDetailview extends StatelessWidget {
                       padding:
                           const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: Row(
-                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                              child: Icon(
-                                Icons.subtitles_outlined,
-                              )),
-                          Text(
-                            document['title'],
-                            style: const TextStyle(fontSize: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 10, 0),
+                                  child: Icon(
+                                    Icons.subtitles_outlined,
+                                  )),
+                              Text(
+                                document['title'],
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Offstage(
+                                offstage:
+                                    document['picture'] != "" ? false : true,
+                                child: FutureBuilder(
+                                    future: storage.downloadUrl(
+                                        _authService.getuser()!.uid,
+                                        document["picture"]),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String?> snapshot) {
+                                      if (snapshot.connectionState ==
+                                              ConnectionState.waiting ||
+                                          !snapshot.hasData) {
+                                        return LoadingAnimationWidget
+                                            .staggeredDotsWave(
+                                          color: Colors.green,
+                                          size: 50,
+                                        );
+                                      }
+                                      if (snapshot.hasError)
+                                        return Text('Hiba történt');
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          final imageProvider =
+                                              Image.network(snapshot.data!)
+                                                  .image;
+                                          showImageViewer(
+                                              context, imageProvider,
+                                              onViewerDismissed: () {
+                                            print("dismissed");
+                                          });
+                                        },
+                                        child: Container(
+                                            height: 75,
+                                            child: Image(
+                                              image:
+                                                  NetworkImage(snapshot.data!),
+                                            )),
+                                      );
+                                    }),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -238,33 +266,23 @@ class TransactionDetailview extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                              child: Icon(
-                                Icons.note_outlined,
-                              )),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Text(document['note'],
-                                style: const TextStyle(fontSize: 20)),
-                          ),
-                        ],
-                      ),
-                    ),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            20, 10, 20, 20),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
+                                child: Icon(
+                                  Icons.note_alt_outlined,
+                                )),
+                            Text(
+                              (document['note']).toString(),
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        )),
                     Padding(
                       padding:
                           const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
