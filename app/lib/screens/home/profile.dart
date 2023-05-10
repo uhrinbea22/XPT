@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:app/screens/home/menu.dart';
+import 'package:app/services/image_picker_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -62,11 +63,9 @@ class MyCustomFormStat extends State<ProfileStateful> {
   final displayNameController = TextEditingController();
   String resetPasswordStatus = "";
   String displayName = "";
-  firebase_storage.FirebaseStorage storage =
-      firebase_storage.FirebaseStorage.instance;
 
   File? _photo;
-  final ImagePicker _picker = ImagePicker();
+  final imagePickerService = ImagePickerService();
   String imgName = "";
 
   @override
@@ -74,85 +73,8 @@ class MyCustomFormStat extends State<ProfileStateful> {
     super.initState();
   }
 
-  Future imgFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        _photo = File(pickedFile.path);
-        uploadFile();
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Future uploadFile() async {
-    if (_photo == null) return;
-    imgName = "profile";
-    String directory = _authService.getuser()!.uid;
-    try {
-      final ref = firebase_storage.FirebaseStorage.instance
-          .ref("$directory/")
-          .child("/$imgName");
-      await ref.putFile(_photo!);
-    } catch (e) {
-      print('error occured');
-    }
-  }
-
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Galéria'),
-                      onTap: () {
-                        imgFromGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Kamera'),
-                    onTap: () {
-                      imgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        uploadFile();
-                      },
-                      child: const Text("Kép feltöltése"))
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  Future imgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      if (pickedFile != null) {
-        _photo = File(pickedFile.path);
-        uploadFile();
-      } else {
-        //TODO : warn user that no image is selected
-        print('No image selected.');
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    Storage storage = Storage();
     User? user = _authService.getuser();
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -191,7 +113,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
             Center(
                 child: GestureDetector(
               onTap: () {
-                _showPicker(context);
+                imagePickerService.showPicker(context);
               },
               child: CircleAvatar(
                 radius: 55,
