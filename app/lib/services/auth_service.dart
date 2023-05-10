@@ -26,7 +26,6 @@ class AuthService {
       return await _auth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
@@ -36,8 +35,17 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
-      // send welcome message
-      FirebaseFirestore.instance.collection('mail').add({
+      /// send welcome message
+      await _sendWelcomeMessage(email);
+      return _userModelFromFirebase(user);
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> _sendWelcomeMessage(String email) async {
+    try {
+      await FirebaseFirestore.instance.collection('mail').add({
         'to': email,
         'message': {
           'subject': 'Üdv!',
@@ -45,9 +53,8 @@ class AuthService {
               'Üdv köztünk, a PénZen applikáció használói közt. Kövesd nyomon tranzakcióidat, és légy tudatosabb. Bármi kérdésed van, keress meg minket a pénzen@gmail.com email címen!',
         },
       });
-      return _userModelFromFirebase(user);
     } catch (e) {
-      return e.toString();
+      return;
     }
   }
 
@@ -65,14 +72,11 @@ class AuthService {
       User user = result.user!;
       return _userModelFromFirebase(user);
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
 
   Future<bool> resetPassword({required String email}) async {
-    // TODO : check if email has been registered already
-
     bool _status = false;
     await _auth
         .sendPasswordResetEmail(email: email)

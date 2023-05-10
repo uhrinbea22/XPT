@@ -52,8 +52,7 @@ class _SignInState extends State<SignIn> {
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
-
-                  ///validate the user data
+                  ///validate the email
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -68,6 +67,7 @@ class _SignInState extends State<SignIn> {
                   },
                   keyboardType: TextInputType.emailAddress,
                 ),
+                ///validate the password
                 const SizedBox(height: 20.0),
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -143,7 +143,6 @@ class _SignInState extends State<SignIn> {
                       setState(() {
                         absorbValue = true;
                       });
-
                       ///sign in the user using Firebase AuthService
                       dynamic result =
                           await _authService.signIn(email, password);

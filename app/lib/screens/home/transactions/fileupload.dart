@@ -13,10 +13,6 @@ class ImageUploads extends StatefulWidget {
 
   @override
   ImageUploadsState createState() => ImageUploadsState();
-
-  void imgFromCamera() {}
-
-  void imgFromGallery() {}
 }
 
 class ImageUploadsState extends State<ImageUploads> {
