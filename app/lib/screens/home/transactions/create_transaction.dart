@@ -5,12 +5,15 @@ import 'package:app/screens/home/transactions/list_all_transactions.dart';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/services/image_picker_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import '../../../firebase_options.dart';
 import '../../../models/transact.dart';
 import '../../../services/auth_service.dart';
@@ -51,7 +54,6 @@ class CreateTransaction extends StatefulWidget {
 }
 
 class CreateTransactionState extends State<CreateTransaction> {
-
   String dropdownvalue = 'Kategória';
   final Map<String, TextEditingController> myController = {
     'amount': TextEditingController(),
@@ -66,6 +68,8 @@ class CreateTransactionState extends State<CreateTransaction> {
 
   final AuthService _authService = AuthService();
   final imagePickerService = ImagePickerService();
+  final FirebaseStorage storage = FirebaseStorage.instance;
+  final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   List categoryList = [];
   bool expense_value = false;
@@ -88,6 +92,74 @@ class CreateTransactionState extends State<CreateTransaction> {
   void initState() {
     imgName = "";
     super.initState();
+  }
+
+  Future imgFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _photo = File(pickedFile.path);
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _photo = File(pickedFile.path);
+        uploadFile();
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadFile() async {
+    if (_photo == null) return;
+    imgName = basename(_photo!.path);
+    String directory = _authService.getuser()!.uid;
+    try {
+      final ref = storage.ref("$directory/").child("/$imgName");
+      await ref.putFile(_photo!);
+    } catch (e) {
+      print('error occured');
+    }
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: Wrap(
+                children: <Widget>[
+                  ListTile(
+                      leading: Icon(Icons.photo_library),
+                      title: Text('Galéria'),
+                      onTap: () {
+                        imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                    leading: Icon(Icons.photo_camera),
+                    title: Text('Kamera'),
+                    onTap: () {
+                      imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Future<bool> titleInDb(String title) async {
@@ -125,7 +197,7 @@ class CreateTransactionState extends State<CreateTransaction> {
               Center(
                   child: GestureDetector(
                 onTap: () {
-                  imagePickerService.showPicker(context);
+                  _showPicker(context);
                 },
                 child: CircleAvatar(
                   radius: 55,
@@ -433,7 +505,7 @@ class CreateTransactionState extends State<CreateTransaction> {
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text('Adat feldolgozása')),
+                                        content: Text('Adatok feldolgozása')),
                                   );
 
                                   ///create a transaction

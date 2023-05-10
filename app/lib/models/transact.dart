@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//Transacion was already in use by Flutter
-
 class Transact {
   DateTime? date;
   int amount;
@@ -11,7 +9,6 @@ class Transact {
   String? note;
   String? place;
   bool expense;
-  // TODO : store the picture in Firebase Storage with title : transaction_id, with directory_id : user_id
   String? picture;
   String? title;
 
@@ -24,7 +21,6 @@ class Transact {
       this.note,
       this.place,
       this.expense,
-      //this.picture,
       this.title,
       this.picture);
 

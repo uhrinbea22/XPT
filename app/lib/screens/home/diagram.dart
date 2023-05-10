@@ -227,20 +227,6 @@ class _State extends State<RealtimeDiagram> {
 
     List<TransactionDetails> lista = [];
 
-/*     for (int i = 0; i < list.length; i++) {
-      for (int j = 0; j < limitCategories.length; j++) {
-        if (limitCategories.contains(list[i].category)) {
-          var index = limitCategories.indexOf(list[i].category);
-          var tr = TransactionDetails.limit(
-            list[i].category.toString(),
-            int.parse(limitValues[index]),
-            list[i].amount,
-          );
-          lista.add(tr);
-        }
-      }
-    }
- */
     for (int i = 0; i < list.length; i++) {
       if (limitCategories.contains(list[i].category)) {
         var index = limitCategories.indexOf(list[i].category);

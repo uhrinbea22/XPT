@@ -113,7 +113,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
             Center(
                 child: GestureDetector(
               onTap: () {
-                imagePickerService.showPicker(context);
+                imagePickerService.showPickerProfile(context);
               },
               child: CircleAvatar(
                 radius: 55,
