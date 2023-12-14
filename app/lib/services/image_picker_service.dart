@@ -67,7 +67,7 @@ class ImagePickerService {
 
   Future uploadPicture(File photo) async {
     if (photo == null) return;
-    String imgName = basename(photo!.path);
+    String imgName = basename(photo.path);
     String directory = _authService.getuser()!.uid;
     try {
       final ref = storage.ref("$directory/").child("/$imgName");
@@ -124,8 +124,8 @@ class ImagePickerService {
                         Navigator.of(context).pop();
                       }),
                   ListTile(
-                    leading: Icon(Icons.photo_camera),
-                    title: Text('Kamera'),
+                    leading: const Icon(Icons.photo_camera),
+                    title: const Text('Kamera'),
                     onTap: () async {
                       await imgFromCamera();
                       Navigator.of(context).pop();

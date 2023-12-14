@@ -77,7 +77,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     dropdownValue = DynamicTheme.of(context)!.themeId;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -88,12 +87,12 @@ class _HomePageState extends State<HomePage> {
       body: Center(
           child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 24, bottom: 12),
+          const Padding(
+            padding: EdgeInsets.only(top: 24, bottom: 12),
             child: Text('Válaszd ki a preferált témát:'),
           ),
           DropdownButton(
-              icon: Icon(Icons.arrow_downward),
+              icon: const Icon(Icons.arrow_downward),
               value: dropdownValue,
               items: [
                 DropdownMenuItem(

@@ -3,7 +3,6 @@ import 'package:app/screens/home/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../firebase_options.dart';
 import '../../services/auth_service.dart';
@@ -51,10 +50,12 @@ class _State extends State<RealtimeDiagram> {
   bool allData = false;
   num allExpenseAmount = 0;
   num allIncomeAmount = 0;
-  final String actualMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month}-01';
-  final String nextMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
+  final String actualMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month}-01'
+      : '${DateTime.now().year}-0${DateTime.now().month}-01';
+  final String nextMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month + 1}-01'
+      : '${DateTime.now().year}-${DateTime.now().month + 1}-01';
 
   @override
   void dispose() {
@@ -117,7 +118,7 @@ class _State extends State<RealtimeDiagram> {
   }
 
   Future loadExpenseData() async {
-    ///load all or only the proper month's the expenses and incomes
+    ///load all or only the proper month's expenses and incomes
     allExpenseAmount = 0;
     allIncomeAmount = 0;
     var snapShotsValue = allData
@@ -260,11 +261,11 @@ class _State extends State<RealtimeDiagram> {
           child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             alignment: Alignment.center,
             child: Text(
               "Aktuális egyenleg : ${allIncomeAmount - allExpenseAmount} $valuta",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           Container(
@@ -295,7 +296,7 @@ class _State extends State<RealtimeDiagram> {
                   interval: 1000.0),
               series: <ChartSeries>[
                 ColumnSeries<TransactionDetails, String>(
-                    dataLabelSettings: DataLabelSettings(
+                    dataLabelSettings: const DataLabelSettings(
                       isVisible: true,
                       color: Colors.purple,
                     ),
@@ -317,7 +318,7 @@ class _State extends State<RealtimeDiagram> {
               title: ChartTitle(text: "Tranzakciók vizsgálata kategóriánként"),
               series: <PieSeries>[
                 PieSeries<TransactionDetails, String>(
-                    dataLabelSettings: DataLabelSettings(
+                    dataLabelSettings: const DataLabelSettings(
                       isVisible: true,
                       color: Colors.purple,
                     ),
@@ -339,7 +340,7 @@ class _State extends State<RealtimeDiagram> {
                 title: ChartTitle(text: "Bevételek és kiadások aránya"),
                 series: <PieSeries>[
                   PieSeries<TransactionDetails, String>(
-                      dataLabelSettings: DataLabelSettings(
+                      dataLabelSettings: const DataLabelSettings(
                         isVisible: true,
                         color: Colors.purple,
                       ),

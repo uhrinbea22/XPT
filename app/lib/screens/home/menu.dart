@@ -49,7 +49,6 @@ class NavDrawer extends StatelessWidget {
                                     height: 60,
                                     width: 60,
                                     child: CircleAvatar(
-                                      //ide az assets-ből user_avatar.png-fajlt
                                       child: Image.asset(
                                         'user_avatar.png',
                                         width: 300,
@@ -59,7 +58,8 @@ class NavDrawer extends StatelessWidget {
                               ],
                             );
                           }
-                          if (snapshot.hasError) return Text('Hiba történt');
+                          if (snapshot.hasError)
+                            return const Text('Hiba történt');
 
                           return Row(
                             children: <Widget>[
@@ -88,7 +88,7 @@ class NavDrawer extends StatelessWidget {
                           _authService.getuser()!.displayName == null
                               ? _authService.getuser()!.email.toString()
                               : _authService.getuser()!.displayName.toString(),
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         ),
                       )
                     ],

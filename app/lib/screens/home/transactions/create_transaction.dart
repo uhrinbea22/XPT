@@ -72,9 +72,9 @@ class CreateTransactionState extends State<CreateTransaction> {
   final ImagePicker _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
   List categoryList = [];
-  bool expense_value = false;
-  bool persistent_value = false;
-  bool online_value = false;
+  bool expenseValue = false;
+  bool persistentValue = false;
+  bool onlineValue = false;
   bool titleInDbAlready = false;
   var showText = "";
   String categoryExists = "";
@@ -83,10 +83,12 @@ class CreateTransactionState extends State<CreateTransaction> {
   File? _photo;
   String imgName = "";
   var _selectedOption = "Kiadás";
-  final String actualMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month}-01';
-  final String nextMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
+  final String actualMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month}-01'
+      : '${DateTime.now().year}-${DateTime.now().month}-01';
+  final String nextMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month + 1}-01'
+      : '${DateTime.now().year}-${DateTime.now().month + 1}-01';
 
   @override
   void initState() {
@@ -101,8 +103,6 @@ class CreateTransactionState extends State<CreateTransaction> {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
         uploadFile();
-      } else {
-        print('No image selected.');
       }
     });
   }
@@ -114,8 +114,6 @@ class CreateTransactionState extends State<CreateTransaction> {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
         uploadFile();
-      } else {
-        print('No image selected.');
       }
     });
   }
@@ -339,10 +337,10 @@ class CreateTransactionState extends State<CreateTransaction> {
                 subtitle: const Text("Ha fizetés vagy számla, csekkold be"),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
-                value: persistent_value,
+                value: persistentValue,
                 onChanged: (bool? value) {
                   setState(() {
-                    persistent_value = value!;
+                    persistentValue = value!;
                   });
                 },
               ),
@@ -350,10 +348,10 @@ class CreateTransactionState extends State<CreateTransaction> {
                 title: Text('Online'),
                 checkColor: Colors.grey,
                 activeColor: Colors.blue,
-                value: online_value,
+                value: onlineValue,
                 onChanged: (bool? value) {
                   setState(() {
-                    online_value = value!;
+                    onlineValue = value!;
                   });
                 },
               ),
@@ -513,9 +511,9 @@ class CreateTransactionState extends State<CreateTransaction> {
                                       DateTime.parse(
                                           myController['date']!.text),
                                       int.parse(myController['amount']!.text),
-                                      persistent_value,
+                                      persistentValue,
                                       dropdownvalue,
-                                      online_value,
+                                      onlineValue,
                                       myController['notes']!.text,
                                       myController['place']!.text,
                                       _selectedOption == "Bevétel"

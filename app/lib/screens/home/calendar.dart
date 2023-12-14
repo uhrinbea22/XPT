@@ -136,6 +136,7 @@ class Cal extends State<MyCalendar> {
             child: Column(
           children: [
             Container(
+              margin: const EdgeInsets.only(top: 25),
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(
@@ -157,6 +158,29 @@ class Cal extends State<MyCalendar> {
                   child: const Text('Napi nézet'),
                 ),
               ]),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      _controller.backward!();
+                    },
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_forward),
+                    onPressed: () {
+                      _controller.forward!();
+                    },
+                  ),
+                )
+              ],
             ),
             SfCalendar(
               controller: _controller,
@@ -183,7 +207,7 @@ class TransactionEvent {
   bool isAllDay;
 }
 
-///
+///model for displaying data in calendar
 class TransactionDataSource extends CalendarDataSource {
   TransactionDataSource(List<TransactionEvent> source) {
     appointments = source;

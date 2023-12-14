@@ -1,53 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:app/screens/home/menu.dart';
 import 'package:app/services/image_picker_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import '../../firebase_options.dart';
 import '../../services/auth_service.dart';
-import 'package:app/firebase_options.dart';
-import 'package:app/screens/home/menu.dart';
-import 'package:app/services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../services/auth_service.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-/* 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(ProfileStateful());
-} */
-/* 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
-
-  // const ProfileScreen();
-  @override
-  Widget build(BuildContext context) {
-    final appTitle = 'Profil';
-    return MaterialApp(
-      title: appTitle,
-      theme: Theme.of(context),
-      home: Scaffold(
-        drawer: NavDrawer(),
-        appBar: AppBar(
-          title: Text(appTitle),
-        ),
-        body: ProfileStateful(),
-      ),
-    );
-  }
-} */
 
 class ProfileStateful extends StatefulWidget {
   final AuthService _authService = AuthService();
@@ -84,7 +40,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
         ),
         body: Column(
           children: [
-            ListTile(
+            const ListTile(
               title: Text("Profil beállítások",
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
@@ -107,7 +63,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
                   });
                 },
                 child: const Text("Név beállítása")),
-            Padding(
+            const Padding(
                 padding: EdgeInsetsDirectional.all(10),
                 child: Text("Avatar feltöltése")),
             Center(
@@ -117,7 +73,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
               },
               child: CircleAvatar(
                 radius: 55,
-                backgroundColor: Color(0xffFDCF09),
+                backgroundColor: const Color(0xffFDCF09),
                 child: _photo != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(50),
@@ -141,7 +97,7 @@ class MyCustomFormStat extends State<ProfileStateful> {
                       ),
               ),
             )),
-            ListTile(
+            const ListTile(
               title: Text(
                 "Biztonság",
                 style: TextStyle(fontWeight: FontWeight.bold),

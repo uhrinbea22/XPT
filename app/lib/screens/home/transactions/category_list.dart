@@ -20,7 +20,7 @@ void main() async {
 class TransactionsByCategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Kategóriára szűrés';
+    const appTitle = 'Kategóriára szűrés';
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: appTitle,
@@ -28,7 +28,7 @@ class TransactionsByCategoryPage extends StatelessWidget {
       home: Scaffold(
         drawer: NavDrawer(),
         appBar: AppBar(
-          title: Text(appTitle),
+          title: const Text(appTitle),
         ),
         body: TransactionsByCategories(),
       ),
@@ -50,10 +50,12 @@ class TransactionsByCategoriesState extends State<TransactionsByCategories> {
   List categoryList = [];
   var categoryController = TextEditingController();
   String selectedCategory = "";
-  final String actualMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month}-01';
-  final String nextMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
+  final String actualMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month}-01'
+      : '${DateTime.now().year}-${DateTime.now().month}-01';
+  final String nextMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month + 1}-01'
+      : '${DateTime.now().year}-${DateTime.now().month + 1}-01';
   bool onlyThisMonth = true;
 
   @override

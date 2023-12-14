@@ -12,17 +12,8 @@ class Transact {
   String? picture;
   String? title;
 
-  Transact(
-      this.date,
-      this.amount,
-      this.persistent,
-      this.category,
-      this.online,
-      this.note,
-      this.place,
-      this.expense,
-      this.title,
-      this.picture);
+  Transact(this.date, this.amount, this.persistent, this.category, this.online,
+      this.note, this.place, this.expense, this.title, this.picture);
 
   Map<String, dynamic> toJson() => _transactToJson(this);
 
@@ -32,7 +23,6 @@ class Transact {
 
   Transact _transactFromJson(Map<String, dynamic> json) {
     return Transact(
-        //json['id'] as int,
         (json['date'] as Timestamp).toDate(),
         json['amount'] as int,
         json['persistent'] as bool,
@@ -41,7 +31,6 @@ class Transact {
         json['note'] as String,
         json['place'] as String,
         json['expense'] as bool,
-        //json['picture'] as Picture,
         json['title'] as String,
         json['picture'] as String);
   }

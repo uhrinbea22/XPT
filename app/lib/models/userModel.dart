@@ -1,4 +1,4 @@
-//for authenticcation purposes only
+/// for authentication purposes only
 
 class UserModel {
   final String uid;

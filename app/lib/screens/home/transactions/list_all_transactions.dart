@@ -4,7 +4,6 @@ import 'package:app/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../consts/styles.dart';
 import 'create_transaction.dart';
@@ -20,10 +19,12 @@ class ListAllTransactions extends StatelessWidget {
 }
 
 class ListTransactions extends StatelessWidget {
-  final String actualMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month}-01';
-  final String nextMonthStart =
-      '${DateTime.now().year}-0${DateTime.now().month + 1}-01';
+  final String actualMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month}-01'
+      : '${DateTime.now().year}-${DateTime.now().month}-01';
+  final String nextMonthStart = DateTime.now().month < 10
+      ? '${DateTime.now().year}-0${DateTime.now().month + 1}-01'
+      : '${DateTime.now().year}-${DateTime.now().month + 1}-01';
   final AuthService authService = AuthService();
   final controller = PageController(initialPage: 0);
   var currentPageValue = 0.0;
@@ -38,12 +39,13 @@ class ListTransactions extends StatelessWidget {
         title: const Text("Tranzakciók"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_right_alt,
             ),
             onPressed: () {
               controller.nextPage(
-                  duration: Duration(milliseconds: 400), curve: Curves.easeIn);
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeIn);
             },
           )
         ],

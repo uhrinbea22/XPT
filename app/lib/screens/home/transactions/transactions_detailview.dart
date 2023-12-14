@@ -106,8 +106,9 @@ class TransactionDetailview extends StatelessWidget {
                                           size: 50,
                                         );
                                       }
-                                      if (snapshot.hasError)
-                                        return Text('Hiba történt');
+                                      if (snapshot.hasError) {
+                                        return const Text('Hiba történt');
+                                      }
                                       return GestureDetector(
                                         onTap: () async {
                                           final imageProvider =
@@ -115,9 +116,7 @@ class TransactionDetailview extends StatelessWidget {
                                                   .image;
                                           showImageViewer(
                                               context, imageProvider,
-                                              onViewerDismissed: () {
-                                            print("dismissed");
-                                          });
+                                              onViewerDismissed: () {});
                                         },
                                         child: Container(
                                             height: 75,

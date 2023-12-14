@@ -97,9 +97,6 @@ class _SignUpState extends State<SignUp> {
               AbsorbPointer(
                 absorbing: absorbValue,
                 child: ElevatedButton(
-                  child: const Text(
-                    'Regisztáció',
-                  ),
                   onPressed: () async {
                     setState(() {
                       absorbValue = true;
@@ -126,6 +123,9 @@ class _SignUpState extends State<SignUp> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                     elevation: 10.0,
+                  ),
+                  child: const Text(
+                    'Regisztáció',
                   ),
                 ),
               ),
