@@ -52,7 +52,7 @@ class _State extends State<RealtimeDiagram> {
   num allIncomeAmount = 0;
   final String actualMonthStart = DateTime.now().month < 10
       ? '${DateTime.now().year}-0${DateTime.now().month}-01'
-      : '${DateTime.now().year}-0${DateTime.now().month}-01';
+      : '${DateTime.now().year}-${DateTime.now().month}-01';
   final String nextMonthStart = DateTime.now().month < 10
       ? '${DateTime.now().year}-0${DateTime.now().month + 1}-01'
       : '${DateTime.now().year}-${DateTime.now().month + 1}-01';

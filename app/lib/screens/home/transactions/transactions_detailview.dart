@@ -119,7 +119,7 @@ class TransactionDetailview extends StatelessWidget {
                                               onViewerDismissed: () {});
                                         },
                                         child: Container(
-                                            height: 75,
+                                            height: 125,
                                             child: Image(
                                               image:
                                                   NetworkImage(snapshot.data!),
